@@ -101,4 +101,14 @@ router.get("/refresh", (req: Request, res: Response) => {
   }
 });
 
+router.post("/logout", (req, res) => {
+  try {
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+    res.json({ message: "Logged out" });
+  } catch (err: any) {
+    console.error(err.message);
+  }
+});
+
 export default router;

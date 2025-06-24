@@ -2,14 +2,24 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { DropdownMenu, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { Menu, Moon, Settings, Sun, User } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useCallback } from "react";
 import { useUIStore } from "../store/useUiStore";
-import { useUserStore } from "../store/useUserStore";
+import { signOut, useUserStore } from "../store/useUserStore";
 import AvatarDiv from "./Avatar";
 
 const Header = () => {
+  const router = useRouter()
   const { currentUser } = useUserStore();
-  console.log(currentUser, 'currentUser')
   const { isDarkMode, isSidebarOpen, toggleSidebar, toggleTheme } = useUIStore();
+
+  const handleSignOut = useCallback(async () => {
+    const res = await signOut()
+    if (res) {
+      router.push('/login')
+    }
+  }, [router])
+
   return (
     <div className="h-16 bg-background border-b border-background-accent px-4 flex items-center justify-between">
       {/* Left side */}
@@ -81,7 +91,7 @@ const Header = () => {
 
             <DropdownMenuSeparator className="bg-background-accent" />
 
-            <DropdownMenuItem className="cursor-pointer hover:bg-background-accent text-red-500">
+            <DropdownMenuItem className="cursor-pointer hover:bg-background-accent text-red-500" onClick={handleSignOut}>
               Sign Out
             </DropdownMenuItem>
           </DropdownMenuContent>

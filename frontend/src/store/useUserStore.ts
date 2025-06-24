@@ -41,8 +41,7 @@ async function loginUser(credentials: {
   try {
     const response = await axios.post<{ message: string; data: User }>(
       "/api/auth/login",
-      credentials,
-      { withCredentials: true }
+      credentials
     );
     return response.data.data;
   } catch (err: any) {
@@ -52,6 +51,18 @@ async function loginUser(credentials: {
     return null;
   }
 }
+
+export const signOut = async (): Promise<{ message: string } | null> => {
+  try {
+    const response = await axios.post<{ message: string }>("/api/auth/logout");
+    return response.data;
+  } catch (err: any) {
+    const errorMessage = err.response?.data?.message || err.message;
+    console.error(errorMessage, "error while loging out");
+    window.alert(errorMessage);
+    return null;
+  }
+};
 
 export const useUserStore = create<UserState>()(
   devtools(
