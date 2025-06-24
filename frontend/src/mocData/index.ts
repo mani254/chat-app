@@ -1,0 +1,206 @@
+import { Chat, Message, User } from "../types";
+// Mock data
+export const mockUsers: User[] = [
+  {
+    _id: "1",
+    name: "You",
+    email: "you@example.com",
+    password: "",
+    avatar:
+      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face",
+    status: "Available",
+    isOnline: true,
+  },
+  {
+    _id: "2",
+    name: "Sarah Johnson",
+    email: "sarah@example.com",
+    password: "",
+    avatar:
+      "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face",
+    status: "At work",
+    isOnline: true,
+  },
+  {
+    _id: "3",
+    name: "Mike Chen",
+    email: "mike@example.com",
+    password: "",
+    avatar:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face",
+    status: "Busy",
+    isOnline: false,
+  },
+  {
+    _id: "4",
+    name: "Emily Davis",
+    email: "emily@example.com",
+    password: "",
+    avatar:
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face",
+    status: "Away",
+    isOnline: true,
+  },
+  {
+    _id: "5",
+    name: "Team Alpha",
+    email: "team@example.com",
+    password: "",
+    avatar:
+      "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=40&h=40&fit=crop&crop=face",
+    status: "Active project",
+    isOnline: true,
+  },
+];
+
+export const mockChats: Chat[] = [
+  {
+    _id: "chat1",
+    isGroupChat: false,
+    users: ["1", "2"],
+    latestMessage: "thats Fentastic! Can't wait to hear more.",
+    createdAt: "2024-01-15T10:00:00Z",
+  },
+  {
+    _id: "chat2",
+    isGroupChat: false,
+    users: ["1", "3"],
+    latestMessage: "Wonderful! Let's catch up soon.",
+    createdAt: "2024-01-14T15:30:00Z",
+  },
+  {
+    _id: "chat3",
+    name: "Team Alpha",
+    isGroupChat: true,
+    users: ["1", "2", "4", "5"],
+    groupAdmin: "5",
+    latestMessage: "One more latest message",
+    createdAt: "2024-01-13T09:15:00Z",
+  },
+  {
+    _id: "chat4",
+    isGroupChat: false,
+    users: ["1", "4"],
+    latestMessage: "This will be the latest message",
+    createdAt: "2024-01-12T14:20:00Z",
+  },
+];
+
+export const mockMessages: Record<string, Message[]> = {
+  chat1: [
+    {
+      _id: "msg1",
+      chat: "chat1",
+      sender: "2",
+      content: "Hey! How are you doing?",
+      readBy: ["1", "2"],
+      messageType: "text",
+      createdAt: "2024-01-15T10:00:00Z",
+    },
+    {
+      _id: "msg2",
+      chat: "chat1",
+      sender: "1",
+      content: "I'm doing great! Just finished a new project. How about you?",
+      readBy: ["1", "2"],
+      messageType: "text",
+      createdAt: "2024-01-15T10:05:00Z",
+    },
+    {
+      _id: "msg3",
+      chat: "chat1",
+      sender: "2",
+      content: "That sounds awesome! I'd love to hear more about it sometime.",
+      readBy: ["2"],
+      messageType: "text",
+      createdAt: "2024-01-15T10:10:00Z",
+    },
+  ],
+  chat2: [
+    {
+      _id: "msg4",
+      chat: "chat2",
+      sender: "3",
+      content: "Did you see the latest updates on the project?",
+      readBy: ["1", "3"],
+      messageType: "text",
+      createdAt: "2024-01-14T15:25:00Z",
+    },
+    {
+      _id: "msg5",
+      chat: "chat2",
+      sender: "1",
+      content: "Yes, looks really promising! Great work on the design.",
+      readBy: ["1", "3"],
+      messageType: "text",
+      createdAt: "2024-01-14T15:28:00Z",
+    },
+    {
+      _id: "msg6",
+      chat: "chat2",
+      sender: "3",
+      content: "Thanks! Let's schedule a call to discuss the next steps.",
+      readBy: ["3"],
+      messageType: "text",
+      createdAt: "2024-01-14T15:30:00Z",
+    },
+  ],
+  chat3: [
+    {
+      _id: "msg7",
+      chat: "chat3",
+      sender: "5",
+      content: "Team meeting at 3 PM today. Please confirm your attendance.",
+      readBy: ["1", "2", "4", "5"],
+      messageType: "text",
+      createdAt: "2024-01-13T09:10:00Z",
+    },
+    {
+      _id: "msg8",
+      chat: "chat3",
+      sender: "2",
+      content: "I'll be there!",
+      readBy: ["1", "2"],
+      messageType: "text",
+      createdAt: "2024-01-13T09:12:00Z",
+    },
+    {
+      _id: "msg9",
+      chat: "chat3",
+      sender: "4",
+      content: "Confirmed! Looking forward to it.",
+      readBy: ["4"],
+      messageType: "text",
+      createdAt: "2024-01-13T09:15:00Z",
+    },
+  ],
+  chat4: [
+    {
+      _id: "msg10",
+      chat: "chat4",
+      sender: "4",
+      content: "Happy birthday! 🎉",
+      readBy: ["1", "4"],
+      messageType: "text",
+      createdAt: "2024-01-12T14:15:00Z",
+    },
+    {
+      _id: "msg11",
+      chat: "chat4",
+      sender: "1",
+      content: "Thank you so much! That means a lot 😊",
+      readBy: ["1", "4"],
+      messageType: "text",
+      createdAt: "2024-01-12T14:18:00Z",
+    },
+    {
+      _id: "msg12",
+      chat: "chat4",
+      sender: "4",
+      content: "Hope you have a wonderful day!",
+      readBy: ["4"],
+      messageType: "text",
+      createdAt: "2024-01-12T14:20:00Z",
+    },
+  ],
+};
