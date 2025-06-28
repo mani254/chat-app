@@ -14,8 +14,10 @@ const io = new SocketIOServer(server, {
   },
 });
 
-// Attach socket handlers
-socketHandler(io);
+// Socket.IO Logic
+io.on("connection", (socket) => {
+  socketHandler(socket, io);
+});
 
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

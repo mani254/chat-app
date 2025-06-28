@@ -2,16 +2,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { useChatStore } from "@/src/store/useChatStore";
+import { useUIStore } from "@/src/store/useUiStore";
+import { useUserStore } from "@/src/store/useUserStore";
+import { Chat } from "@/src/types";
 import EmojiPicker from 'emoji-picker-react';
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, MoreVertical, Paperclip, Phone, Send, Smile, Video } from "lucide-react";
 import Image from "next/image";
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from "react";
-import { useChatStore } from "../store/useChatStore";
-import { useUIStore } from "../store/useUiStore";
-import { useUserStore } from "../store/useUserStore";
-import { Chat } from "../types";
 
 
 const ChatWindow = () => {

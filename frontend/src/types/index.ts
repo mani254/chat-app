@@ -1,3 +1,14 @@
+export interface UserQueryParams {
+  search?: string;
+  sortBy?: string;
+  orderBy?: string;
+  page?: number;
+  limit?: number;
+  fetchFields?: Record<string, number>;
+  status?: "active" | "inactive";
+  filterMain?: boolean;
+}
+
 export interface User {
   _id: string;
   name: string;
@@ -16,7 +27,7 @@ export interface Message {
   readBy: string[];
   messageType: "text" | "image" | "file";
   createdAt: string;
-} 
+}
 
 export interface Chat {
   _id: string;

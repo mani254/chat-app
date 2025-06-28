@@ -33,8 +33,10 @@ const Login = (): React.ReactElement => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     try {
-      await logInUser(loginData)
-      router.push('/');
+      const user = await logInUser(loginData)
+      if (user) {
+        router.push('/');
+      }
     } catch (error) {
       console.error('Login failed:', error);
     }

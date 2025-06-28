@@ -3,9 +3,10 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import connectDB from "./config/db";
+import autoCastQueryParams from "./middleware/autoCastQueryParams";
 import { errorHandler } from "./middleware/errorMiddleware";
 import authRoutes from "./routes/authRoutes";
-import userRoutes from "./routes/userRoutes";
+import userRouter from "./routes/userRouter";
 // import chatRoutes from "./routes/chatRoutes";
 // import messageRoutes from "./routes/messageRoutes";
 
@@ -23,7 +24,15 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api/auth", authRoutes);
-app.use("/api", userRoutes);
+
+const queryValuesToCast: Record<string, "number" | "boolean" | "object"> = {
+  page: "number",
+  limit: "number",
+  fetchFields: "object",
+};
+
+app.use("/api/users", autoCastQueryParams(queryValuesToCast), userRouter);
+
 // app.use("/api/chats", chatRoutes);
 // app.use("/api/messages", messageRoutes);
 
