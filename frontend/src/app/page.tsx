@@ -5,7 +5,6 @@ import ProtectedComponent from "../components/auth/Protected";
 import ChatSidebar from "../components/chat/ChatSidebar";
 import ChatWindow from "../components/chat/ChatWindow";
 import NewChatModal from "../components/chat/newChatModel";
-import Header from "../components/Header";
 import { SocketProvider } from "../components/providers/socketProvider";
 import { useUIStore } from "../store/useUiStore";
 
@@ -14,9 +13,22 @@ export default function Home() {
   const [token, setToken] = useState<string | null>('')
 
   useEffect(() => {
-    const token = localStorage.getItem('accessToken')
-    setToken(token)
-  }, [])
+    const updateToken = () => {
+      const newToken = localStorage.getItem("accessToken");
+      setToken(newToken);
+    };
+
+    window.addEventListener("storage", updateToken);
+
+    const interval = setInterval(updateToken, 5_000);
+
+    updateToken();
+
+    return () => {
+      window.removeEventListener("storage", updateToken);
+      clearInterval(interval);
+    };
+  }, []);
 
 
   useEffect(() => {
@@ -36,13 +48,12 @@ export default function Home() {
 
       <SocketProvider token={token}>
         <div className="h-screen flex flex-col bg-background">
-          <Header />
 
           <div className="flex-1 flex overflow-hidden">
             <ChatSidebar />
 
             <motion.main
-              className="flex-1 flex"
+              className="flex-1 flex flex-col"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
@@ -52,7 +63,6 @@ export default function Home() {
 
           </div>
           <div className="w-auto absolute bottom-5 right-5">
-
             <NewChatModal />
           </div>
         </div>

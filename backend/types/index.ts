@@ -7,8 +7,8 @@ export interface UserQueryParams {
   page?: number;
   limit?: number;
   fetchFields?: Record<string, number>;
-  status?: "online" | "offline";
   filterMain?: string;
+  isOnline?: boolean;
 }
 
 export interface UserFetchResult {

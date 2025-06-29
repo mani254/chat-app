@@ -11,6 +11,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { MessageCircle, Search, X } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import Header from '../Header';
 
 const ChatSidebar = () => {
 
@@ -125,6 +126,7 @@ const ChatSidebar = () => {
         }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
       >
+        <Header />
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Header */}
           <div className="p-4 border-b border-background-accent">

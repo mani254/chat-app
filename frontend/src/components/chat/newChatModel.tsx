@@ -1,5 +1,4 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogClose,
@@ -35,6 +34,7 @@ const NewChatModal = () => {
 
   // Load users on page/search change
   useEffect(() => {
+    if (!open) return
     const fetchUsers = async () => {
       setLoading(true);
       await setUsers({ search, page, limit: 10, filterMain: true })
@@ -155,20 +155,14 @@ const NewChatModal = () => {
                   </div>
 
                   <div className="ml-auto">
-                    {user.status && (
-                      <Badge
-                        variant="outline"
-                        className={cn(
-                          "text-xs px-2 py-0.5",
-                          user.status.toLowerCase().includes("online") &&
-                          "bg-green-100 text-green-600 border-green-200",
-                          user.status.toLowerCase().includes("offline") &&
-                          "bg-gray-100 text-gray-500 border-gray-200"
-                        )}
-                      >
-                        {user.status}
-                      </Badge>
-                    )}
+                    <span
+                      className={`text-xs px-2 py-0.5 border rounded ${user.isOnline
+                        ? "bg-green-100 text-green-600 border-green-200"
+                        : "bg-gray-100 text-gray-500 border-gray-200"
+                        }`}
+                    >
+                      {user.isOnline ? "Online" : "Offline"}
+                    </span>
                   </div>
                 </button>
               ))

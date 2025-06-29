@@ -12,7 +12,12 @@ instance.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        await instance.get("/api/auth/refresh");
+        const refreshRes = await instance.get("/api/auth/refresh");
+
+        const newAccessToken = refreshRes.data?.accessToken;
+        if (newAccessToken) {
+          localStorage.setItem("accessToken", newAccessToken);
+        }
         return instance(originalRequest);
       } catch (refreshError) {
         console.error("Refresh failed", refreshError);

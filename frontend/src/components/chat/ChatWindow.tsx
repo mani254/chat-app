@@ -12,6 +12,7 @@ import { ArrowLeft, MoreVertical, Paperclip, Phone, Send, Smile, Video } from "l
 import Image from "next/image";
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from "react";
+import ActiveUsers from "./ActiveUsers";
 
 
 const ChatWindow = () => {
@@ -123,25 +124,33 @@ const ChatWindow = () => {
 
   if (!activeChat) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-background">
-        <div className="text-center">
-          <div className="w-24 h-24 bg-primary-accent rounded-full flex items-center justify-center mx-auto mb-4">
-            <Send className="w-12 h-12 text-primary" />
+      <>
+        <ActiveUsers />
+
+        <div className="flex-1 flex items-center justify-center bg-background">
+          <div className="text-center">
+            <div className="w-24 h-24 bg-primary-accent rounded-full flex items-center justify-center mx-auto mb-4">
+              <Send className="w-12 h-12 text-primary" />
+            </div>
+            <h2 className="text-2xl font-semibold text-foreground mb-2">
+              Welcome to Messenger
+            </h2>
+            <p className="text-gray-500 dark:text-gray-400 max-w-md">
+              Select a conversation from the sidebar to start chatting with your friends and colleagues.
+            </p>
           </div>
-          <h2 className="text-2xl font-semibold text-foreground mb-2">
-            Welcome to Messenger
-          </h2>
-          <p className="text-gray-500 dark:text-gray-400 max-w-md">
-            Select a conversation from the sidebar to start chatting with your friends and colleagues.
-          </p>
         </div>
-      </div>
+      </>
     );
   }
   return (
     <div className="flex-1 flex flex-col bg-background relative">
+      <ActiveUsers />
+
+
+
       {/* Header */}
-      <div className="p-4 border-b border-background-accent bg-background">
+      <div className="p-4 border-b border-background-accent bg-background mt-20">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Button

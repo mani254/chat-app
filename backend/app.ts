@@ -29,6 +29,7 @@ const queryValuesToCast: Record<string, "number" | "boolean" | "object"> = {
   page: "number",
   limit: "number",
   fetchFields: "object",
+  isOnline: "boolean",
 };
 
 app.use("/api/users", autoCastQueryParams(queryValuesToCast), userRouter);

@@ -5,8 +5,8 @@ export interface UserQueryParams {
   page?: number;
   limit?: number;
   fetchFields?: Record<string, number>;
-  status?: "active" | "inactive";
   filterMain?: boolean;
+  isOnline?: boolean;
 }
 
 export interface User {

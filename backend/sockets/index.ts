@@ -15,11 +15,11 @@ const socketHandler = async (socket: Socket, io: Server) => {
 
     const user = (socket as any).user;
 
-    await User.findByIdAndUpdate(user._id, { isOnline: true });
+    const userData = await User.findByIdAndUpdate(user._id, { isOnline: true });
 
     socket.join(user._id.toString());
 
-    socket.broadcast.emit("user-online", { userId: user._id });
+    socket.broadcast.emit("user-online", { userData: userData });
 
     console.log(`${user.name} connected`);
 

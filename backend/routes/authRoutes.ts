@@ -96,7 +96,7 @@ router.get("/refresh", (req: Request, res: Response) => {
         sameSite: "none",
         maxAge: 15 * 60 * 1000,
       })
-      .json({ message: "Token refreshed" });
+      .json({ message: "Token refreshed", accessToken: newAccessToken });
   } catch {
     res.status(403).json({ message: "Invalid refresh token" });
   }

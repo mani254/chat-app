@@ -4,16 +4,14 @@ import { UserFetchResult, UserQueryParams } from "../types";
 
 class UserService {
   private getMatchState(query: UserQueryParams): Record<string, any> {
-    const { search, status } = query;
+    const { search, isOnline } = query;
     let matchStage: Record<string, any> = {};
 
     if (search && search.trim() !== "") {
       matchStage.name = { $regex: search, $options: "i" };
     }
 
-    if (status) {
-      matchStage.status = status;
-    }
+    matchStage.isOnline = Boolean(isOnline);
 
     return matchStage;
   }
