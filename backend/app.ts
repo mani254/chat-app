@@ -6,9 +6,8 @@ import connectDB from "./config/db";
 import autoCastQueryParams from "./middleware/autoCastQueryParams";
 import { errorHandler } from "./middleware/errorMiddleware";
 import authRoutes from "./routes/authRoutes";
+import chatRouter from "./routes/chatRouter";
 import userRouter from "./routes/userRouter";
-// import chatRoutes from "./routes/chatRoutes";
-// import messageRoutes from "./routes/messageRoutes";
 
 dotenv.config();
 connectDB();
@@ -33,6 +32,7 @@ const queryValuesToCast: Record<string, "number" | "boolean" | "object"> = {
 };
 
 app.use("/api/users", autoCastQueryParams(queryValuesToCast), userRouter);
+app.use("/api/chats", autoCastQueryParams(queryValuesToCast), chatRouter);
 
 // app.use("/api/chats", chatRoutes);
 // app.use("/api/messages", messageRoutes);

@@ -1,18 +1,33 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { Chat, Message } from "../types";
-import { useUserStore } from "./useUserStore";
+import axios from "../lib/api";
+import { Chat, ChatQueryParams, Message } from "../types";
+
+async function fetchChats(
+  params: ChatQueryParams
+): Promise<{ chats: Chat[]; totalItems: number }> {
+  try {
+    const response = await axios.get<{
+      message: string;
+      chats: Chat[];
+      totalItems: number;
+    }>("/api/chats", { params });
+    return response.data;
+  } catch (err: any) {
+    const errorMessage = err.response?.data?.message || err.message;
+    console.error(errorMessage, "error while fetching chats");
+    window.alert(errorMessage);
+    return { chats: [], totalItems: 0 };
+  }
+}
 
 interface ChatState {
   chats: Chat[];
   messages: Record<string, Message[]>;
-  sendMessage: (
-    chatId: string,
-    content: string,
-    messageType?: "text" | "image" | "file"
-  ) => void;
-  markAsRead: (chatId: string, messageId: string, userId: string) => void;
-  loadMoreMessages: (chatId: string) => void;
+  hasMoreChats: boolean;
+  setChats: (
+    params: ChatQueryParams
+  ) => Promise<{ chats: Chat[]; totalItems: number }>;
 }
 
 export const useChatStore = create<ChatState>()(
@@ -20,53 +35,26 @@ export const useChatStore = create<ChatState>()(
     (set) => ({
       chats: [],
       messages: {},
-      sendMessage: (chatId, content, messageType = "text") => {
-        const currentUser = useUserStore.getState().currentUser;
-        if (!currentUser) return;
-        const newMessage: Message = {
-          _id: `msg${Date.now()}`,
-          chat: chatId,
-          sender: currentUser._id,
-          content,
-          readBy: [currentUser._id],
-          messageType,
-          createdAt: new Date().toISOString(),
-        };
+      hasMoreChats: true,
+
+      setChats: async (params) => {
+        const { chats, totalItems } = await fetchChats(params);
         set(
-          (state) => ({
-            messages: {
-              ...state.messages,
-              [chatId]: [...(state.messages[chatId] || []), newMessage],
-            },
-            chats: state.chats.map((chat) =>
-              chat._id === chatId
-                ? { ...chat, latestMessage: newMessage._id }
-                : chat
-            ),
-          }),
+          (state) => {
+            const newChats =
+              params.page && params.page > 1
+                ? [...state.chats, ...(chats || [])]
+                : chats || [];
+            const hasMoreChats = newChats.length < totalItems;
+            return {
+              chats: newChats,
+              hasMoreChats,
+            };
+          },
           false,
-          "sendMessage"
+          "setChats"
         );
-      },
-      markAsRead: (chatId, messageId, userId) => {
-        set(
-          (state) => ({
-            messages: {
-              ...state.messages,
-              [chatId]:
-                state.messages[chatId]?.map((msg) =>
-                  msg._id === messageId && !msg.readBy.includes(userId)
-                    ? { ...msg, readBy: [...msg.readBy, userId] }
-                    : msg
-                ) || [],
-            },
-          }),
-          false,
-          "markAsRead"
-        );
-      },
-      loadMoreMessages: (chatId) => {
-        console.log(`Loading more messages for chat: ${chatId}`);
+        return { chats, totalItems };
       },
     }),
     { name: "chat-store" }

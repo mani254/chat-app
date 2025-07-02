@@ -9,6 +9,17 @@ export interface UserQueryParams {
   isOnline?: boolean;
 }
 
+export interface ChatQueryParams {
+  search?: string;
+  sortBy?: string;
+  orderBy?: string;
+  page?: number;
+  limit?: number;
+  fetchFields?: Record<string, number>;
+  userId?: string;
+  isGroupChat?: boolean;
+}
+
 export interface User {
   _id: string;
   name: string;
@@ -32,9 +43,10 @@ export interface Message {
 export interface Chat {
   _id: string;
   name?: string;
+  avatar?: string;
   isGroupChat: boolean;
-  users: string[];
+  users: User[];
   groupAdmin?: string;
-  latestMessage?: string;
+  latestMessage?: Message;
   createdAt: string;
 }

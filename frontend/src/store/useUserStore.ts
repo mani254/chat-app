@@ -160,7 +160,10 @@ export const useUserStore = create<UserState>()(
       },
 
       setActiveUsers: async () => {
-        const { users } = await fetchUsers({ isOnline: true });
+        const { users } = await fetchUsers({
+          isOnline: true,
+          filterMain: true,
+        });
         set({ activeUsers: users }, false, "setActiveUsers");
       },
 
