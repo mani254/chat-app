@@ -47,7 +47,6 @@ export function validation(action: ValidationAction, value: string): string {
       return "";
     }
     default: {
-      console.log(action);
       return "";
     }
   }

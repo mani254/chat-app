@@ -1,8 +1,9 @@
 // controllers/chatController.ts
 import { Request, Response } from "express";
-import ChatModal from "../models/Chat";
+import { Types } from "mongoose";
 import chatService from "../services/chatServices";
 import { ChatQueryParams } from "../types";
+
 export const fetchChats = async (req: Request, res: Response) => {
   try {
     const { sortBy, orderBy, userId } = req.query as ChatQueryParams;
@@ -31,10 +32,6 @@ export const fetchChats = async (req: Request, res: Response) => {
 
     const data = await chatService.fetchChats(req.query);
 
-    const chats = await ChatModal.find();
-
-    console.log(chats, "allchats");
-
     res.status(200).json({
       message: "Chats fetched successfully",
       chats: data.chats,
@@ -45,5 +42,75 @@ export const fetchChats = async (req: Request, res: Response) => {
     res
       .status(500)
       .json({ message: "Error while fetching chats", error: error.message });
+  }
+};
+
+export const getChatById = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (!Types.ObjectId.isValid(id)) {
+      res.status(400).json({ message: "Invalid chat ID format" });
+      return;
+    }
+
+    const chat = await chatService.getChatById(new Types.ObjectId(id));
+
+    res.status(200).json({
+      message: "Chat fetched successfully",
+      chat,
+    });
+  } catch (error: any) {
+    console.error("Error while fetching chat by ID:", error);
+    res.status(500).json({
+      message: "Error while fetching chat",
+      error: error.message,
+    });
+  }
+};
+
+export const createChat = async (req: Request, res: Response) => {
+  try {
+    const { users, isGroupChat, name, groupAdmin } = req.body;
+
+    if (!users || !Array.isArray(users) || users.length === 0) {
+      res.status(400).json({ message: "Users array is required" });
+      return;
+    }
+
+    if (isGroupChat) {
+      if (!name || !groupAdmin) {
+        res.status(400).json({
+          message: "Group name and groupAdmin are required for group chats",
+        });
+        return;
+      }
+    } else {
+      if (users.length !== 2) {
+        res.status(400).json({
+          message: "One-on-one chat must contain exactly two users",
+        });
+        return;
+      }
+    }
+
+    const chat = await chatService.createChat({
+      users,
+      isGroupChat,
+      name,
+      groupAdmin,
+    });
+
+    res.status(200).json({
+      message: "Chat created successfully",
+      chat,
+    });
+    return;
+  } catch (error: any) {
+    console.error("Error while creating chat:", error);
+    res.status(500).json({
+      message: "Error while creating chat",
+      error: error.message,
+    });
   }
 };

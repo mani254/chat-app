@@ -3,7 +3,7 @@
 
 /* @custom-variant dark (&:is(.dark *)); */
 
-:root {
+.bright {
   --primary-color: 224, 76%, 49%;
   --primary-accent: 213, 100%, 97%;
 
@@ -47,7 +47,7 @@
   --sidebar-ring: 217.2 91.2% 59.8%;
 }
 
-.dark {
+.navy-dark {
   --primary-color: 213, 93%, 79%;
   --primary-accent: 204 100% 11%;
 
@@ -138,4 +138,15 @@
 
 .shadow {
   box-shadow: 0px 0px 5px 1px hsl(var(--background-accent));
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none !important; /* Chrome/Safari/WebKit */
+}
+.scrollbar-hidden[data-slot="scroll-area-thumb"] {
+  display: none !important;
+}
+
+.nextjs-toast {
+  display: none !important;
 }

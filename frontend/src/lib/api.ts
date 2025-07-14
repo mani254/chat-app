@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import { userStore } from "../store/useUserStore";
 const instance = axios.create({
   baseURL: "http://localhost:5000",
   withCredentials: true,
@@ -17,6 +17,7 @@ instance.interceptors.response.use(
         const newAccessToken = refreshRes.data?.accessToken;
         if (newAccessToken) {
           localStorage.setItem("accessToken", newAccessToken);
+          userStore.setState({ token: newAccessToken });
         }
         return instance(originalRequest);
       } catch (refreshError) {

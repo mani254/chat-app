@@ -1,132 +1,139 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+"use client";
+
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { useChatStore } from "@/src/store/useChatStore";
 import { useUserStore } from "@/src/store/useUserStore";
+import { User } from "@/src/types";
+import { DialogDescription } from "@radix-ui/react-dialog";
+import { debounce } from "lodash";
 import { Plus, Search } from "lucide-react";
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
+import AvatarDiv from "../Avatar";
+import LoadMoreLoader from "../loaders/LoadMoreLoader";
+
 
 const NewChatModal = () => {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(1);
 
-  const observerRef = useRef<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const observerRef = useRef<HTMLDivElement | null>(null);
 
   const users = useUserStore((state) => state.users);
-  const setUsers = useUserStore((state) => state.setUsers);
-  const hasMoreUsers = useUserStore((state => state.hasMoreUsers));
+  const totalUsers = useUserStore((state) => state.totalUsers);
+  const loadingUsers = useUserStore((state) => state.loadingUsers);
+  const loadUsers = useUserStore((state) => state.loadUsers);
+  const createChat = useChatStore((state) => state.createChat)
+  const currentUser = useUserStore((state) => state.currentUser)
 
-  // Load users on page/search change
+
+  // Debounced search effect
+  const debouncedSearch = useRef(
+    debounce((value: string) => {
+      loadUsers(value, { reset: true });
+    }, 300)
+  ).current;
+
   useEffect(() => {
-    if (!open) return
-    const fetchUsers = async () => {
-      setLoading(true);
-      await setUsers({ search, page, limit: 10, filterMain: true })
+    if (open) debouncedSearch(search);
+  }, [search, open, debouncedSearch]);
 
-      setLoading(false);
-    };
-    fetchUsers();
-  }, [search, page, setUsers, open]);
-
-
-
-  // Reset page to 1 on new search
-  useEffect(() => {
-    setPage(1);
-  }, [search]);
-
-  // Infinite scroll handler
-  const handleObserver = useCallback(
-    (entries: IntersectionObserverEntry[]) => {
-
-      const target = entries[0];
-      console.log(target.isIntersecting, hasMoreUsers, loading, target)
-      if (target.isIntersecting && hasMoreUsers && !loading) {
-        setPage((prev) => prev + 1);
-        console.log('fetched the users')
-      }
-    },
-    [loading, hasMoreUsers]
-  );
-
-  // Attach IntersectionObserver to last element
-  useEffect(() => {
-    const scrollContainer = scrollRef.current;
+  // Intersection observer for infinite scroll
+  const observeSentinel = useCallback(() => {
+    const scrollEl = scrollRef.current;
     const sentinel = observerRef.current;
-    if (!scrollContainer || !sentinel) return;
+    if (!scrollEl || !sentinel) return;
 
-    const observer = new IntersectionObserver(handleObserver, {
-      root: scrollContainer,
-      threshold: 1.0,
-    });
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const hasMore = users.length < totalUsers - 1;
+        if (entry.isIntersecting && !loadingUsers && hasMore) {
+          loadUsers(search);
+        }
+      },
+      { root: scrollEl, threshold: 1 }
+    );
 
     observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [users.length, totalUsers, loadingUsers, loadUsers, search]);
 
-    return () => {
-      observer.disconnect();
-    };
-  }, [handleObserver]);
+  useEffect(() => {
+    const cleanup = observeSentinel();
+    return cleanup;
+  }, [observeSentinel]);
+
+  async function handleCreateChat(user: User) {
+    const info = {
+      users: [currentUser!._id, user._id],
+      isGroupChat: false,
+      name: "",
+      groupAdmin: undefined
+    }
+    await createChat(info).then(res => {
+      setOpen(false)
+      router.push(`/?chatId=${res._id}`)
+    })
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <button
           aria-label="New Chat"
-          className="flex items-center justify-center w-10 h-10 rounded-full bg-white shadow hover:bg-gray-100 transition border border-gray-200"
+          className="flex items-center justify-center w-10 h-10 rounded-full bg-background-accent shadow hover:bg-background transition cursor-pointer text-background hover:text-background-accent"
         >
-          <Plus className="w-5 h-5 text-gray-700" />
+          <Plus className="w-5 h-5" />
         </button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-md w-full rounded-2xl p-0 overflow-hidden bg-white border border-gray-200 shadow-xl">
-        <DialogHeader className="p-5 pb-2 border-b border-gray-100">
-          <DialogTitle className="text-base font-semibold text-gray-900">
+      <DialogContent className="max-w-md w-full rounded-2xl p-0 border  shadow-xl">
+        <DialogHeader className="p-5 pb-2 border-b border-background-accent">
+          <DialogTitle className=" font-semibold mb-2">
             Start a new chat
           </DialogTitle>
+          <DialogDescription aria-describedby={undefined}>
+          </DialogDescription>
         </DialogHeader>
 
-        <div className="px-5 pt-3">
+        <div className="">
           {/* Search Bar */}
-          <div className="mb-2 relative">
+          <div className="mb-2 relative mx-5">
             <Input
               placeholder="Search users..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className={cn(
-                "w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 bg-gray-50 focus:bg-white text-sm",
-                loading && "pr-10"
+                "w-full pl-10 pr-4 py-2 rounded-2xl border border-foreground-accent/50 text-sm",
+                loadingUsers && "pr-10"
               )}
               style={{ minHeight: 38 }}
             />
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-              <Search className={cn("w-4 h-4", loading && "animate-spin")} />
+              <Search className={cn("w-4 h-4", loadingUsers && "animate-spin")} />
             </span>
           </div>
 
           {/* User List */}
-          <div
+          <ScrollArea
             ref={scrollRef}
-            className="user-scroll-container space-y-2 h-72 overflow-y-auto pr-1 custom-scrollbar"
+            className="h-72 px-4"
           >
-            {loading && page === 1 ? (
+            {loadingUsers && users.length === 0 ? (
               Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-14 rounded-lg bg-gray-100" />
+                <Skeleton key={i} className="h-14 rounded-2xl bg-background-accent" />
               ))
             ) : users.length === 0 ? (
               <div className="text-gray-400 text-center py-6 text-sm">
@@ -136,29 +143,23 @@ const NewChatModal = () => {
               users.map((user) => (
                 <button
                   key={user._id}
-                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 transition text-left"
+                  className="w-full flex items-center gap-3 px-3 py-2 mb-2 rounded-2xl hover:bg-background-accent/50 cursor-pointer transition text-left"
+                  onClick={() => handleCreateChat(user)}
                 >
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback>
-                      {user.name?.slice(0, 2).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
+                  <AvatarDiv user={user} />
 
                   <div className="flex flex-col">
-                    <span className="text-sm font-medium text-gray-800">
+                    <span className="text-sm font-medium mb-1">
                       {user.name}
                     </span>
-                    <span className="text-xs text-gray-500">
-                      {user.email}
-                    </span>
+                    <span className="text-xs text-foreground-accent">{user.status}</span>
                   </div>
 
                   <div className="ml-auto">
                     <span
                       className={`text-xs px-2 py-0.5 border rounded ${user.isOnline
                         ? "bg-green-100 text-green-600 border-green-200"
-                        : "bg-gray-100 text-gray-500 border-gray-200"
+                        : "bg-background-accent border-background text-background"
                         }`}
                     >
                       {user.isOnline ? "Online" : "Offline"}
@@ -169,24 +170,23 @@ const NewChatModal = () => {
             )}
 
             {/* Infinite scroll sentinel */}
-            {hasMoreUsers && (
-              <div ref={observerRef} className="h-8 flex justify-center items-center">
-                {loading && (
-                  <span className="text-xs text-gray-400">Loading more...</span>
-                )}
-              </div>
-            )}
-          </div>
+            <div ref={observerRef} className="h-8 flex justify-center items-center">
+              {loadingUsers && users.length > 0 && (
+                // <span className="text-xs text-gray-400">Loading more...</span>
+                <LoadMoreLoader />
+              )}
+            </div>
+          </ScrollArea>
         </div>
 
         {/* Close button */}
-        <div className="px-5 pb-3 flex justify-end ">
+        {/* <div className="px-3 flex justify-end">
           <DialogClose asChild>
-            <button className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition font-medium text-sm">
+            <button className="px-4 py-2 rounded-lg  transition font-medium text-sm">
               Close
             </button>
           </DialogClose>
-        </div>
+        </div> */}
       </DialogContent>
     </Dialog>
   );

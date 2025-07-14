@@ -1,20 +1,28 @@
 "use client";
 
 import { useSocket } from "@/src/socket/useSocket";
+import { useUserStore } from "@/src/store/useUserStore";
 import React, { createContext, useContext } from "react";
 
-const SocketContext = createContext<any>(null);
+interface SocketContextType {
+  socket: ReturnType<typeof useSocket>["socket"];
+  connected: boolean;
+}
 
-export const useSocketContext = () => useContext(SocketContext);
+const SocketContext = createContext<SocketContextType | null>(null);
 
-export const SocketProvider = ({
-  token,
-  children,
-}: {
-  token: string;
-  children: React.ReactNode;
-}) => {
-  const { socket, connected } = useSocket(token);
+export const useSocketContext = () => {
+  const context = useContext(SocketContext);
+  if (!context) {
+    throw new Error("useSocketContext must be used within a SocketProvider");
+  }
+  return context;
+};
+
+export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
+  const token = useUserStore((state) => state.token);
+
+  const { socket, connected } = useSocket(token!);
 
   return (
     <SocketContext.Provider value={{ socket, connected }}>

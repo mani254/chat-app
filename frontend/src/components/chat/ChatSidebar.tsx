@@ -1,288 +1,128 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
-import { MessageCircle, Search, X } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
-
-import { useChatStore } from "@/src/store/useChatStore";
-import { useUIStore } from "@/src/store/useUiStore";
-import { useUserStore } from "@/src/store/useUserStore";
-import { Chat } from "@/src/types";
-
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import Header from "../Header";
+import { useChatStore } from "@/src/store/useChatStore";
+import { useUserStore } from "@/src/store/useUserStore";
+import { debounce } from "lodash";
+import { Search } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import LoadMoreLoader from "../loaders/LoadMoreLoader";
+import ChatListItem from "./ChatList";
+import NoChatsFound from "./NoChatsFound";
 
-interface GetChatDetailsParams {
-  chat: Chat;
-  type?: "name" | "avatar";
-}
-
-const ChatSidebar = () => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const [activeChat, setActiveChat] = useState<Chat | undefined>();
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
+const ChatListSidebar = () => {
   const [search, setSearch] = useState("");
 
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const observerRef = useRef<HTMLDivElement | null>(null);
-  const initialFetchDone = useRef(false);
 
-  const { chats, setChats, hasMoreChats } = useChatStore();
-  const { isSidebarOpen, toggleSidebar } = useUIStore();
-  const currentUser = useUserStore((state) => state.currentUser);
-
-  // Update active chat from URL
-  useEffect(() => {
-    const chatId = searchParams.get("chatId");
-    const chat = chats.find((c) => c._id === chatId);
-    setActiveChat(chat);
-  }, [searchParams, chats]);
-
-  // Main fetch logic with safety
-  const fetchChats = useCallback(async () => {
-    if (!currentUser || loading || !hasMoreChats) return;
-
-    setLoading(true);
-    await setChats({ search, page, limit: 20, userId: currentUser._id });
-    setLoading(false);
-  }, [search, page, currentUser, setChats, loading, hasMoreChats]);
-
-  // Initial load only once
-  useEffect(() => {
-    if (!initialFetchDone.current && currentUser) {
-      initialFetchDone.current = true;
-      fetchChats();
-    }
-  }, [currentUser, fetchChats]);
-
-  // Pagination observer
-  const handleObserver = useCallback(
-    (entries: IntersectionObserverEntry[]) => {
-      const target = entries[0];
-      if (target.isIntersecting && hasMoreChats && !loading) {
-        setPage((prev) => prev + 1);
-      }
-    },
-    [loading, hasMoreChats]
-  );
+  const chats = useChatStore(s => s.chats)
+  const loadChats = useChatStore(s => s.loadChats)
+  const loadingChats = useChatStore(s => s.loadingChats)
+  const totalChats = useChatStore((s) => s.totalChats)
+  const currentUser = useUserStore((s) => s.currentUser);
+  const activeChat = useChatStore((s) => s.activeChat)
+  const debouncedSearch = useRef(
+    debounce(
+      (params: { search?: string; userId: string }) => {
+        loadChats({ ...params, reset: true });
+      },
+      300
+    )
+  ).current;
 
   useEffect(() => {
+    if (!currentUser) return;
+    debouncedSearch({ search, userId: currentUser._id });
+  }, [search, currentUser, debouncedSearch]);
+
+  // Infinite scroll observer
+  const observeSentinel = useCallback(() => {
+    const container = scrollRef.current;
     const sentinel = observerRef.current;
-    const scrollContainer = scrollRef.current;
-    if (!sentinel || !scrollContainer) return;
+    if (!container || !sentinel) return;
 
-    const observer = new IntersectionObserver(handleObserver, {
-      root: scrollContainer,
-      threshold: 1.0,
-    });
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const hasMore = chats.length < totalChats;
+        if (entry.isIntersecting && !loadingChats && hasMore) {
+          loadChats({ search, userId: currentUser?._id });
+        }
+      },
+      { root: container, threshold: 1 }
+    );
 
     observer.observe(sentinel);
     return () => observer.disconnect();
-  }, [handleObserver]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chats.length, totalChats, loadingChats, loadChats, search]);
 
   useEffect(() => {
-    if (page > 1 && currentUser) {
-      fetchChats();
-    }
-  }, [page, currentUser, fetchChats]);
-
-  const setCurrentChat = useCallback(
-    (chat: Chat) => {
-      if (chat) {
-        router.push(`/?chatId=${chat._id}`);
-        setActiveChat(chat);
-      }
-    },
-    [router]
-  );
-
-  const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diff = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
-    return diff < 24
-      ? date.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-      })
-      : date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-  };
-
-  const getChatDetails = ({ chat, type = "name" }: GetChatDetailsParams) => {
-    if (chat.isGroupChat) {
-      return type === "avatar" ? chat.avatar : chat.name;
-    }
-    const other = chat.users.find((u) => u._id !== currentUser?._id);
-    return type === "avatar" ? other?.avatar : other?.name;
-  };
+    const cleanup = observeSentinel();
+    return cleanup;
+  }, [observeSentinel]);
 
   return (
-    <>
-      <AnimatePresence>
-        {isSidebarOpen && (
-          <motion.div
-            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={toggleSidebar}
-          />
-        )}
-      </AnimatePresence>
+    <div className="w-[350px] lg:w-1/3 max-w-[300px] border border-background-accent h-full relative overflow-hidden py-3">
+      {/* Search Bar */}
+      <div className="mb-3 px-2 sticky top-0">
+        <Input
+          placeholder="Search chats..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className={cn(
+            "w-full pl-10 pr-4 py-2 rounded-lg border bg-background-accent border-foreground-accent/50 text-sm",
+            loadingChats && "pr-10"
+          )}
+          style={{ minHeight: 38 }}
+        />
+        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+          <Search className={cn("w-4 h-4", loadingChats && "animate-spin")} />
+        </span>
+      </div>
 
-      <motion.aside
-        className={cn(
-          "fixed top-0 left-0 z-50 h-full bg-background border-r border-background-accent flex flex-col",
-          "lg:relative lg:z-0",
-          isSidebarOpen ? "w-80" : "w-0 lg:w-0"
-        )}
-        initial={false}
-        animate={{ width: isSidebarOpen ? 320 : 0 }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-      >
-        <Header />
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <div className="p-4 border-b border-background-accent">
-            <div className="flex items-center justify-between mb-4">
-              <h1 className="text-xl font-semibold flex items-center gap-2">
-                <MessageCircle className="w-6 h-6 text-blue-600" />
-                Chats
-              </h1>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={toggleSidebar}
-                className="lg:hidden"
-              >
-                <X className="w-4 h-4" />
-              </Button>
-            </div>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input
-                placeholder="Search conversations..."
-                value={search}
-                onChange={(e) => {
-                  setPage(1);
-                  setSearch(e.target.value);
-                }}
-                className="pl-10 bg-background border-background-accent"
-              />
-            </div>
-          </div>
+      {/* Chat List Scrollable */}
+      <ScrollArea ref={scrollRef} className="h-full scrollbar-hidden">
+        <div className="space-y-1">
+          {loadingChats && chats.length === 0 ? (
+            Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-14 rounded-lg bg-background-accent" />
+            ))
+          ) : chats.length === 0 ? (
+            <NoChatsFound search={search} />
+          ) : (
+            chats.map((chat) => {
+              const isChatActive = activeChat?._id === chat._id
 
-          <ScrollArea className="flex-1" ref={scrollRef}>
-            <div className="p-2">
-              {chats.map((chat) => {
-                const isActive = activeChat?._id === chat._id;
-                const chatName = getChatDetails({ chat, type: "name" });
-                const chatImage = getChatDetails({ chat, type: "avatar" });
-                const latestMsg = chat.latestMessage;
-                const isUnread =
-                  currentUser &&
-                  latestMsg &&
-                  !latestMsg.readBy.includes(currentUser._id);
+              const haveUnreadMessages =
+                !!chat.latestMessage &&
+                Array.isArray(chat.latestMessage.readBy) &&
+                !chat.latestMessage.readBy.includes(currentUser?._id || "");
 
-                return (
-                  <motion.div
-                    key={chat._id}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <Button
-                      variant="ghost"
-                      className={cn(
-                        "w-full p-3 h-auto justify-start text-left hover:bg-background-accent rounded-lg mb-1 cursor-pointer",
-                        isActive && "bg-primary-accent"
-                      )}
-                      onClick={() => {
-                        setCurrentChat(chat);
-                        if (window.innerWidth < 1024) toggleSidebar();
-                      }}
-                    >
-                      <div className="flex items-center gap-3 w-full">
-                        <div className="relative">
-                          <Avatar className="w-12 h-12">
-                            <AvatarImage src={chatImage} />
-                            <AvatarFallback>
-                              {chatName?.charAt(0).toUpperCase() || "UN"}
-                            </AvatarFallback>
-                          </Avatar>
-                          {!chat.isGroupChat && (
-                            <div className="absolute -bottom-1 -right-1 w-[14px] h-[14px] bg-green-500 rounded-full " />
-                          )}
-                        </div>
-
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between mb-1">
-                            <h3
-                              className={cn(
-                                "font-medium text-sm truncate",
-                                isActive ? "text-primary" : "text-foreground"
-                              )}
-                            >
-                              {chatName}
-                            </h3>
-                            {latestMsg && (
-                              <span className="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">
-                                {formatTime(latestMsg.createdAt)}
-                              </span>
-                            )}
-                          </div>
-
-                          <div className="flex items-center justify-between">
-                            <p
-                              className={cn(
-                                "text-xs truncate",
-                                isUnread
-                                  ? "text-gray-900 dark:text-white font-medium"
-                                  : "text-gray-500 dark:text-gray-400"
-                              )}
-                            >
-                              {latestMsg?.content}
-                            </p>
-                            {isUnread && (
-                              <div className="w-2 h-2 bg-blue-600 rounded-full flex-shrink-0 ml-2" />
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </Button>
-                  </motion.div>
-                );
-              })}
-
-              {chats.length === 0 && !loading && (
-                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                  <MessageCircle className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p>No conversations found</p>
-                  {search && (
-                    <p className="text-sm mt-2">Try a different search term</p>
-                  )}
-                </div>
-              )}
-            </div>
-            {hasMoreChats && (
-              <div ref={observerRef} className="h-8 flex justify-center items-center">
-                {loading && (
-                  <span className="text-xs text-gray-400">Loading more...</span>
-                )}
-              </div>
+              return (
+                <ChatListItem
+                  key={chat._id}
+                  chat={chat}
+                  currentUserId={currentUser?._id}
+                  isChatActive={isChatActive}
+                  haveUnreadMessages={haveUnreadMessages}
+                />
+              )
+            }
+            )
+          )}
+          <div ref={observerRef} className="h-8 flex justify-center items-center">
+            {loadingChats && chats.length > 0 && (
+              <LoadMoreLoader />
             )}
-          </ScrollArea>
+          </div>
         </div>
-      </motion.aside>
-    </>
+      </ScrollArea>
+    </div>
   );
 };
 
-export default ChatSidebar;
+export default ChatListSidebar;

@@ -11,6 +11,7 @@ interface SendMessagePayload {
 
 export const registerMessageHandlers = (socket: Socket, io: Server) => {
   socket.on("send-message", async (data: SendMessagePayload) => {
+    console.log("send message event triggered");
     try {
       const user = (socket as any).user;
       if (!user) return;
@@ -32,9 +33,10 @@ export const registerMessageHandlers = (socket: Socket, io: Server) => {
 
       const populatedMessage = await MessageModel.findById(message._id)
         .populate("sender", "name avatar")
-        .populate("chat")
-        .populate("readBy", "name avatar");
+        .populate("chat");
+      // .populate("readBy", "name avatar");
 
+      console.log("emitting the message", populatedMessage);
       // 🛰 Emit to chat room
       io.to(chat._id.toString()).emit("new-message", populatedMessage);
     } catch (err) {

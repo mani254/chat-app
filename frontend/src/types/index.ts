@@ -33,10 +33,10 @@ export interface User {
 export interface Message {
   _id: string;
   chat: string;
-  sender: string;
+  sender: User;
   content: string;
   readBy: string[];
-  messageType: "text" | "image" | "file";
+  messageType: "text" | "image" | "file" | "note";
   createdAt: string;
 }
 
@@ -49,4 +49,29 @@ export interface Chat {
   groupAdmin?: string;
   latestMessage?: Message;
   createdAt: string;
+}
+
+export interface MessageQueryParams {
+  chatId?: string;
+  senderId?: string;
+  messageType?: "text" | "image" | "file" | "note";
+  search?: string;
+  page?: number;
+  limit?: number;
+  sortBy?: "createdAt" | "updatedAt";
+  orderBy?: "asc" | "desc";
+  fetchFields?: Record<string, number>;
+  includeChat?: boolean | string;
+}
+
+export interface MessageFetchResult {
+  totalItems: number;
+  messages: Message[];
+}
+
+export interface CreateChatPayload {
+  users: string[];
+  isGroupChat: boolean;
+  name?: string;
+  groupAdmin?: string;
 }

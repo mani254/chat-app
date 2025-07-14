@@ -1,15 +1,12 @@
 // services/chatService.ts
 import { Types } from "mongoose";
-import Chat from "../models/Chat";
-import { ChatFetchResult, ChatQueryParams } from "../types";
+import Chat, { IChat } from "../models/Chat";
+import { ChatFetchResult, ChatQueryParams, CreateChatPayload } from "../types";
 
 class ChatService {
   private getMatchStage(query: ChatQueryParams): Record<string, any> {
     const { search, userId, isGroupChat } = query;
 
-    // const matchStage: Record<string, any> = {
-    //   users: { $in: [userId] }, // Only chats where the user is a participant
-    // };
     const matchStage: Record<string, any> = {};
 
     if (userId && Types.ObjectId.isValid(userId)) {
@@ -54,10 +51,6 @@ class ChatService {
       if (fetchFields && Object.keys(fetchFields).length > 0) {
         chatStages.push({ $project: fetchFields });
       }
-
-      console.log(matchStage, "--matchstage--");
-      console.log(fetchFields, "fetechfeilds");
-      console.log(chatStages, "chatstages");
 
       const pipeline = [
         { $match: matchStage },
@@ -159,6 +152,74 @@ class ChatService {
       console.error("Error while fetching chat by ID:", error);
       throw new Error(error.message);
     }
+  }
+
+  async createChat(data: CreateChatPayload): Promise<IChat> {
+    const { users, isGroupChat, name, groupAdmin } = data;
+    const userObjectIds = users.map((id) => {
+      if (!Types.ObjectId.isValid(id)) {
+        throw new Error(`Invalid user ID: ${id}`);
+      }
+      return new Types.ObjectId(id);
+    });
+
+    if (!isGroupChat) {
+      if (userObjectIds.length !== 2) {
+        throw new Error("One-on-one chat must contain exactly 2 users");
+      }
+
+      const [userA, userB] = userObjectIds;
+
+      const existingChat = await Chat.findOne({
+        isGroupChat: false,
+        users: { $all: [userA, userB], $size: 2 },
+      })
+        .populate("users", "-password")
+        .populate("latestMessage")
+        .populate("groupAdmin", "-password");
+
+      if (existingChat) {
+        return existingChat;
+      }
+    }
+
+    const chatData: Partial<IChat> = {
+      users: userObjectIds,
+      isGroupChat,
+    };
+
+    if (isGroupChat) {
+      if (!name || !groupAdmin) {
+        throw new Error("Group name and groupAdmin are required");
+      }
+
+      if (!Types.ObjectId.isValid(groupAdmin)) {
+        throw new Error("Invalid groupAdmin ID");
+      }
+
+      chatData.name = name;
+      chatData.groupAdmin = new Types.ObjectId(groupAdmin);
+    }
+
+    const createdChat = await Chat.create(chatData);
+
+    const populatedChat = await Chat.findById(createdChat._id)
+      .populate("users", "-password")
+      .populate("latestMessage", "-password");
+
+    if (!isGroupChat) {
+      const userNames = (populatedChat.users as any[])
+        .map((u) => u.name.trim())
+        .sort((a, b) => a.localeCompare(b));
+
+      const nameForSearch = userNames.join(" - ");
+
+      await Chat.findByIdAndUpdate(createdChat._id, {
+        name: nameForSearch,
+      });
+    }
+
+    return populatedChat!;
   }
 }
 

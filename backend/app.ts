@@ -7,6 +7,7 @@ import autoCastQueryParams from "./middleware/autoCastQueryParams";
 import { errorHandler } from "./middleware/errorMiddleware";
 import authRoutes from "./routes/authRoutes";
 import chatRouter from "./routes/chatRouter";
+import messageRouter from "./routes/messageRouter";
 import userRouter from "./routes/userRouter";
 
 dotenv.config();
@@ -33,6 +34,7 @@ const queryValuesToCast: Record<string, "number" | "boolean" | "object"> = {
 
 app.use("/api/users", autoCastQueryParams(queryValuesToCast), userRouter);
 app.use("/api/chats", autoCastQueryParams(queryValuesToCast), chatRouter);
+app.use("/api/messages", autoCastQueryParams(queryValuesToCast), messageRouter);
 
 // app.use("/api/chats", chatRoutes);
 // app.use("/api/messages", messageRoutes);

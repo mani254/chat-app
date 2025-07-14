@@ -1,4 +1,5 @@
 import { IChat } from "../models/Chat";
+import { IMessage } from "../models/Message";
 import { IUser } from "../models/User";
 
 export interface UserQueryParams {
@@ -31,4 +32,29 @@ export interface ChatQueryParams {
 export interface ChatFetchResult {
   totalItems: number;
   chats: IChat[];
+}
+
+export interface MessageQueryParams {
+  chatId?: string;
+  senderId?: string;
+  messageType?: "text" | "image" | "file" | "note";
+  search?: string;
+  page?: number;
+  limit?: number;
+  sortBy?: "createdAt" | "updatedAt";
+  orderBy?: "asc" | "desc";
+  fetchFields?: Record<string, number>;
+  includeChat?: boolean | string;
+}
+
+export interface MessageFetchResult {
+  totalItems: number;
+  messages: IMessage[];
+}
+
+export interface CreateChatPayload {
+  users: string[];
+  isGroupChat: boolean;
+  name?: string;
+  groupAdmin?: string;
 }

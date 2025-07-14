@@ -1,23 +1,43 @@
-import React, { ReactNode, useEffect } from "react";
-import { useUserStore } from "../../store/useUserStore";
+"use client";
 
-interface Props {
-  children: ReactNode;
-}
+import { useUserStore } from "@/src/store/useUserStore";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-const ProtectedComponent: React.FC<Props> = ({ children }) => {
-  const { getCurrentUser, isAuthenticated } = useUserStore();
+export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const router = useRouter();
+  const { isAuthenticated, token, setToken, getCurrentUser } = useUserStore();
+  const [checkingAuth, setCheckingAuth] = useState(true);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      await getCurrentUser();
-    };
-    fetchUser();
-  }, [getCurrentUser]);
+    const initializeAuth = async () => {
+      const localToken = localStorage.getItem("accessToken");
 
-  if (!isAuthenticated) return <div>Loading or redirecting...</div>;
+      if (!localToken) {
+        router.replace("/login");
+        return;
+      }
+
+      setToken(localToken);
+      await getCurrentUser();
+      setCheckingAuth(false);
+    };
+
+    initializeAuth();
+  }, [router, setToken, getCurrentUser]);
+
+  if (checkingAuth || !token) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center text-sm text-gray-500">
+        Loading...
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    router.replace("/login");
+    return null;
+  }
 
   return <>{children}</>;
 };
-
-export default ProtectedComponent;

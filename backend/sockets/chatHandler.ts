@@ -1,15 +1,14 @@
 import { Server, Socket } from "socket.io";
-import { IChat } from "../models/Chat";
-import chatServices from "../services/chatServices";
 
 const registerChatHandlers = (socket: Socket, io: Server) => {
-  socket.on("create-chat", async (data: IChat) => {
-    try {
-      const chat = chatServices.createChat(data);
-    } catch (err: any) {
-      console.log(err.message);
-    }
-  });
+  try {
+    socket.on("join-chat", (chatId: string) => {
+      socket.join(chatId);
+    });
+  } catch (err: any) {
+    console.error("chatError:", err);
+    socket.emit("error", "Message sending failed");
+  }
 };
 
 export default registerChatHandlers;

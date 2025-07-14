@@ -71,92 +71,107 @@ export const signOut = async (): Promise<{ message: string } | null> => {
   }
 };
 
-// --- Zustand Store ---
 interface UserState {
   currentUser: User | null;
   users: User[];
   activeUsers: User[];
   isAuthenticated: boolean;
-  hasMoreUsers: boolean; // NEW: indicates if more users can be fetched
-  getCurrentUser: () => Promise<void>;
-  setUsers: (
-    params: UserQueryParams
-  ) => Promise<{ users: User[]; totalItems: number }>;
-  setActiveUsers: () => Promise<{ users: User[]; totalItems: number }>;
-  removeActiveUser: (id: string) => void;
-  addActiveUser: (user: User) => void;
+  token?: string;
+
+  page: number;
+  limit: number;
+  totalUsers: number;
+  loadingUsers: boolean;
+
   register: (user: Partial<User>) => Promise<User | null>;
   login: (credentials: {
     email: string;
     password: string;
   }) => Promise<User | null>;
+  getCurrentUser: () => Promise<void>;
+  setToken: (token: string) => void;
+
+  loadUsers: (
+    search: string,
+    options?: { reset?: boolean; limit?: number }
+  ) => Promise<void>;
+
+  setActiveUsers: () => Promise<void>;
+  removeActiveUser: (id: string) => void;
+  addActiveUser: (user: User) => void;
 }
 
 export const useUserStore = create<UserState>()(
   devtools(
-    (set) => ({
+    (set, get) => ({
       currentUser: null,
       users: [],
+      activeUsers: [],
       isAuthenticated: false,
-      hasMoreUsers: true,
+      token: undefined,
 
-      register: async (user) => {
-        const newUser = await registerUser(user);
-        if (newUser) {
-          console.log(newUser, "user created successfully");
-        }
-        return newUser;
-      },
+      page: 1,
+      limit: 20,
+      totalUsers: 0,
+      loadingUsers: false,
+
+      register: async (user) => await registerUser(user),
 
       login: async ({ email, password }) => {
         const loggedInUser = await loginUser({ email, password });
+        const accessToken = window.localStorage.getItem("accessToken") || "";
         if (loggedInUser) {
-          set(
-            { currentUser: loggedInUser, isAuthenticated: true },
-            false,
-            "login"
-          );
+          set({
+            currentUser: loggedInUser,
+            isAuthenticated: true,
+            token: accessToken,
+          });
         }
         return loggedInUser;
       },
 
+      setToken: (token) => set({ token }),
+
       getCurrentUser: async () => {
         try {
           const res = await axios.get("/api/users/profile");
-          const user = res.data.data;
-          set(
-            { currentUser: user, isAuthenticated: true },
-            false,
-            "getCurrentUser"
-          );
-        } catch (err) {
-          console.error("Failed to fetch current user", err);
-          set(
-            { currentUser: null, isAuthenticated: false },
-            false,
-            "clearUser"
-          );
+          set({ currentUser: res.data.data, isAuthenticated: true });
+        } catch {
+          set({ currentUser: null, isAuthenticated: false });
         }
       },
 
-      setUsers: async (params) => {
-        const { users, totalItems } = await fetchUsers(params);
-        set(
-          (state) => {
-            const newUsers =
-              params.page && params.page > 1
-                ? [...state.users, ...(users || [])]
-                : users || [];
-            const hasMoreUsers = newUsers.length < totalItems - 1;
-            return {
-              users: newUsers,
-              hasMoreUsers,
-            };
-          },
-          false,
-          "setUsers"
-        );
-        return { users, totalItems };
+      loadUsers: async (search, options = {}) => {
+        const { page, limit, users, loadingUsers } = get();
+        if (loadingUsers) return;
+
+        const reset = options.reset ?? false;
+        const nextPage = reset ? 1 : page;
+        const fetchLimit = options.limit ?? limit;
+
+        set({ loadingUsers: true });
+
+        try {
+          const { users: newUsers, totalItems } = await fetchUsers({
+            search,
+            page: nextPage,
+            limit: fetchLimit,
+            filterMain: true,
+          });
+
+          const updatedUsers = reset ? newUsers : [...users, ...newUsers];
+
+          set({
+            users: updatedUsers,
+            page: nextPage + 1,
+            totalUsers: totalItems,
+            limit: fetchLimit,
+            loadingUsers: false,
+          });
+        } catch (err) {
+          console.error("Failed to load users", err);
+          set({ loadingUsers: false });
+        }
       },
 
       setActiveUsers: async () => {
@@ -164,32 +179,22 @@ export const useUserStore = create<UserState>()(
           isOnline: true,
           filterMain: true,
         });
-        set({ activeUsers: users }, false, "setActiveUsers");
+        set({ activeUsers: users });
       },
 
-      removeActiveUser: (id: string) => {
-        set(
-          (state) => ({
-            activeUsers: state.activeUsers.filter((user) => user._id !== id),
-          }),
-          false,
-          "removeActiveUser"
-        );
-      },
+      removeActiveUser: (id: string) =>
+        set((state) => ({
+          activeUsers: state.activeUsers.filter((user) => user._id !== id),
+        })),
 
-      addActiveUser: (user: User) => {
-        set(
-          (state) => {
-            if (state.activeUsers.some((u) => u._id === user._id)) {
-              return {};
-            }
-            return { activeUsers: [...state.activeUsers, user] };
-          },
-          false,
-          "addActiveUser"
-        );
-      },
+      addActiveUser: (user: User) =>
+        set((state) => {
+          if (state.activeUsers.some((u) => u._id === user._id)) return {};
+          return { activeUsers: [...state.activeUsers, user] };
+        }),
     }),
     { name: "user-store" }
   )
 );
+
+export const userStore = useUserStore;

@@ -2,6 +2,7 @@
 import { Server, Socket } from "socket.io";
 import { authenticateSocket } from "../middleware/socketAuth";
 import User from "../models/User";
+import registerChatHandlers from "./chatHandler";
 import { registerMessageHandlers } from "./messageHandler";
 
 const socketHandler = async (socket: Socket, io: Server) => {
@@ -24,6 +25,8 @@ const socketHandler = async (socket: Socket, io: Server) => {
     console.log(`${user.name} connected`);
 
     registerMessageHandlers(socket, io);
+
+    registerChatHandlers(socket, io);
 
     socket.on("disconnect", async () => {
       await User.findByIdAndUpdate(user._id, { isOnline: false });
