@@ -2,8 +2,6 @@
 import { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import { getSocket } from "../lib/socket";
-import { useChatStore } from "../store/useChatStore";
-import { useMessageStore } from "../store/useMessageStore";
 import { useUserStore } from "../store/useUserStore";
 
 export const useSocket = (token: string) => {
@@ -16,14 +14,6 @@ export const useSocket = (token: string) => {
     const sock = getSocket(token);
 
     sock.connect();
-
-    // --- Remove previous listeners before adding new ones to prevent duplicates ---
-    sock.off("connect");
-    sock.off("disconnect");
-    sock.off("user-online");
-    sock.off("user-offline");
-    sock.off("new-message");
-    sock.off("connect_error");
 
     sock.on("connect", () => {
       console.log("✅ Socket connected:", sock.id);
@@ -43,29 +33,6 @@ export const useSocket = (token: string) => {
     sock.on("user-offline", ({ userId }) => {
       console.log("👤 User Offline:", userId);
       useUserStore.getState().removeActiveUser(userId);
-    });
-
-    sock.on("new-message", (message) => {
-      console.log("📩 New message received:", message);
-
-      const currentChat = useChatStore.getState().activeChat;
-      const isActive = currentChat && currentChat._id === message.chat._id;
-
-      if (isActive) {
-        useMessageStore.setState((state) => ({
-          messages: [...(state.messages || []), message],
-        }));
-      }
-
-      const updatedChats = useChatStore
-        .getState()
-        .chats.map((chat) =>
-          chat._id === message.chat._id
-            ? { ...chat, latestMessage: message }
-            : chat
-        );
-
-      useChatStore.setState({ chats: updatedChats });
     });
 
     sock.on("connect_error", (err) => {

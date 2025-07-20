@@ -32,7 +32,7 @@ export interface User {
 
 export interface Message {
   _id: string;
-  chat: string;
+  chat: string | Chat;
   sender: User;
   content: string;
   readBy: string[];

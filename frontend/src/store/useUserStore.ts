@@ -88,6 +88,7 @@ interface UserState {
     email: string;
     password: string;
   }) => Promise<User | null>;
+  logout: () => Promise<void>;
   getCurrentUser: () => Promise<void>;
   setToken: (token: string) => void;
 
@@ -128,6 +129,20 @@ export const useUserStore = create<UserState>()(
           });
         }
         return loggedInUser;
+      },
+
+      logout: async () => {
+        const res = await signOut();
+        if (res) {
+          localStorage.removeItem("accessToken");
+          set({
+            token: undefined,
+            currentUser: null,
+            isAuthenticated: false,
+            users: [],
+            activeUsers: [],
+          });
+        }
       },
 
       setToken: (token) => set({ token }),
@@ -189,8 +204,12 @@ export const useUserStore = create<UserState>()(
 
       addActiveUser: (user: User) =>
         set((state) => {
-          if (state.activeUsers.some((u) => u._id === user._id)) return {};
-          return { activeUsers: [...state.activeUsers, user] };
+          const exists = state.activeUsers.find((u) => u._id === user._id);
+          if (exists) return {};
+
+          return {
+            activeUsers: [user, ...state.activeUsers],
+          };
         }),
     }),
     { name: "user-store" }

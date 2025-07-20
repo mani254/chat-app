@@ -11,6 +11,7 @@ export const authorise = async (
 
   if (!token) {
     res.status(401).json({ message: "Not authorized" });
+    return;
   }
 
   try {
@@ -18,6 +19,7 @@ export const authorise = async (
     let user = await User.findById((decoded as any).id).select("password");
     if (!user) {
       res.status(401).json({ message: "User not found" });
+      return;
     }
     req.userId = user._id;
     next();

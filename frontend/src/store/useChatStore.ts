@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { Chat, CreateChatPayload } from "../types";
+import { Chat, CreateChatPayload, Message } from "../types";
 
 import {
   createChat as createChatAPI,
@@ -32,6 +32,7 @@ interface ChatState {
 
   setActiveChat: (chatId: string) => Promise<void>;
   createChat: (info: CreateChatPayload) => Promise<Chat>;
+  updateChatLatestMessage: (chatId: string, message: Message) => Promise<void>;
   resetChats: () => void;
 }
 
@@ -101,7 +102,6 @@ export const useChatStore = create<ChatState>()(
           const chat = await createChatAPI(info);
           if (chat) {
             const existedChat = chats.some((c) => chat._id === c._id);
-            console.log(existedChat, "existed chat");
             if (existedChat) {
               set({ activeChat: chat });
             } else {
@@ -111,6 +111,45 @@ export const useChatStore = create<ChatState>()(
           }
         } catch (err) {
           console.error("Failed to create chat:", err);
+        }
+      },
+
+      updateChatLatestMessage: async (chatId: string, message: Message) => {
+        const { chats, limit } = get();
+
+        const existingIndex = chats.findIndex((c) => c._id === chatId);
+
+        if (existingIndex !== -1) {
+          // ✅ Chat exists: update latestMessage and move it to top
+          const updatedChat = {
+            ...chats[existingIndex],
+            latestMessage: message,
+          };
+
+          const updatedChats = [
+            updatedChat,
+            ...chats.slice(0, existingIndex),
+            ...chats.slice(existingIndex + 1),
+          ];
+
+          set({ chats: updatedChats });
+        } else {
+          try {
+            // 🚀 Chat does not exist: fetch and push to top
+            const fetchedChat = await fetchChatById(chatId);
+
+            if (fetchedChat) {
+              // ✅ Update latestMessage
+              fetchedChat.latestMessage = message;
+
+              const trimmedChats =
+                chats.length >= limit ? chats.slice(0, limit - 1) : chats;
+
+              set({ chats: [fetchedChat, ...trimmedChats] });
+            }
+          } catch (err) {
+            console.error("Failed to fetch chat for update:", err);
+          }
         }
       },
 

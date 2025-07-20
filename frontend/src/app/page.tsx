@@ -5,6 +5,7 @@ import { ProtectedRoute } from "../components/auth/Protected";
 import ChatSidebar from "../components/chat/ChatSidebar";
 import ChatWindow from "../components/chat/ChatWindow";
 import NewChatModal from "../components/chat/newChatModel";
+import Header from "../components/Header";
 import { SocketProvider } from "../components/providers/socketProvider";
 
 export default function Home() {
@@ -13,7 +14,8 @@ export default function Home() {
   return (
     <ProtectedRoute>
       <SocketProvider>
-        <div className="h-screen bg-background flex">
+        <div className="h-screen bg-background flex pt-[65px]">
+          <Header />
           <ChatSidebar />
           <motion.main
             className="w-full"
@@ -24,7 +26,7 @@ export default function Home() {
             <ChatWindow />
           </motion.main>
         </div>
-        <div className="w-auto fixed  left-5 bottom-5">
+        <div className="w-auto fixed left-5 bottom-5">
           <NewChatModal />
         </div>
       </SocketProvider>

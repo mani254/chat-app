@@ -1,7 +1,7 @@
 // services/messageService.ts
 import { Types } from "mongoose";
 import Message from "../models/Message";
-import { MessageQueryParams, MessageFetchResult } from "../types";
+import { MessageFetchResult, MessageQueryParams } from "../types";
 
 class MessageService {
   private getMatchStage(query: MessageQueryParams): Record<string, any> {
@@ -35,7 +35,7 @@ class MessageService {
     try {
       const {
         sortBy = "createdAt",
-        orderBy = "asc",
+        orderBy = "desc",
         page,
         limit,
         fetchFields,
@@ -77,7 +77,6 @@ class MessageService {
           },
         },
 
-        // Optionally populate chat
         ...(includeChat
           ? [
               {

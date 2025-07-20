@@ -6,13 +6,12 @@ import { useEffect, useState } from "react";
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
-  const { isAuthenticated, token, setToken, getCurrentUser } = useUserStore();
+  const { isAuthenticated, setToken, getCurrentUser } = useUserStore();
   const [checkingAuth, setCheckingAuth] = useState(true);
 
   useEffect(() => {
     const initializeAuth = async () => {
       const localToken = localStorage.getItem("accessToken");
-
       if (!localToken) {
         router.replace("/login");
         return;
@@ -26,7 +25,8 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     initializeAuth();
   }, [router, setToken, getCurrentUser]);
 
-  if (checkingAuth || !token) {
+
+  if (checkingAuth) {
     return (
       <div className="h-screen w-full flex items-center justify-center text-sm text-gray-500">
         Loading...

@@ -23,6 +23,7 @@ interface MessageState {
   limit: number;
   totalMessages: number;
   loadingMessages: boolean;
+  addMessage: (message: Message) => void;
 
   loadMessages: (params: {
     chatId: string;
@@ -38,7 +39,7 @@ export const useMessageStore = create<MessageState>()(
     (set, get) => ({
       messages: [],
       page: 1,
-      limit: 20,
+      limit: 40,
       totalMessages: 0,
       loadingMessages: false,
 
@@ -58,8 +59,12 @@ export const useMessageStore = create<MessageState>()(
             limit: fetchLimit,
           });
 
+          const orderedMessages = newMessages.reverse();
+
           set({
-            messages: reset ? newMessages : [...newMessages, ...messages],
+            messages: reset
+              ? orderedMessages
+              : [...orderedMessages, ...messages],
             page: nextPage + 1,
             limit: fetchLimit,
             totalMessages: totalItems,
@@ -69,6 +74,18 @@ export const useMessageStore = create<MessageState>()(
           console.error("Failed to load messages", err);
           set({ loadingMessages: false });
         }
+      },
+
+      addMessage: (message: Message) => {
+        const { messages, limit } = get();
+        const newMessages = [...messages];
+
+        if (newMessages.length >= limit) {
+          newMessages.shift();
+        }
+
+        newMessages.push(message);
+        set({ messages: newMessages });
       },
 
       resetMessages: () =>

@@ -81,7 +81,7 @@ router.post("/login", async (req: Request, res: Response) => {
 router.get("/refresh", (req: Request, res: Response) => {
   const token = req.cookies?.refreshToken;
   if (!token) {
-    res.status(401).json({ message: "No token" });
+    res.status(404).json({ message: "No token found" });
     return;
   }
 

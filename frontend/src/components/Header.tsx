@@ -1,17 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { DropdownMenu, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
-import { Menu, Moon, Settings, Sun, User } from "lucide-react";
+import { Menu, Settings, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { useUIStore } from "../store/useUiStore";
 import { signOut, useUserStore } from "../store/useUserStore";
 import AvatarDiv from "./Avatar";
+import ActiveUsers from "./chat/ActiveUsers";
 
 const Header = () => {
   const router = useRouter()
   const { currentUser } = useUserStore();
-  const { isDarkMode, isSidebarOpen, toggleSidebar, toggleTheme } = useUIStore();
+  const { isSidebarOpen, toggleSidebar } = useUIStore();
 
   const handleSignOut = useCallback(async () => {
     const res = await signOut()
@@ -21,7 +22,7 @@ const Header = () => {
   }, [router])
 
   return (
-    <div className="h-16 bg-background border-b border-background-accent px-4 flex items-center justify-between">
+    <div className="absolute top-0 w-full z-20 h-16 bg-background border-b border-background-accent px-4 flex items-center justify-between">
       {/* Left side */}
       <div className="flex items-center gap-3">
         {!isSidebarOpen && (
@@ -40,10 +41,14 @@ const Header = () => {
         </h1>
       </div>
 
+      <div>
+        <ActiveUsers />
+      </div>
+
       {/* Right side */}
       <div className="flex items-center gap-2">
         {/* Theme Toggle */}
-        <Button
+        {/* <Button
           variant="ghost"
           size="sm"
           onClick={toggleTheme}
@@ -54,7 +59,7 @@ const Header = () => {
           ) : (
             <Moon className="w-4 h-4" />
           )}
-        </Button>
+        </Button> */}
 
         {/* User Menu */}
         <DropdownMenu >

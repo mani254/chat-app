@@ -18,12 +18,19 @@ const AvatarDiv = ({
   const isOnline = displayUser?.isOnline;
 
   return (
-    <div className="relative inline-block border bg-background border-foreground-accent/50 rounded-full p-1">
+    <div
+      className={clsx(
+        "relative inline-block rounded-full cursor-pointer",
+        showActiveCircle
+          ? "p-[3px] border border-green-400"
+          : "border bg-background border-foreground-accent/50 p-1"
+      )}
+    >
       <Avatar
         className={clsx(
           "transition-all",
           showActiveCircle
-            ? "w-12 h-12 p-[2px] border-2 border-green-400"
+            ? "w-8 h-8 ring-2 ring-background"
             : "w-8 h-8"
         )}
       >
@@ -36,8 +43,7 @@ const AvatarDiv = ({
 
       {showActiveDot && isOnline && (
         <span
-          className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"
-          style={{ boxShadow: "0 0 0 2px #22c55e" }}
+          className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full ring-2 ring-background"
         />
       )}
     </div>

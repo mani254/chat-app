@@ -45,7 +45,6 @@ class UserService {
         userStages.push({ $project: fetchFields });
       }
 
-      console.log(matchStage);
 
       const pipeline = [
         { $match: matchStage },

@@ -8,6 +8,7 @@ import { useMessageStore } from "@/src/store/useMessageStore";
 import { useUserStore } from "@/src/store/useUserStore";
 import { useSocketContext } from "../providers/socketProvider";
 
+import { useMessageSocket } from "@/src/socket/useMessageSocket";
 import ChatInputArea from "./ChatInputArea";
 import ChatMessagesList from "./ChatMessagesList";
 
@@ -33,16 +34,36 @@ const ChatWindow = () => {
     resetMessages();
     setActiveChat(chatId).then(() => {
       socket.emit("join-chat", chatId);
+      console.log("Joined Room:", chatId);
       loadMessages({ chatId, reset: true });
     });
+    return () => {
+      socket.emit("leave-chat", chatId);
+      console.log("Left Room:", chatId);
+    }
   }, [searchParams, socket, resetMessages, setActiveChat, loadMessages]);
+
+  useEffect(() => {
+    if (socket && currentUser) {
+      socket.emit("reg-user-chat-updates", currentUser._id);
+      console.log("Registered for chat updates for user:", currentUser._id);
+    }
+    return () => {
+      if (socket && currentUser) {
+        socket.emit("unreg-user-chat-updates", currentUser._id);
+        console.log("Unregistered for chat updates for user:", currentUser._id);
+      }
+    }
+  }, [socket, currentUser]);
+
+  useMessageSocket(activeChat?._id || null);
 
   if (!activeChat) return null;
 
   const hasMoreMessages = messages.length < totalMessages;
 
   return (
-    <div className="flex-1 flex flex-col h-screen relative">
+    <div className="flex-1 flex flex-col h-full relative">
       <ChatMessagesList
         messages={messages}
         currentUser={currentUser}
