@@ -29,8 +29,8 @@ const Header = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={toggleSidebar}
-            className="lg:hidden"
+            onClick={() => toggleSidebar()}
+            className="lg:hidden cursor-pointer"
           >
             <Menu className="w-5 h-5" />
           </Button>

@@ -10,7 +10,6 @@ import { SocketProvider } from "../components/providers/socketProvider";
 
 export default function Home() {
 
-
   return (
     <ProtectedRoute>
       <SocketProvider>

@@ -2,8 +2,8 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
 interface UIState {
-  isSidebarOpen?: boolean;
-  toggleSidebar: () => void;
+  isSidebarOpen: boolean;
+  toggleSidebar: (value?: boolean) => void;
 }
 
 export const useUIStore = create<UIState>()(
@@ -11,12 +11,17 @@ export const useUIStore = create<UIState>()(
     (set) => ({
       isSidebarOpen: true,
 
-      toggleSidebar: () =>
-        set(
-          (state) => ({ isSidebarOpen: !state.isSidebarOpen }),
-          false,
-          "toggleSidebar"
-        ),
+      toggleSidebar: (value?: boolean) => {
+        if (typeof value === "boolean") {
+          set({ isSidebarOpen: value }, false, "toggleSidebar:set");
+        } else {
+          set(
+            (state) => ({ isSidebarOpen: !state.isSidebarOpen }),
+            false,
+            "toggleSidebar:toggle"
+          );
+        }
+      },
     }),
     { name: "ui-store" }
   )

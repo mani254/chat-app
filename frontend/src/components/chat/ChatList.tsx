@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { useUIStore } from "@/src/store/useUiStore";
 import { Chat } from "@/src/types";
 import { useRouter } from "next/navigation";
 import AvatarDiv from "../Avatar";
@@ -20,11 +21,16 @@ const ChatListItem = ({ chat, currentUserId, isChatActive, haveUnreadMessages }:
 
   const user = chat.isGroupChat ? null : chat.users.find(chat => chat._id !== currentUserId)
 
+  const toggleSidebar = useUIStore((s) => s.toggleSidebar)
+
   if (!partner) return null;
 
   return (
     <button
-      onClick={() => router.push(`/?chatId=${chat._id}`)}
+      onClick={() => {
+        router.push(`/?chatId=${chat._id}`)
+        if (window.innerWidth < 768) toggleSidebar();
+      }}
       className={cn(
         "relative w-full flex items-center gap-3 px-3 py-2 rounded-lg transition text-left cursor-pointer",
         "hover:bg-background-accent/50",

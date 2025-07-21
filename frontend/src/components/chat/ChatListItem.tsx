@@ -52,7 +52,7 @@ const ChatListItem = ({ chat, isActive, currentUserId, setCurrentChat, toggleSid
         )}
         onClick={() => {
           setCurrentChat(chat);
-          if (window.innerWidth < 1024) toggleSidebar();
+          if (window.innerWidth < 768) toggleSidebar();
         }}
       >
         <div className="flex items-center gap-3 w-full">

@@ -18,8 +18,6 @@ const ChatInputArea = ({ activeChat }: ChatInputAreaProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { socket } = useSocketContext();
 
-
-
   function handleSendMessage() {
     if (!activeChat || !input.trim() || !socket) return;
 

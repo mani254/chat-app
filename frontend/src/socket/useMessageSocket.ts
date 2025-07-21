@@ -1,10 +1,13 @@
-import { useEffect } from "react";
+import { RefObject, useEffect } from "react";
 import { useSocketContext } from "../components/providers/socketProvider";
 import { useChatStore } from "../store/useChatStore";
 import { useMessageStore } from "../store/useMessageStore";
 import { Message } from "../types";
 
-export const useMessageSocket = (activeChatId: string | null) => {
+export const useMessageSocket = (
+  activeChatId: string | null,
+  audioRef: RefObject<HTMLAudioElement> | null
+) => {
   const { socket } = useSocketContext();
   const addMessage = useMessageStore((state) => state.addMessage);
   const updateChatLatestMessage = useChatStore(
@@ -12,7 +15,7 @@ export const useMessageSocket = (activeChatId: string | null) => {
   );
 
   useEffect(() => {
-    if (!socket || !activeChatId) return;
+    if (!socket || !activeChatId || !audioRef?.current) return;
 
     const handleNewMessage = (message: Message) => {
       console.log("new message received", message);
@@ -22,6 +25,10 @@ export const useMessageSocket = (activeChatId: string | null) => {
       }
       if (message.chat._id === activeChatId) {
         addMessage(message);
+        if (audioRef?.current) {
+          audioRef.current.currentTime = 0;
+          audioRef.current.play();
+        }
       }
     };
 
@@ -42,5 +49,7 @@ export const useMessageSocket = (activeChatId: string | null) => {
       socket.off("new-message", handleNewMessage);
       console.log("new-message event listener removed");
     };
-  }, [socket, activeChatId, addMessage, updateChatLatestMessage]);
+  }, [socket, activeChatId, addMessage, updateChatLatestMessage, audioRef]);
+
+  return null;
 };

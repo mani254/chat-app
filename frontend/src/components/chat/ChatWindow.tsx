@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import { useChatStore } from "@/src/store/useChatStore";
 import { useMessageStore } from "@/src/store/useMessageStore";
@@ -12,9 +12,12 @@ import { useMessageSocket } from "@/src/socket/useMessageSocket";
 import ChatInputArea from "./ChatInputArea";
 import ChatMessagesList from "./ChatMessagesList";
 
+
 const ChatWindow = () => {
   const searchParams = useSearchParams();
-  const { socket } = useSocketContext();
+  const { socket } = useSocketContext()
+
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const currentUser = useUserStore((s) => s.currentUser);
   const activeChat = useChatStore((s) => s.activeChat);
@@ -56,7 +59,7 @@ const ChatWindow = () => {
     }
   }, [socket, currentUser]);
 
-  useMessageSocket(activeChat?._id || null);
+  useMessageSocket(activeChat?._id || null, audioRef as React.RefObject<HTMLAudioElement>);
 
   if (!activeChat) return null;
 
@@ -64,6 +67,11 @@ const ChatWindow = () => {
 
   return (
     <div className="flex-1 flex flex-col h-full relative">
+
+      <div className="relative -z-50 hidden">
+        <audio controls ref={audioRef} src='../../assets/sounds/message-arrived-sound-effect.mp3' />
+      </div>
+
       <ChatMessagesList
         messages={messages}
         currentUser={currentUser}
@@ -72,6 +80,7 @@ const ChatWindow = () => {
         hasMoreMessages={hasMoreMessages}
         onLoadMore={() => loadMessages({ chatId: activeChat._id })}
       />
+
       <ChatInputArea activeChat={activeChat} />
     </div>
   );
