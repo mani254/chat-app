@@ -4,6 +4,7 @@ import { authenticateSocket } from "../middleware/socketAuth";
 import User from "../models/User";
 import registerChatHandlers from "./chatHandler";
 import { registerMessageHandlers } from "./messageHandler";
+import { registerTypingHandlers } from "./typingHandler";
 import registerUserHandlers from "./userHandler";
 
 const socketHandler = async (socket: Socket, io: Server) => {
@@ -27,11 +28,13 @@ const socketHandler = async (socket: Socket, io: Server) => {
 
     console.log(`${user.name} connected`);
 
+    registerUserHandlers(socket, io);
+
     registerChatHandlers(socket, io);
 
     registerMessageHandlers(socket, io);
 
-    registerUserHandlers(socket, io);
+    registerTypingHandlers(socket, io);
 
     socket.on("disconnect", async () => {
       await User.findByIdAndUpdate(user._id, { isOnline: false });

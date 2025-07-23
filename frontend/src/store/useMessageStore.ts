@@ -23,6 +23,23 @@ interface MessageState {
   limit: number;
   totalMessages: number;
   loadingMessages: boolean;
+  typingInfo: {
+    isTyping: boolean;
+    typingUser: {
+      name: string;
+      id: string;
+      avatar: string;
+    } | null;
+  };
+  setTypingInfo: (typingInfo: {
+    isTyping: boolean;
+    typingUser: {
+      name: string;
+      id: string;
+      avatar: string;
+    } | null;
+  }) => void;
+
   addMessage: (message: Message) => void;
 
   loadMessages: (params: {
@@ -74,6 +91,10 @@ export const useMessageStore = create<MessageState>()(
           console.error("Failed to load messages", err);
           set({ loadingMessages: false });
         }
+      },
+
+      setTypingInfo(typingInfo) {
+        set({ typingInfo });
       },
 
       addMessage: (message: Message) => {

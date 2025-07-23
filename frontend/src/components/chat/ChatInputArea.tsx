@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Paperclip, Send, Smile } from "lucide-react";
 import { useRef, useState } from "react";
 
+import { useUserStore } from "@/src/store/useUserStore";
 import { useSocketContext } from "../providers/socketProvider";
 
 interface ChatInputAreaProps {
@@ -16,7 +17,44 @@ const ChatInputArea = ({ activeChat }: ChatInputAreaProps) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
   const { socket } = useSocketContext();
+  const currentUser = useUserStore((s) => s.currentUser);
+
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isTyping = useRef(false);
+
+  const emitStartTyping = () => {
+    if (!isTyping.current && socket && activeChat) {
+      isTyping.current = true;
+      socket.emit("user-start-typing", {
+        chatId: activeChat._id,
+        user: {
+          _id: currentUser?._id,
+          name: currentUser?.name,
+        },
+      });
+    }
+
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+
+    typingTimeoutRef.current = setTimeout(() => {
+      emitEndTyping();
+    }, 2000);
+  };
+
+  const emitEndTyping = () => {
+    if (isTyping.current && socket && activeChat) {
+      isTyping.current = false;
+      socket.emit("user-end-typing", {
+        chatId: activeChat._id,
+        user: {
+          _id: currentUser?._id,
+          name: currentUser?.name,
+        },
+      });
+    }
+  };
 
   function handleSendMessage() {
     if (!activeChat || !input.trim() || !socket) return;
@@ -42,6 +80,7 @@ const ChatInputArea = ({ activeChat }: ChatInputAreaProps) => {
   }
 
   function handleInputChange(value: string) {
+    emitStartTyping();
     setInput(value);
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";

@@ -14,7 +14,7 @@ export const registerMessageHandlers = (socket: Socket, io: Server) => {
     console.log("send message event triggered");
     try {
       const user = (socket as any).user;
-      if (!user) return;
+      if (!user) throw new Error("User not authenticated");
 
       const chat = await ChatModel.findById(data.chatId);
 

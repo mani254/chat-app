@@ -5,6 +5,7 @@ import { ArrowDown } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import LoadMoreLoader from "../loaders/LoadMoreLoader";
 import ChatMessageBubble from "./ChatMessageBubble";
+import TypingDots from "./TypingDots";
 
 interface ChatMessagesListProps {
   messages: Message[];
@@ -128,6 +129,7 @@ const ChatMessagesList = ({
             />
           );
         })}
+        <TypingDots />
       </div>
 
       {/* 👇 Bottom Observer for scroll-to-bottom visibility */}

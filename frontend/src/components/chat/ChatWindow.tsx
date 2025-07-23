@@ -9,6 +9,8 @@ import { useUserStore } from "@/src/store/useUserStore";
 import { useSocketContext } from "../providers/socketProvider";
 
 import { useMessageSocket } from "@/src/socket/useMessageSocket";
+import { useTypingSocket } from "@/src/socket/useTypingSocket";
+
 import ChatInputArea from "./ChatInputArea";
 import ChatMessagesList from "./ChatMessagesList";
 
@@ -18,6 +20,7 @@ const ChatWindow = () => {
   const { socket } = useSocketContext()
 
   const audioRef = useRef<HTMLAudioElement>(null);
+  const typingSoundRef = useRef<HTMLAudioElement>(null);
 
   const currentUser = useUserStore((s) => s.currentUser);
   const activeChat = useChatStore((s) => s.activeChat);
@@ -60,6 +63,7 @@ const ChatWindow = () => {
   }, [socket, currentUser]);
 
   useMessageSocket(activeChat?._id || null, audioRef as React.RefObject<HTMLAudioElement>);
+  useTypingSocket(activeChat?._id || null, typingSoundRef as React.RefObject<HTMLAudioElement>);
 
   if (!activeChat) return null;
 
@@ -70,6 +74,10 @@ const ChatWindow = () => {
 
       <div className="relative -z-50 hidden">
         <audio controls ref={audioRef} src='../../assets/sounds/message-arrived-sound-effect.mp3' />
+      </div>
+
+      <div className="relative -z-50 hidden">
+        <audio controls ref={typingSoundRef} src='../../assets/sounds/typing-effect.mp3' />
       </div>
 
       <ChatMessagesList
