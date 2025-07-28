@@ -120,12 +120,14 @@ const ChatMessagesList = ({
         {messages.map((message) => {
           const isOwn = message.sender._id === currentUser?._id;
           const showName = activeChat?.isGroupChat && !isOwn;
+          const systemMessage = message.midText
           return (
             <ChatMessageBubble
               key={message._id}
               message={message}
               isOwn={isOwn}
               showName={showName}
+              systemMessage={systemMessage}
             />
           );
         })}

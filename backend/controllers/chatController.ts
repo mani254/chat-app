@@ -94,12 +94,15 @@ export const createChat = async (req: Request, res: Response) => {
       }
     }
 
-    const chat = await chatService.createChat({
-      users,
-      isGroupChat,
-      name,
-      groupAdmin,
-    });
+    const chat = await chatService.createChat(
+      {
+        users,
+        isGroupChat,
+        name,
+        groupAdmin,
+      },
+      req.userId as Types.ObjectId
+    );
 
     res.status(200).json({
       message: "Chat created successfully",

@@ -46,17 +46,17 @@ const ChatListSidebar = () => {
   }, [search, currentUser, debouncedSearch]);
 
   // Closes sidebar on window resize if width < 768 and sidebar is open.
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 768 && isSidebarOpen) {
-        toggleSidebar(false);
-      }
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     if (window.innerWidth < 768 && isSidebarOpen) {
+  //       // toggleSidebar(false);
+  //     }
+  //   };
+  //   handleResize();
+  //   window.addEventListener("resize", handleResize);
+  //   return () => window.removeEventListener("resize", handleResize);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   // Closes sidebar when clicking outside of it on small screens.
   useEffect(() => {
@@ -116,35 +116,38 @@ const ChatListSidebar = () => {
           exit={{ x: -300, opacity: 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
           className={cn(
-            "fixed md:static bg-background border-r border-background-accent",
+            "fixed md:static bg-background border-r border-background-accent h-full overflow-hidden",
             "w-[300px] md:w-1/3 max-w-[340px] h-full py-3",
             "md:translate-x-0 md:opacity-100",
             "shadow-lg md:shadow-none"
           )}
         >
-          <Header />
+          <div className="sticky top-0 z-10 bg-background py-1">
+            <Header />
 
-          {/* Search Bar */}
-          <div className="my-4 px-2 sticky top-4  bg-background ">
-            <div className="relative">
-              <Input
-                placeholder="Search chats..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className={cn(
-                  "w-full pl-10 pr-4 py-3 rounded-full border border-foreground-accent/50 text-sm",
-                  loadingChats && "pr-10",
+            {/* Search Bar */}
+            <div className="my-3 px-2   ">
+              <div className="relative">
+                <Input
+                  placeholder="Search chats..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className={cn(
+                    "w-full pl-10 pr-4 py-3 rounded-full border border-foreground-accent/50 text-sm",
+                    loadingChats && "pr-10",
 
-                )}
-              />
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                <Search className={cn("w-4 h-4", loadingChats && "animate-spin")} />
-              </span>
+                  )}
+                />
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                  <Search className={cn("w-4 h-4", loadingChats && "animate-spin")} />
+                </span>
+              </div>
             </div>
           </div>
 
+
           {/* Chat List Scrollable */}
-          <ScrollArea ref={scrollRef} className="scrollbar-hidden">
+          <ScrollArea ref={scrollRef} className="h-full pb-[100px] scrollbar-hidden">
             <div className="space-y-1">
               {loadingChats && chats.length === 0 ? (
                 Array.from({ length: 4 }).map((_, i) => (

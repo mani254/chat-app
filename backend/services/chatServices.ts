@@ -2,6 +2,7 @@
 import { Types } from "mongoose";
 import Chat, { IChat } from "../models/Chat";
 import { ChatFetchResult, ChatQueryParams, CreateChatPayload } from "../types";
+import messageServices from "./messageServices";
 
 class ChatService {
   private getMatchStage(query: ChatQueryParams): Record<string, any> {
@@ -154,7 +155,10 @@ class ChatService {
     }
   }
 
-  async createChat(data: CreateChatPayload): Promise<IChat> {
+  async createChat(
+    data: CreateChatPayload,
+    userId: Types.ObjectId
+  ): Promise<IChat> {
     const { users, isGroupChat, name, groupAdmin } = data;
     const userObjectIds = users.map((id) => {
       if (!Types.ObjectId.isValid(id)) {
@@ -202,8 +206,25 @@ class ChatService {
     }
 
     const createdChat = await Chat.create(chatData);
+    let messageId = null;
+    if (createdChat && userId) {
+      messageId = await messageServices.createMessage({
+        chat: createdChat._id,
+        sender: userId,
+        content: "New Chat Was Created",
+        messageType: "note",
+        readBy: [userId],
+        midText: true,
+      });
+    }
 
-    const populatedChat = await Chat.findById(createdChat._id)
+    const updatedChat = await Chat.findOneAndUpdate(
+      { _id: createdChat._id },
+      { latestMessage: messageId },
+      { new: true }
+    );
+
+    const populatedChat = await Chat.findById(updatedChat._id)
       .populate("users", "-password")
       .populate("latestMessage", "-password");
 
@@ -219,7 +240,7 @@ class ChatService {
       });
     }
 
-    return populatedChat!;
+    return populatedChat;
   }
 }
 

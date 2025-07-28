@@ -38,6 +38,7 @@ export interface Message {
   readBy: string[];
   messageType: "text" | "image" | "file" | "note";
   createdAt: string;
+  midText: boolean;
 }
 
 export interface Chat {

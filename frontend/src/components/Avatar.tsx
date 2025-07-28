@@ -3,18 +3,21 @@ import clsx from "clsx";
 import { useUserStore } from "../store/useUserStore";
 import { User } from "../types";
 
+interface AvatarDivProps {
+  user?: User | null;
+  showActiveDot?: boolean;
+  showActiveCircle?: boolean;
+  className?: string; // ✅ Add this to allow parent customization
+}
+
 const AvatarDiv = ({
   user = null,
   showActiveDot = false,
   showActiveCircle = false,
-}: {
-  user?: User | null;
-  showActiveDot?: boolean;
-  showActiveCircle?: boolean;
-}) => {
+  className = "", // default empty string
+}: AvatarDivProps) => {
   const currentUser = useUserStore((state) => state.currentUser);
   const displayUser = user || currentUser;
-
   const isOnline = displayUser?.isOnline;
 
   return (
@@ -28,23 +31,20 @@ const AvatarDiv = ({
     >
       <Avatar
         className={clsx(
-          "transition-all",
-          showActiveCircle
-            ? "w-8 h-8 ring-2 ring-background"
-            : "w-8 h-8"
+          "transition-all aspect-square",
+          showActiveCircle && "ring-2 ring-background",
+          className || "w-8 h-8" // ✅ use className if provided, fallback to default
         )}
       >
         <AvatarImage src={displayUser?.avatar} />
         <AvatarFallback>
-          {displayUser?.name?.charAt(0).toUpperCase()}
+          {displayUser?.name?.charAt(0)?.toUpperCase()}
           {displayUser?.name?.charAt(1)?.toUpperCase()}
         </AvatarFallback>
       </Avatar>
 
       {showActiveDot && isOnline && (
-        <span
-          className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full ring-2 ring-background"
-        />
+        <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border border-background rounded-full ring-2 ring-background" />
       )}
     </div>
   );

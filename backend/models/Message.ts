@@ -7,6 +7,7 @@ export interface IMessage extends Document {
   content: string;
   readBy: Types.ObjectId[];
   messageType: "text" | "image" | "file" | "note";
+  midText?: boolean;
 }
 
 const MessageSchema: Schema<IMessage> = new Schema(
@@ -19,6 +20,10 @@ const MessageSchema: Schema<IMessage> = new Schema(
       type: String,
       enum: ["text", "image", "file", "note"],
       default: "text",
+    },
+    midText: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }

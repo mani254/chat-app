@@ -1,13 +1,14 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Paperclip } from "lucide-react";
 import Image from "next/image";
+import AvatarDiv from "../Avatar";
 
 interface ChatMessageBubbleProps {
   message: any;
   isOwn: boolean;
   showName: boolean;
+  systemMessage: boolean; // Add this prop for system message
 }
 
 const formatMessageTime = (dateStr: string) => {
@@ -18,32 +19,31 @@ const formatMessageTime = (dateStr: string) => {
   });
 };
 
-const ChatMessageBubble = ({ message, isOwn, showName }: ChatMessageBubbleProps) => (
+const ChatMessageBubble = ({ message, isOwn, showName, systemMessage }: ChatMessageBubbleProps) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
-    className={cn("flex gap-2", isOwn ? "justify-end" : "justify-start")}
+    className={cn("flex gap-2 relative", isOwn ? "justify-end" : "justify-start", systemMessage && "justify-center")}
   >
-    {!isOwn && (
-      <Avatar className="w-8 h-8">
-        <AvatarImage src={message.sender.avatar} />
-        <AvatarFallback>
-          {message.sender.name?.charAt(0).toUpperCase() || "U"}
-        </AvatarFallback>
-      </Avatar>
+    {!isOwn && !message.midText && (
+      <div className="flex items-end pb-1">
+        <AvatarDiv user={message.sender} className="w-5 h-5" />
+      </div>
     )}
-    <div className={cn("max-w-xs lg:max-w-md", isOwn ? "text-right" : "text-left")}>      {showName && (
-      <p className="text-xs text-gray-500 dark:text-gray-400 mb-1 px-3">
-        {message.sender.name}
-      </p>
-    )}
+    <div className={cn("max-w-xs lg:max-w-md", isOwn ? "text-right" : "text-left", systemMessage && "text-center")}>
+      {showName && (
+        <p className="text-xs text-gray-500 dark:text-gray-400 mb-1 px-3">
+          {message.sender.name}
+        </p>
+      )}
       <div
         className={cn(
           "inline-block px-4 py-2 rounded-2xl max-w-full break-words",
-          isOwn ? "bg-blue-600 text-white" : "bg-background"
+          isOwn ? "bg-blue-600 text-white" : "bg-background-accent",
+          systemMessage && "bg-background-accent/50 text-foreground-accent py-1"
         )}
       >
-        {message.messageType === "text" && (
+        {(message.messageType === "text") && (
           <p className="text-sm whitespace-pre-wrap">{message.content}</p>
         )}
         {message.messageType === "image" && (
@@ -55,12 +55,18 @@ const ChatMessageBubble = ({ message, isOwn, showName }: ChatMessageBubbleProps)
             <span className="text-sm">{message.content}</span>
           </div>
         )}
-      </div>
-      <div className={cn("text-xs text-gray-500 dark:text-gray-400 mt-1", isOwn ? "text-right" : "text-left")}>        <span>{formatMessageTime(message.createdAt)}</span>
-        {isOwn && (
-          <span className="ml-1 text-blue-600">{message.readBy.length > 1 ? "✓✓" : "✓"}</span>
+        {(message.messageType === "note") && (
+          <p className="text-xs whitespace-pre-wrap ">{message.content}</p>
         )}
       </div>
+      {!message.midText && (
+        <div className={cn("text-xs text-gray-500 dark:text-gray-400 mt-1", isOwn ? "text-right" : "text-left")}>
+          <span>{formatMessageTime(message.createdAt)}</span>
+          {isOwn && (
+            <span className="ml-1 text-blue-600">{message.readBy.length > 1 ? "✓✓" : "✓"}</span>
+          )}
+        </div>
+      )}
     </div>
   </motion.div>
 );

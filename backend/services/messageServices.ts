@@ -1,6 +1,6 @@
 // services/messageService.ts
 import { Types } from "mongoose";
-import Message from "../models/Message";
+import Message, { IMessage } from "../models/Message";
 import { MessageFetchResult, MessageQueryParams } from "../types";
 
 class MessageService {
@@ -133,6 +133,16 @@ class MessageService {
       return message;
     } catch (error: any) {
       console.error("Error while fetching message by ID:", error);
+      throw new Error(error.message);
+    }
+  }
+
+  async createMessage(messageData: any): Promise<IMessage> {
+    try {
+      const message = await Message.create(messageData);
+      return message;
+    } catch (error: any) {
+      console.error("Error while creating message:", error);
       throw new Error(error.message);
     }
   }
