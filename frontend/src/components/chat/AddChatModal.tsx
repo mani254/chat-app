@@ -93,15 +93,15 @@ const NewChatModal = () => {
       <DialogTrigger asChild>
         <button
           aria-label="New Chat"
-          className="flex items-center justify-center w-10 h-10 rounded-full bg-background-accent shadow hover:bg-background transition cursor-pointer text-background hover:text-background-accent"
+          className="flex items-center justify-center w-10 h-10 rounded-full shadow-md border border-background-accent transition cursor-pointer text-background hover:text-background-accent"
         >
-          <Plus className="w-5 h-5" />
+          <Plus className="w-5 h-5 text-primary" />
         </button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-md w-full rounded-2xl p-0 border  shadow-xl">
-        <DialogHeader className="p-5 pb-2 border-b border-background-accent">
-          <DialogTitle className=" font-semibold mb-2">
+      <DialogContent className="max-w-md w-full rounded-2xl p-0 border shadow-xl bg-background overflow-hidden">
+        <DialogHeader className="p-5 pb-1 border-b border-background-accent">
+          <DialogTitle className=" font-semibold">
             Start a new chat
           </DialogTitle>
           <DialogDescription aria-describedby={undefined}>
@@ -143,7 +143,7 @@ const NewChatModal = () => {
               users.map((user) => (
                 <button
                   key={user._id}
-                  className="w-full flex items-center gap-3 px-3 py-2 mb-2 rounded-2xl hover:bg-background-accent/50 cursor-pointer transition text-left"
+                  className="w-full flex items-center gap-3 px-3 py-2 mb-2 rounded-2xl hover:bg-background-accent/70 cursor-pointer transition text-left"
                   onClick={() => handleCreateChat(user)}
                 >
                   <AvatarDiv user={user} />
@@ -156,14 +156,9 @@ const NewChatModal = () => {
                   </div>
 
                   <div className="ml-auto">
-                    <span
-                      className={`text-xs px-2 py-0.5 border rounded ${user.isOnline
-                        ? "bg-green-100 text-green-600 border-green-200"
-                        : "bg-background-accent border-background text-background"
-                        }`}
-                    >
-                      {user.isOnline ? "Online" : "Offline"}
-                    </span>
+                    {user.isOnline && (
+                      <span className="w-2.5 h-2.5 rounded-full bg-green-500 inline-block" />
+                    )}
                   </div>
                 </button>
               ))

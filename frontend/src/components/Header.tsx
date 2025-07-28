@@ -1,13 +1,20 @@
 import { Button } from "@/components/ui/button";
-import { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
-import { DropdownMenu, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
-import { Menu, Settings, User } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import { Ellipsis, LogOut, Menu, Moon, Settings, User, Video } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { useUIStore } from "../store/useUiStore";
 import { signOut, useUserStore } from "../store/useUserStore";
 import AvatarDiv from "./Avatar";
-import ActiveUsers from "./chat/ActiveUsers";
+
+const dropdownItemClass = `
+  cursor-pointer px-4 py-2 flex items-center text-sm
+  hover:bg-background-accent 
+  focus:bg-background-accent
+  focus:outline-none focus:ring-0 focus:border-none
+  active:bg-background-accent/70
+  transition-colors
+`;
 
 const Header = () => {
   const router = useRouter()
@@ -22,7 +29,7 @@ const Header = () => {
   }, [router])
 
   return (
-    <div className="absolute top-0 w-full z-20 h-16 bg-background border-b border-background-accent px-4 flex items-center justify-between">
+    <div className="h-16 flex items-center justify-between border-b border-background-accent shadow-sm px-4">
       {/* Left side */}
       <div className="flex items-center gap-3">
         {!isSidebarOpen && (
@@ -37,72 +44,78 @@ const Header = () => {
         )}
 
         <h1 className="text-xl font-semibold">
-          Messenger
+          Chats
         </h1>
+
       </div>
 
-      <div>
-        <ActiveUsers />
-      </div>
-
-      {/* Right side */}
-      <div className="flex items-center gap-2">
-        {/* Theme Toggle */}
-        {/* <Button
-          variant="ghost"
-          size="sm"
-          onClick={toggleTheme}
-          className="w-9 h-9 p-0"
-        >
-          {isDarkMode ? (
-            <Sun className="w-4 h-4" />
-          ) : (
-            <Moon className="w-4 h-4" />
-          )}
-        </Button> */}
-
-        {/* User Menu */}
-        <DropdownMenu >
+      <div className="flex gap-2 items-center">
+        <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-9 w-9 rounded-full cursor-pointer">
-              <AvatarDiv />
-            </Button>
+            <div className="p-2 bg-background-accent rounded-full cursor-pointer hover:bg-background-accent/80 transition">
+              <Ellipsis size={19} />
+            </div>
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent className="w-56 bg-background shadow" align="end">
-            <div className="px-3 py-2">
-              <p className="text-sm font-medium">
-                {currentUser?.name}
-              </p>
-              <p className="text-xs">
-                {currentUser?.email}
-              </p>
+          <DropdownMenuContent
+            className="w-64 bg-background shadow-xl border border-border rounded-lg z-10"
+            align="start"
+          >
+            {/* User Info Header */}
+            <div className="px-4 py-3 border-b border-border">
+              <div className="flex items-center gap-3">
+                <AvatarDiv />
+                <div>
+                  <p className="text-sm font-semibold text-foreground">
+                    {currentUser?.name}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {currentUser?.email}
+                  </p>
+                </div>
+              </div>
             </div>
 
-            <DropdownMenuSeparator />
+            <DropdownMenuSeparator className="my-1" />
 
-            <DropdownMenuItem
-              // onClick={toggleProfileDrawer}
-              className="cursor-pointer hover:bg-background-accent"
-            >
+            {/* Menu Items */}
+            <DropdownMenuItem className={dropdownItemClass}>
               <User className="w-4 h-4 mr-2" />
               View Profile
             </DropdownMenuItem>
 
-            <DropdownMenuItem className="cursor-pointer hover:bg-background-accent">
+            <DropdownMenuItem className={dropdownItemClass}>
               <Settings className="w-4 h-4 mr-2" />
               Settings
             </DropdownMenuItem>
 
-            <DropdownMenuSeparator className="bg-background-accent" />
+            <DropdownMenuItem className={dropdownItemClass}>
+              <Moon className="w-4 h-4 mr-2" />
+              Toggle Theme
+            </DropdownMenuItem>
 
-            <DropdownMenuItem className="cursor-pointer hover:bg-background-accent text-red-500" onClick={handleSignOut}>
+            <DropdownMenuSeparator className="my-1" />
+
+            <DropdownMenuItem
+              onClick={handleSignOut}
+              className={`${dropdownItemClass} text-red-500`}
+            >
+              <LogOut className="w-4 h-4 mr-2" />
               Sign Out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
+
+        <div className="p-2 bg-background-accent rounded-full cursor-pointer">
+          <Video size={19} />
+        </div>
+
+        <div className="p-2 bg-background-accent rounded-full cursor-pointer">
+          <Settings size={19} />
+        </div>
       </div>
-    </div>
+    </div >
   )
 
 }

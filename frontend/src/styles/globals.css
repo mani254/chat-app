@@ -3,15 +3,15 @@
 
 /* @custom-variant dark (&:is(.dark *)); */
 
-.bright {
-  --primary-color: 224, 76%, 49%;
-  --primary-accent: 213, 100%, 97%;
+.light-theme {
+  --background: 0, 0%, 100%;
+  --foreground: 220, 13%, 18%; /* #1F2937 */
 
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
+  --background-accent: 216, 20%, 95%;
+  --foreground-accent: 220, 9%, 46%; /* #69707D */
 
-  --background-accent: 212, 12%, 84%;
-  --foreground-accent: 215, 14%, 34%;
+  --primary-color: 220, 75%, 56%; /* #3F83F8 */
+  --primary-accent: 220, 100%, 97%; /* #EBF5FF */
 
   --card: 0 0% 100%;
   --card-foreground: 222.2 84% 4.9%;

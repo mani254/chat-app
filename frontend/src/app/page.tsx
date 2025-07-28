@@ -1,20 +1,25 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useEffect } from "react";
 import { ProtectedRoute } from "../components/auth/Protected";
+import NewChatModal from "../components/chat/AddChatModal";
 import ChatSidebar from "../components/chat/ChatSidebar";
 import ChatWindow from "../components/chat/ChatWindow";
-import NewChatModal from "../components/chat/newChatModel";
-import Header from "../components/Header";
 import { SocketProvider } from "../components/providers/socketProvider";
+import { useUIStore } from "../store/useUiStore";
 
 export default function Home() {
+  const theme = useUIStore(s => s.theme)
+
+  useEffect(() => {
+    document.body.className = theme;
+  }, [theme]);
 
   return (
     <ProtectedRoute>
       <SocketProvider>
-        <div className="h-screen bg-background flex pt-[65px]">
-          <Header />
+        <div className={`${theme} h-screen bg-background-accent flex`}>
           <ChatSidebar />
           <motion.main
             className="w-full"
@@ -25,7 +30,7 @@ export default function Home() {
             <ChatWindow />
           </motion.main>
         </div>
-        <div className="w-auto fixed left-5 bottom-5">
+        <div className="w-auto fixed left-10 bottom-10">
           <NewChatModal />
         </div>
       </SocketProvider>

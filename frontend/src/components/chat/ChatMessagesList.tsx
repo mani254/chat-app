@@ -138,7 +138,7 @@ const ChatMessagesList = ({
       {/* ⬇️ Scroll to Bottom Button */}
       {showScrollToBottom && (
         <button
-          className="absolute bottom-24 right-1/2 -translate-x-1/2 z-50 bg-primary/85 text-white px-4 py-2 rounded-full shadow-lg transition hover:bg-primary/90"
+          className="absolute bottom-24 right-1/2 -translate-x-1/2  bg-primary/85 text-white px-4 py-2 rounded-full shadow-lg transition hover:bg-primary/90"
           onClick={() => {
             if (scrollRef.current) {
               scrollRef.current.scrollTo({

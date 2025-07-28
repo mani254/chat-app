@@ -7,8 +7,10 @@ export interface IUser extends Document {
   email: string;
   password: string;
   avatar?: string;
+  gender: "male" | "female" | "other";
   status?: string;
   isOnline?: boolean;
+  birthday?: Date;
 }
 
 const UserSchema = new Schema<IUser>(
@@ -31,6 +33,13 @@ const UserSchema = new Schema<IUser>(
       type: String,
       required: [true, "Password is required"],
       minlength: [6, "Password should be at least 6 characters"],
+    },
+    gender: {
+      type: String,
+      enum: ["male", "female", "other"],
+    },
+    birthday: {
+      type: Date,
     },
     avatar: {
       type: String,
