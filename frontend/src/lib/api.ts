@@ -1,10 +1,13 @@
 import axios from "axios";
 import { userStore } from "../store/useUserStore";
 
+const baseURL = process.env.NEXT_PUBLIC_API_BACKEND_URL;
 const instance = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: baseURL,
   withCredentials: true,
 });
+
+
 
 instance.interceptors.response.use(
   (response) => response,

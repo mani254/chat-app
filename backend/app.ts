@@ -14,10 +14,12 @@ dotenv.config();
 connectDB();
 
 const app = express();
+const frontendUrl = process.env.FRONTEND_URL || "";
 
+console.log(frontendUrl);
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:3002", "*"],
+    origin: [frontendUrl, "*"],
     credentials: true,
   })
 );

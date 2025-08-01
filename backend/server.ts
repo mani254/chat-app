@@ -4,12 +4,14 @@ import app from "./app";
 import socketHandler from "./sockets";
 
 const PORT = process.env.PORT || 5000;
+const frontendUrl = process.env.FRONTEND_URL || "";
+console.log(frontendUrl); // Add this line to log the frontendUr
 
 const server = http.createServer(app);
 
 const io = new SocketIOServer(server, {
   cors: {
-    origin: ["http://localhost:3000", "http://localhost:3002", "*"],
+    origin: [frontendUrl, "*"],
     methods: ["GET", "POST"],
   },
 });

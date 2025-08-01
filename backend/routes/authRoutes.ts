@@ -19,9 +19,7 @@ router.post("/register", async (req: Request, res: Response) => {
       return;
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({ name, email, password: hashedPassword });
-
+    const user = await User.create({ name, email, password: password });
     res.status(201).json({
       message: "User created successfully",
       data: {
@@ -41,7 +39,9 @@ router.post("/login", async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
-    if (!user || !(await user.matchPassword(password))) {
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!user || !isMatch) {
       res.status(401).json({ message: "Invalid credentials", data: null });
       return;
     }
@@ -52,14 +52,16 @@ router.post("/login", async (req: Request, res: Response) => {
     res
       .cookie("accessToken", accessToken, {
         httpOnly: true,
-        secure: true,
-        sameSite: "none",
+        // secure: true,
+        // sameSite: "none",
+        sameSite: "lax",
         maxAge: 15 * 60 * 1000,
       })
       .cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: true,
-        sameSite: "none",
+        // secure: true,
+        // sameSite: "none",
+        sameSite: "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       })
       .json({
