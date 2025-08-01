@@ -30,14 +30,12 @@ const queryValuesToCast: Record<string, "number" | "boolean" | "object"> = {
   limit: "number",
   fetchFields: "object",
   isOnline: "boolean",
+  isGroupChat: "boolean",
 };
 
 app.use("/api/users", autoCastQueryParams(queryValuesToCast), userRouter);
 app.use("/api/chats", autoCastQueryParams(queryValuesToCast), chatRouter);
 app.use("/api/messages", autoCastQueryParams(queryValuesToCast), messageRouter);
-
-// app.use("/api/chats", chatRoutes);
-// app.use("/api/messages", messageRoutes);
 
 app.use(errorHandler);
 

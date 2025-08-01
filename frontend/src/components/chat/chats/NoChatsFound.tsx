@@ -1,5 +1,6 @@
 import { MessageCircle } from "lucide-react";
-import NewChatModal from "./AddChatModal";
+import NewChatModal from "./NewChatModal";
+
 
 interface NoChatsFoundProps {
   search: string;

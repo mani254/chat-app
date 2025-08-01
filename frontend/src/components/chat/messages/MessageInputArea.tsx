@@ -6,7 +6,7 @@ import { Paperclip, Send, Smile } from "lucide-react";
 import { useRef, useState } from "react";
 
 import { useUserStore } from "@/src/store/useUserStore";
-import { useSocketContext } from "../providers/socketProvider";
+import { useSocketContext } from "../../providers/socketProvider";
 
 interface ChatInputAreaProps {
   activeChat: Chat;

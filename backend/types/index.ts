@@ -10,7 +10,7 @@ export interface UserQueryParams {
   limit?: number;
   fetchFields?: Record<string, number>;
   filterMain?: string;
-  isOnline?: boolean;
+  isOnline?: boolean | string;
 }
 
 export interface UserFetchResult {
@@ -26,7 +26,7 @@ export interface ChatQueryParams {
   limit?: number;
   fetchFields?: Record<string, number>;
   userId?: string;
-  isGroupChat?: boolean;
+  isGroupChat?: boolean | string;
 }
 
 export interface ChatFetchResult {

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { useUIStore } from "../store/useUiStore";
 import { signOut, useUserStore } from "../store/useUserStore";
-import AvatarDiv from "./Avatar";
+import AvatarDiv from "./ui/Avatar";
 
 const dropdownItemClass = `
   cursor-pointer px-4 py-2 flex items-center text-sm

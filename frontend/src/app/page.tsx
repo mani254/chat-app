@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 import { ProtectedRoute } from "../components/auth/Protected";
-import NewChatModal from "../components/chat/AddChatModal";
+import NewChatModal from "../components/chat/chats/NewChatModal";
 import ChatSidebar from "../components/chat/ChatSidebar";
 import ChatWindow from "../components/chat/ChatWindow";
 import { SocketProvider } from "../components/providers/socketProvider";
@@ -30,7 +30,7 @@ export default function Home() {
             <ChatWindow />
           </motion.main>
         </div>
-        <div className="w-auto fixed left-10 bottom-10">
+        <div className="w-auto fixed left-20 bottom-20 z-10">
           <NewChatModal />
         </div>
       </SocketProvider>

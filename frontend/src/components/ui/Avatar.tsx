@@ -1,13 +1,13 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import clsx from "clsx";
-import { useUserStore } from "../store/useUserStore";
-import { User } from "../types";
+import { useUserStore } from "../../store/useUserStore";
+import { User } from "../../types";
 
 interface AvatarDivProps {
   user?: User | null;
   showActiveDot?: boolean;
   showActiveCircle?: boolean;
-  className?: string; // ✅ Add this to allow parent customization
+  className?: string;
 }
 
 const AvatarDiv = ({

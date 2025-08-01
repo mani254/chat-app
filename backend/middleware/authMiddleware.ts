@@ -21,6 +21,7 @@ export const authorise = async (
       res.status(401).json({ message: "User not found" });
       return;
     }
+    console.log(req.query, "--req.query in the auth middlware");
     req.userId = user._id;
     next();
   } catch (err) {

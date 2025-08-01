@@ -5,7 +5,9 @@ import { useUIStore } from "@/src/store/useUiStore";
 import { Chat } from "@/src/types";
 import { getTimeAgo } from "@/src/utils/formator";
 import { useRouter } from "next/navigation";
-import AvatarDiv from "../Avatar";
+import AvatarDiv from "../../ui/Avatar";
+import GroupChatAvatar from "../../ui/GroupChatAvatar";
+
 interface ChatListItemProps {
   chat: Chat;
   currentUserId?: string;
@@ -37,7 +39,8 @@ const ChatListItem = ({ chat, currentUserId, isChatActive, haveUnreadMessages }:
         isChatActive && "bg-primary/15 border border-l-4 border-primary/30 font-semibold hover:bg-primary/15",
       )}
     >
-      <AvatarDiv user={user} showActiveDot={true} />
+
+      {chat.isGroupChat ? <GroupChatAvatar chat={chat} /> : <AvatarDiv user={user} showActiveDot={true} />}
 
       < div className="flex flex-col overflow-hidden">
         <span className={cn("text-sm font-medium text-foreground truncate",

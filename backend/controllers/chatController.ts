@@ -7,6 +7,7 @@ import { ChatQueryParams } from "../types";
 export const fetchChats = async (req: Request, res: Response) => {
   try {
     const { sortBy, orderBy, userId } = req.query as ChatQueryParams;
+    console.log(req.query);
 
     const allowedSortFields = ["createdAt", "updatedAt", "name"];
 

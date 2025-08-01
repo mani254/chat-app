@@ -3,7 +3,8 @@ import { useUserStore } from '@/src/store/useUserStore'
 import { User } from '@/src/types'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import AvatarDiv from '../Avatar'
+import AvatarDiv from '../../ui/Avatar'
+
 const ActiveUsers = () => {
 
   const activeUsers = useUserStore((state) => state.activeUsers)

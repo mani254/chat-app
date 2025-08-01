@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Paperclip } from "lucide-react";
 import Image from "next/image";
-import AvatarDiv from "../Avatar";
+import AvatarDiv from "../../ui/Avatar";
 
 interface ChatMessageBubbleProps {
   message: any;

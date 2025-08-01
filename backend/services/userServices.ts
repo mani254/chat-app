@@ -10,8 +10,11 @@ class UserService {
     if (search && search.trim() !== "") {
       matchStage.name = { $regex: search, $options: "i" };
     }
-    if (isOnline) {
-      matchStage.isOnline = true;
+
+    if (isOnline !== undefined) {
+      const normalizedIsOnline =
+        typeof isOnline === "string" ? isOnline === "true" : Boolean(isOnline);
+      matchStage.isOnline = normalizedIsOnline;
     }
 
     return matchStage;
@@ -44,7 +47,6 @@ class UserService {
       if (fetchFields && Object.keys(fetchFields).length > 0) {
         userStages.push({ $project: fetchFields });
       }
-
 
       const pipeline = [
         { $match: matchStage },
@@ -83,4 +85,5 @@ class UserService {
     }
   }
 }
+
 export default new UserService();

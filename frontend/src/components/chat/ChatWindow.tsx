@@ -11,8 +11,8 @@ import { useSocketContext } from "../providers/socketProvider";
 import { useMessageSocket } from "@/src/socket/useMessageSocket";
 import { useTypingSocket } from "@/src/socket/useTypingSocket";
 
-import ChatInputArea from "./ChatInputArea";
 import ChatMessagesList from "./ChatMessagesList";
+import ChatInputArea from "./messages/MessageInputArea";
 
 
 const ChatWindow = () => {

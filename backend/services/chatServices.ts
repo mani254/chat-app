@@ -7,7 +7,6 @@ import messageServices from "./messageServices";
 class ChatService {
   private getMatchStage(query: ChatQueryParams): Record<string, any> {
     const { search, userId, isGroupChat } = query;
-
     const matchStage: Record<string, any> = {};
 
     if (userId && Types.ObjectId.isValid(userId)) {
@@ -16,14 +15,19 @@ class ChatService {
       throw new Error("Invalid userId");
     }
 
-    if (typeof isGroupChat === "boolean") {
-      matchStage.isGroupChat = isGroupChat;
+    if (isGroupChat !== undefined) {
+      const normalizedIsGroupChat =
+        typeof isGroupChat === "string"
+          ? isGroupChat === "true"
+          : Boolean(isGroupChat);
+      matchStage.isGroupChat = normalizedIsGroupChat;
     }
 
     if (search && search.trim() !== "") {
       matchStage.name = { $regex: search, $options: "i" };
     }
 
+    console.log(matchStage, "matchStage");
     return matchStage;
   }
 
