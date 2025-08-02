@@ -11,6 +11,8 @@ import { useSocketContext } from "../providers/socketProvider";
 import { useMessageSocket } from "@/src/socket/useMessageSocket";
 import { useTypingSocket } from "@/src/socket/useTypingSocket";
 
+import useMediaQuery from "@/src/hooks/useMediaQuery";
+import { useUIStore } from "@/src/store/useUiStore";
 import ChatMessagesList from "./ChatMessagesList";
 import MessageHeader from "./messages/MessageHeader";
 import MessageInputArea from "./messages/MessageInputArea";
@@ -33,9 +35,21 @@ const ChatWindow = () => {
   const loadingMessages = useMessageStore((s) => s.loadingMessages);
   const totalMessages = useMessageStore((s) => s.totalMessages);
 
+  const toggleSidebar = useUIStore((s) => s.toggleSidebar);
+
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+
   // On chat change: reset and join socket room
   useEffect(() => {
     const chatId = searchParams.get("chatId");
+
+    console.log(isDesktop, 'isdesktop')
+    if (!isDesktop && !chatId) {
+      toggleSidebar(true);
+      setActiveChat(null);
+      resetMessages();
+    }
+
     if (!chatId || !socket) return;
 
     resetMessages();
@@ -48,7 +62,7 @@ const ChatWindow = () => {
       socket.emit("leave-chat", chatId);
       console.log("Left Room:", chatId);
     }
-  }, [searchParams, socket, resetMessages, setActiveChat, loadMessages]);
+  }, [searchParams, socket, resetMessages, setActiveChat, loadMessages, isDesktop, toggleSidebar]);
 
   useEffect(() => {
     if (socket && currentUser) {
@@ -82,8 +96,7 @@ const ChatWindow = () => {
       </div>
 
       <div className="flex flex-col h-full">
-
-
+        
         <div className="sticky top-0">
           <MessageHeader chat={activeChat} />
         </div>

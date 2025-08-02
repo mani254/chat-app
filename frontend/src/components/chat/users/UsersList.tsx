@@ -13,7 +13,7 @@ interface UserListProps {
   selectedUserIds?: string[];
   onClick?: (user: User) => void;
   highlightSelected?: boolean;
-  enabled: boolean; // ✅ Add this
+  enabled: boolean;
 }
 
 const UserList = ({

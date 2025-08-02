@@ -31,6 +31,7 @@ const NoGroupsFound = ({ search }: NoGroupsFoundProps) => {
       <div className="flex items-center justify-center">
         <NewGroupModal />
       </div>
+
     </section>
   );
 };

@@ -19,7 +19,7 @@ export default function Home() {
   return (
     <ProtectedRoute>
       <SocketProvider>
-        <div className={`${theme} h-screen bg-background-accent flex`}>
+        <div className={`${theme} h-screen bg-background-accent flex overflow-hidden`}>
           <ChatSidebar />
           <motion.main
             className="w-full"

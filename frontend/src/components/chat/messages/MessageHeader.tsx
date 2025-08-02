@@ -1,10 +1,13 @@
 import { useUserStore } from '@/src/store/useUserStore';
 import { Chat, User } from '@/src/types';
-import { Info, Phone, Video } from 'lucide-react';
+import { ArrowLeft, Info, Phone, Video } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import AvatarDiv from '../../ui/Avatar';
 
 const MessageHeader = ({ chat }: { chat: Chat }) => {
+  const router = useRouter()
   const currentUser = useUserStore((s) => s.currentUser);
+  const activeUsers = useUserStore((s) => s.activeUsers);
 
   const isGroupChat = chat.isGroupChat;
 
@@ -12,7 +15,7 @@ const MessageHeader = ({ chat }: { chat: Chat }) => {
     ? {
       name: chat.name,
       avatar: chat.avatar || '',
-      onlineUsers: chat.users.filter((u) => u.isOnline),
+      onlineUsers: chat.users.filter((u) => activeUsers.find(au => au._id === u._id)),
     }
     : chat.users.find((u) => u._id !== currentUser?._id)!;
 
@@ -29,7 +32,7 @@ const MessageHeader = ({ chat }: { chat: Chat }) => {
     }
 
     if (!isGroupChat && 'isOnline' in partner) {
-      return partner.isOnline ? (
+      return activeUsers.find((au) => partner._id == au._id) ? (
         <p className="text-xs text-green-500 flex items-center gap-1">
           <span className="w-2 h-2 rounded-full bg-green-500 inline-block"></span>
           Active now
@@ -42,15 +45,26 @@ const MessageHeader = ({ chat }: { chat: Chat }) => {
     return null;
   };
 
-  return (
-    <div className="h-16 flex items-center justify-between border-b bg-background border-background-accent shadow-sm px-4">
-      {/* Left side */}
-      <div className="flex items-center gap-3">
-        <AvatarDiv user={partner as User} className="w-8 h-8" />
+  const handleBack = () => {
+    router.push('/')
+  }
 
-        <div className="flex flex-col">
-          <h5 className="text-lg font-semibold">{partner?.name || 'Unknown'}</h5>
-          {renderStatus()}
+  return (
+    <div className="h-16 flex gap-3 items-center justify-between border-b bg-background border-background-accent shadow-sm px-4">
+
+      <div className='flex gap-2 items-center' onClick={handleBack}>
+        <div className='p-2 rounded-full bg-background-accent cursor-pointer md:hidden'>
+          <ArrowLeft size={19} />
+        </div>
+
+        {/* Left side */}
+        <div className="flex items-center gap-3">
+          <AvatarDiv user={partner as User} className="w-8 h-8" />
+
+          <div className="flex flex-col">
+            <h5 className="text-lg font-semibold">{partner?.name || 'Unknown'}</h5>
+            {renderStatus()}
+          </div>
         </div>
       </div>
 

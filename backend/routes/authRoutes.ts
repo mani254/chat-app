@@ -55,7 +55,7 @@ router.post("/login", async (req: Request, res: Response) => {
         // secure: true,
         // sameSite: "none",
         sameSite: "lax",
-        maxAge: 15 * 60 * 1000,
+        maxAge: 1 * 24 * 60 * 60 * 1000,
       })
       .cookie("refreshToken", refreshToken, {
         httpOnly: true,
@@ -96,7 +96,7 @@ router.get("/refresh", (req: Request, res: Response) => {
         httpOnly: true,
         secure: true,
         sameSite: "none",
-        maxAge: 15 * 60 * 1000,
+        maxAge: 1 * 24 * 60 * 60 * 1000,
       })
       .json({ message: "Token refreshed", accessToken: newAccessToken });
   } catch {

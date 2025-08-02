@@ -108,10 +108,10 @@ const ChatMessagesList = ({
   }, [messages]);
 
   return (
-    <div className="px-4 overflow-y-auto bg-background h-full" ref={scrollRef}>
+    <div className="px-4 pb-[110px] overflow-y-auto bg-background h-full scrollbar-custom relative" ref={scrollRef}>
       {/* 🔼 Top Observer (for infinite scroll) */}
 
-      <div ref={topObserverRef} className="h-8 flex justify-center items-center">
+      <div ref={topObserverRef} className="h-8 flex justify-center items-center ">
         {loading && <LoadMoreLoader />}
       </div>
 

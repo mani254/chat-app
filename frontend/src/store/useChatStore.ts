@@ -24,7 +24,7 @@ interface ChatState {
     userId?: string;
   }) => Promise<void>;
 
-  setActiveChat: (chatId: string) => Promise<void>;
+  setActiveChat: (chatId: string | null) => Promise<void>;
   createChat: (info: CreateChatPayload) => Promise<Chat>;
   updateChatLatestMessage: (chatId: string, message: Message) => Promise<void>;
   resetChats: () => void;
@@ -76,7 +76,11 @@ export const useChatStore = create<ChatState>()(
       },
 
       // ✅ Load full chat by ID
-      setActiveChat: async (chatId: string) => {
+      setActiveChat: async (chatId: string | null) => {
+        if (!chatId) {
+          set({ activeChat: null });
+          return;
+        }
         try {
           const chat = await fetchChatById(chatId);
           if (chat) {
