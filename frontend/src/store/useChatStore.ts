@@ -7,13 +7,7 @@ import {
   fetchChatById,
   fetchChats,
 } from "../lib/chatApi";
-// import {
-//   fetchChats,
-//   fetchChatById,
-//   createChat as createChatAPI,
-// } from "../lib/chatApi"; // separate file (cleaner)
 
-// Zustand state
 interface ChatState {
   chats: Chat[];
   activeChat: Chat | null;

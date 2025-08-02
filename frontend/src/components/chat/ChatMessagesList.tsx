@@ -108,7 +108,7 @@ const ChatMessagesList = ({
   }, [messages]);
 
   return (
-    <div className="flex-1 px-4 overflow-y-auto bg-background h-full" ref={scrollRef}>
+    <div className="px-4 overflow-y-auto bg-background h-full" ref={scrollRef}>
       {/* 🔼 Top Observer (for infinite scroll) */}
 
       <div ref={topObserverRef} className="h-8 flex justify-center items-center">
@@ -116,7 +116,7 @@ const ChatMessagesList = ({
       </div>
 
       {/* 💬 Chat Messages */}
-      <div className="space-y-4 pb-[80px]">
+      <div className="space-y-4">
         {messages.map((message) => {
           const isOwn = message.sender._id === currentUser?._id;
           const showName = activeChat?.isGroupChat && !isOwn;

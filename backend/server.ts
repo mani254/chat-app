@@ -5,7 +5,6 @@ import socketHandler from "./sockets";
 
 const PORT = process.env.PORT || 5000;
 const frontendUrl = process.env.FRONTEND_URL || "";
-console.log(frontendUrl); // Add this line to log the frontendUr
 
 const server = http.createServer(app);
 

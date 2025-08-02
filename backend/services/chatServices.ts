@@ -27,7 +27,6 @@ class ChatService {
       matchStage.name = { $regex: search, $options: "i" };
     }
 
-    console.log(matchStage, "matchStage");
     return matchStage;
   }
 

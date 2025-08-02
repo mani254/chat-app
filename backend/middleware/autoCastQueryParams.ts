@@ -32,11 +32,6 @@ const autoCastQueryParams = (paramsToCast: Record<string, ParamType>) => {
               return;
             }
             (req.query as any)[key] = num;
-            console.log(
-              (req.query as any)[key],
-              "---------------------------------"
-            ); // Add this line for debug information
-            console.log(typeof (req.query as any)[key], "------"); // Add this line for debug information
             break;
           }
 
@@ -48,7 +43,6 @@ const autoCastQueryParams = (paramsToCast: Record<string, ParamType>) => {
               return;
             }
             (req.query as any)[key] = value === "true";
-            console.log((req.query as any)[key]); // Add this line for debug informatio
             break;
           }
 

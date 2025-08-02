@@ -1,12 +1,12 @@
 import { io, Socket } from "socket.io-client";
 
-const SOCKET_URL = "http://localhost:5000";
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_BACKEND_URL;
 
 let socket: Socket | null = null;
 
 export const getSocket = (token: string): Socket => {
   if (!socket) {
-    socket = io(SOCKET_URL, {
+    socket = io(BACKEND_URL, {
       auth: { token }, // JWT token passed here
       transports: ["websocket"],
       autoConnect: false,

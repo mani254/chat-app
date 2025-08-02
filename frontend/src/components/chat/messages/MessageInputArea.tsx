@@ -12,7 +12,7 @@ interface ChatInputAreaProps {
   activeChat: Chat;
 }
 
-const ChatInputArea = ({ activeChat }: ChatInputAreaProps) => {
+const MessageInputArea = ({ activeChat }: ChatInputAreaProps) => {
   const [input, setInput] = useState<string>("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -149,4 +149,4 @@ const ChatInputArea = ({ activeChat }: ChatInputAreaProps) => {
   );
 };
 
-export default ChatInputArea;
+export default MessageInputArea;

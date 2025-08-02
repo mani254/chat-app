@@ -38,8 +38,10 @@ const ChatMessageBubble = ({ message, isOwn, showName, systemMessage }: ChatMess
       )}
       <div
         className={cn(
-          "inline-block px-4 py-2 rounded-2xl max-w-full break-words",
-          isOwn ? "bg-blue-600 text-white" : "bg-background-accent",
+          "relative inline-block px-4 py-2 rounded-2xl max-w-full break-words",
+          isOwn
+            ? "bg-blue-600 text-white rounded-br-sm message-bubble-own"
+            : "bg-background-accent rounded-bl-sm message-bubble-other",
           systemMessage && "bg-background-accent/50 text-foreground-accent py-1"
         )}
       >

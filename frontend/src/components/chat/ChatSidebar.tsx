@@ -9,6 +9,7 @@ import { Search } from "lucide-react";
 import { useState } from "react";
 import Header from "../Header";
 
+import useMediaQuery from "@/src/hooks/useMediaQuery";
 import ActiveUsersTab from "./tabs/ActiveUsersTab";
 import ChatsTab from "./tabs/ChatTab";
 import GroupsTab from "./tabs/GroupsTab";
@@ -16,6 +17,8 @@ import GroupsTab from "./tabs/GroupsTab";
 const ChatSidebar = () => {
   const { isSidebarOpen } = useUIStore();
   const [search, setSearch] = useState("");
+
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   return (
     <AnimatePresence>
@@ -27,7 +30,8 @@ const ChatSidebar = () => {
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
           className={cn(
             "fixed md:static bg-background border-r border-background-accent h-full",
-            "w-[300px] md:w-1/3 max-w-[340px] py-3 shadow-lg md:shadow-none"
+            "w-[300px] md:w-1/3 max-w-[340px] py-3 shadow-lg md:shadow-none",
+            !isDesktop && "w-full max-w-full"
           )}
         >
           <div className="sticky top-0 z-10 bg-background py-1">

@@ -81,7 +81,7 @@ const Register = (): React.ReactElement => {
     const { email, password, name } = registerData;
     try {
       await registerUser({ email, password, name });
-      router.push('/login');
+      router.replace('/login');
     } catch (error) {
       console.error('Registration failed:', error);
     }

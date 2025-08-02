@@ -16,7 +16,6 @@ connectDB();
 const app = express();
 const frontendUrl = process.env.FRONTEND_URL || "";
 
-console.log(frontendUrl);
 app.use(
   cors({
     origin: [frontendUrl, "*"],

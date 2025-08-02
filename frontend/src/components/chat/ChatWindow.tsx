@@ -12,7 +12,8 @@ import { useMessageSocket } from "@/src/socket/useMessageSocket";
 import { useTypingSocket } from "@/src/socket/useTypingSocket";
 
 import ChatMessagesList from "./ChatMessagesList";
-import ChatInputArea from "./messages/MessageInputArea";
+import MessageHeader from "./messages/MessageHeader";
+import MessageInputArea from "./messages/MessageInputArea";
 
 
 const ChatWindow = () => {
@@ -70,7 +71,7 @@ const ChatWindow = () => {
   const hasMoreMessages = messages.length < totalMessages;
 
   return (
-    <div className="flex-1 flex flex-col h-full relative">
+    <div className="flex-1 flex flex-col h-full relative bg-green-200">
 
       <div className="relative -z-50 hidden">
         <audio controls ref={audioRef} src='../../assets/sounds/message-arrived-sound-effect.mp3' />
@@ -80,16 +81,27 @@ const ChatWindow = () => {
         <audio controls ref={typingSoundRef} src='../../assets/sounds/typing-effect.mp3' />
       </div>
 
-      <ChatMessagesList
-        messages={messages}
-        currentUser={currentUser}
-        activeChat={activeChat}
-        loading={loadingMessages}
-        hasMoreMessages={hasMoreMessages}
-        onLoadMore={() => loadMessages({ chatId: activeChat._id })}
-      />
+      <div className="flex flex-col h-full">
 
-      <ChatInputArea activeChat={activeChat} />
+
+        <div className="sticky top-0">
+          <MessageHeader chat={activeChat} />
+        </div>
+        <ChatMessagesList
+          messages={messages}
+          currentUser={currentUser}
+          activeChat={activeChat}
+          loading={loadingMessages}
+          hasMoreMessages={hasMoreMessages}
+          onLoadMore={() => loadMessages({ chatId: activeChat._id })}
+        />
+
+        <MessageInputArea activeChat={activeChat} />
+
+      </div>
+
+
+
     </div>
   );
 };

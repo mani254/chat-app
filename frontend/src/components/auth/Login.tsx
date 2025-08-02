@@ -35,7 +35,7 @@ const Login = (): React.ReactElement => {
     try {
       const user = await logInUser(loginData)
       if (user) {
-        router.push('/');
+        router.replace('/');
       }
     } catch (error) {
       console.error('Login failed:', error);

@@ -1,9 +1,7 @@
-import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
-import { Ellipsis, LogOut, Menu, Moon, Settings, User, Video } from "lucide-react";
+import { Ellipsis, LogOut, Moon, Settings, User, Video } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
-import { useUIStore } from "../store/useUiStore";
 import { signOut, useUserStore } from "../store/useUserStore";
 import AvatarDiv from "./ui/Avatar";
 
@@ -19,7 +17,6 @@ const dropdownItemClass = `
 const Header = () => {
   const router = useRouter()
   const { currentUser } = useUserStore();
-  const { isSidebarOpen, toggleSidebar } = useUIStore();
 
   const handleSignOut = useCallback(async () => {
     const res = await signOut()
@@ -32,16 +29,6 @@ const Header = () => {
     <div className="h-16 flex items-center justify-between border-b border-background-accent shadow-sm px-4">
       {/* Left side */}
       <div className="flex items-center gap-3">
-        {!isSidebarOpen && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => toggleSidebar()}
-            className="lg:hidden cursor-pointer"
-          >
-            <Menu className="w-5 h-5" />
-          </Button>
-        )}
 
         <h1 className="text-xl font-semibold">
           Chats
