@@ -69,7 +69,7 @@ const NewGroupModal = () => {
         </button>
       }
     >
-      <div className="h-[90vh] md:h-[500px] flex flex-col gap-4">
+      <div className="h-[90vh] md:h-auto min-h-80 md:max-h-96">
         {/* Group Name Input */}
         <div className="px-5">
           <Input

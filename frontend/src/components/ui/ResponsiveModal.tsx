@@ -44,7 +44,7 @@ export const ResponsiveModal = ({
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogTrigger asChild>{trigger}</DialogTrigger>
-        <DialogContent className="p-0 overflow-hidden bg-background">
+        <DialogContent className="p-0 overflow-hidden bg-background rounded-3xl">
           {title && (
             <DialogHeader className="p-5 pb-1 border-b border-border">
               <DialogTitle>{title}</DialogTitle>
@@ -64,13 +64,14 @@ export const ResponsiveModal = ({
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerTrigger asChild>{trigger}</DrawerTrigger>
-      <DrawerContent className="p-0 overflow-hidden bg-background">
+      <DrawerContent className="p-0 overflow-hidden bg-background rounded-3xl max-h-full">
         {title && (
           <DrawerHeader className="px-4 pt-4 border-b border-border">
             <DrawerTitle>{title}</DrawerTitle>
             {description && <DrawerDescription>{description}</DrawerDescription>}
           </DrawerHeader>
         )}
+
         {children}
       </DrawerContent>
     </Drawer>

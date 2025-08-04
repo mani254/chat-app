@@ -96,7 +96,7 @@ const ChatWindow = () => {
       </div>
 
       <div className="flex flex-col h-full">
-        
+
         <div className="sticky top-0">
           <MessageHeader chat={activeChat} />
         </div>

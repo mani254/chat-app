@@ -48,9 +48,9 @@ const NewChatModal = () => {
         </button>
       }
     >
-      <div className="h-[90vh] md:h-72">
+      <div className="h-[90vh] md:h-96">
         {/* Search Bar */}
-        <div className="mb-2 relative mx-5">
+        <div className="relative mx-5">
           <Input
             placeholder="Search users..."
             value={search}

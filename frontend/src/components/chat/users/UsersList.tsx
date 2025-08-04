@@ -34,7 +34,7 @@ const UserList = ({
   );
 
   return (
-    <div className="h-full px-4 overflow-y-auto scrollbar-custom" ref={scrollRef}>
+    <div className="h-full px-4 py-4 overflow-y-auto scrollbar-custom" ref={scrollRef}>
       {loadingUsers && users.length === 0 ? (
         Array.from({ length: 4 }).map((_, i) => (
           <Skeleton key={i} className="h-14 rounded-2xl bg-background-accent" />

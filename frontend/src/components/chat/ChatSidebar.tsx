@@ -6,10 +6,11 @@ import { cn } from "@/lib/utils";
 import { useUIStore } from "@/src/store/useUiStore";
 import { AnimatePresence, motion } from "framer-motion";
 import { Search } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "../Header";
 
 import useMediaQuery from "@/src/hooks/useMediaQuery";
+import { useUserStore } from "@/src/store/useUserStore";
 import ActiveUsersTab from "./tabs/ActiveUsersTab";
 import ChatsTab from "./tabs/ChatTab";
 import GroupsTab from "./tabs/GroupsTab";
@@ -19,6 +20,11 @@ const ChatSidebar = () => {
   const [search, setSearch] = useState("");
 
   const isDesktop = useMediaQuery("(min-width: 768px)");
+  const setActiveUsers = useUserStore((state) => state.setActiveUsers)
+
+  useEffect(() => {
+    setActiveUsers();
+  }, [setActiveUsers]);
 
   return (
     <AnimatePresence>

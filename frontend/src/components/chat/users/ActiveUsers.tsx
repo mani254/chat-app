@@ -2,21 +2,16 @@ import { useChatStore } from '@/src/store/useChatStore';
 import { useUserStore } from '@/src/store/useUserStore';
 import { User } from '@/src/types';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import AvatarDiv from '../../ui/Avatar';
 import NoActiveUsersFound from './NoActiveUsersFound';
 
 const ActiveUsers = () => {
 
   const activeUsers = useUserStore((state) => state.activeUsers);
-  const setActiveUsers = useUserStore((state) => state.setActiveUsers);
   const currentUser = useUserStore((state) => state.currentUser);
   const createChat = useChatStore((state) => state.createChat);
   const router = useRouter();
 
-  useEffect(() => {
-    setActiveUsers();
-  }, [setActiveUsers]);
 
   async function handleCreateChat(user: User) {
     const info = {

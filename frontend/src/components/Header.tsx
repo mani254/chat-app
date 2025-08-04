@@ -1,9 +1,10 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { Ellipsis, LogOut, Moon, Settings, User, Video } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { signOut, useUserStore } from "../store/useUserStore";
 import AvatarDiv from "./ui/Avatar";
+import FeatureComingSoonModal from "./ui/FeatureCommingSoonModal";
 
 const dropdownItemClass = `
   cursor-pointer px-4 py-2 flex items-center text-sm
@@ -17,6 +18,9 @@ const dropdownItemClass = `
 const Header = () => {
   const router = useRouter()
   const { currentUser } = useUserStore();
+  const [openFeatureCommingSoonModal, setOpenFeatureCommingSoonModal] = useState(false);
+
+
 
   const handleSignOut = useCallback(async () => {
     const res = await signOut()
@@ -44,7 +48,7 @@ const Header = () => {
             </div>
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent
+          <DropdownMenuContent onClick={() => setOpenFeatureCommingSoonModal(true)}
             className="w-64 bg-background shadow-xl border border-border rounded-lg z-10"
             align="start"
           >
@@ -66,17 +70,17 @@ const Header = () => {
             <DropdownMenuSeparator className="my-1" />
 
             {/* Menu Items */}
-            <DropdownMenuItem className={dropdownItemClass}>
+            <DropdownMenuItem className={dropdownItemClass} onClick={() => setOpenFeatureCommingSoonModal(true)}>
               <User className="w-4 h-4 mr-2" />
               View Profile
             </DropdownMenuItem>
 
-            <DropdownMenuItem className={dropdownItemClass}>
+            <DropdownMenuItem className={dropdownItemClass} onClick={() => setOpenFeatureCommingSoonModal(true)}>
               <Settings className="w-4 h-4 mr-2" />
               Settings
             </DropdownMenuItem>
 
-            <DropdownMenuItem className={dropdownItemClass}>
+            <DropdownMenuItem className={dropdownItemClass} onClick={() => setOpenFeatureCommingSoonModal(true)}>
               <Moon className="w-4 h-4 mr-2" />
               Toggle Theme
             </DropdownMenuItem>
@@ -94,13 +98,15 @@ const Header = () => {
         </DropdownMenu>
 
 
-        <div className="p-2 bg-background-accent rounded-full cursor-pointer">
+        <div className="p-2 bg-background-accent rounded-full cursor-pointer" onClick={() => setOpenFeatureCommingSoonModal(true)}>
           <Video size={19} />
         </div>
 
-        <div className="p-2 bg-background-accent rounded-full cursor-pointer">
+        <div className="p-2 bg-background-accent rounded-full cursor-pointer" onClick={() => setOpenFeatureCommingSoonModal(true)}>
           <Settings size={19} />
         </div>
+
+        <FeatureComingSoonModal open={openFeatureCommingSoonModal} onOpenChange={setOpenFeatureCommingSoonModal} />
       </div>
     </div >
   )
