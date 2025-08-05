@@ -19,7 +19,6 @@ async function fetchMessages(
 
 interface MessageState {
   messages: Message[];
-  page: number;
   limit: number;
   totalMessages: number;
   loadingMessages: boolean;
@@ -31,14 +30,8 @@ interface MessageState {
       avatar: string;
     } | null;
   };
-  setTypingInfo: (typingInfo: {
-    isTyping: boolean;
-    typingUser: {
-      name: string;
-      id: string;
-      avatar: string;
-    } | null;
-  }) => void;
+
+  setTypingInfo: (typingInfo: MessageState["typingInfo"]) => void;
 
   addMessage: (message: Message) => void;
 
@@ -55,64 +48,61 @@ export const useMessageStore = create<MessageState>()(
   devtools(
     (set, get) => ({
       messages: [],
-      page: 1,
-      limit: 40,
+      limit: 20,
       totalMessages: 0,
       loadingMessages: false,
 
+      typingInfo: {
+        isTyping: false,
+        typingUser: null,
+      },
+
+      setTypingInfo: (typingInfo) => set({ typingInfo }),
+
+      addMessage: (message: Message) => {
+        set((state) => {
+          const exists = state.messages.some((m) => m._id === message._id);
+          if (exists) return {};
+          return { messages: [...state.messages, message] };
+        });
+      },
       loadMessages: async ({ chatId, reset = false, limit }) => {
-        const { page, messages, loadingMessages } = get();
+        const { messages, loadingMessages } = get();
         if (loadingMessages) return;
 
-        const nextPage = reset ? 1 : page;
         const fetchLimit = limit ?? get().limit;
+        const skip = reset ? 0 : messages.length;
 
         set({ loadingMessages: true });
 
         try {
           const { messages: newMessages, totalItems } = await fetchMessages({
             chatId,
-            page: nextPage,
+            skip,
             limit: fetchLimit,
+            sortBy: "createdAt",
+            orderBy: "desc",
           });
 
           const orderedMessages = newMessages.reverse();
 
-          set({
+          set((state) => ({
             messages: reset
               ? orderedMessages
-              : [...orderedMessages, ...messages],
-            page: nextPage + 1,
+              : [...orderedMessages, ...state.messages],
             limit: fetchLimit,
             totalMessages: totalItems,
             loadingMessages: false,
-          });
+          }));
         } catch (err) {
-          console.error("Failed to load messages", err);
+          console.error("Failed to load messages:", err);
           set({ loadingMessages: false });
         }
-      },
-
-      setTypingInfo(typingInfo) {
-        set({ typingInfo });
-      },
-
-      addMessage: (message: Message) => {
-        const { messages, limit } = get();
-        const newMessages = [...messages];
-
-        if (newMessages.length >= limit) {
-          newMessages.shift();
-        }
-
-        newMessages.push(message);
-        set({ messages: newMessages });
       },
 
       resetMessages: () =>
         set({
           messages: [],
-          page: 1,
           totalMessages: 0,
           loadingMessages: false,
         }),

@@ -29,6 +29,7 @@ app.use("/api/auth", authRoutes);
 const queryValuesToCast: Record<string, "number" | "boolean" | "object"> = {
   page: "number",
   limit: "number",
+  skip: "number",
   fetchFields: "object",
   isOnline: "boolean",
   isGroupChat: "boolean",

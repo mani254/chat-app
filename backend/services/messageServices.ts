@@ -42,7 +42,10 @@ class MessageService {
         includeChat = false,
       } = query;
 
-      const skip = page && limit ? (Number(page) - 1) * Number(limit) : 0;
+      const skip =
+        Number(query?.skip) ||
+        (page && limit ? (Number(page) - 1) * Number(limit) : 0);
+
       const matchStage = this.getMatchStage(query);
 
       const messageStages: any[] = [
@@ -60,7 +63,6 @@ class MessageService {
 
       const pipeline = [
         { $match: matchStage },
-
         // Populate sender
         {
           $lookup: {
@@ -76,7 +78,20 @@ class MessageService {
             preserveNullAndEmptyArrays: true,
           },
         },
-
+        {
+          $lookup: {
+            from: "messages",
+            localField: "replyTo",
+            foreignField: "_id",
+            as: "replyTo",
+          },
+        },
+        {
+          $unwind: {
+            path: "$replyTo",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
         ...(includeChat
           ? [
               {
@@ -113,6 +128,10 @@ class MessageService {
       ];
 
       const [result] = await Message.aggregate(pipeline);
+
+      result.messages.forEach((element: any) => {
+        console.log(element.content, "message");
+      });
       return result || { totalItems: 0, messages: [] };
     } catch (error: any) {
       console.error("Error while fetching messages:", error);

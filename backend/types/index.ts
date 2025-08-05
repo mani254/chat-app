@@ -8,6 +8,7 @@ export interface UserQueryParams {
   orderBy?: string;
   page?: number;
   limit?: number;
+  skip?: number;
   fetchFields?: Record<string, number>;
   filterMain?: string;
   isOnline?: boolean | string;
@@ -24,6 +25,7 @@ export interface ChatQueryParams {
   orderBy?: string;
   page?: number;
   limit?: number;
+  skip?: number;
   fetchFields?: Record<string, number>;
   userId?: string;
   isGroupChat?: boolean | string;
@@ -41,6 +43,7 @@ export interface MessageQueryParams {
   search?: string;
   page?: number;
   limit?: number;
+  skip?: number;
   sortBy?: "createdAt" | "updatedAt";
   orderBy?: "asc" | "desc";
   fetchFields?: Record<string, number>;

@@ -33,7 +33,8 @@ export const registerMessageHandlers = (socket: Socket, io: Server) => {
 
       const populatedMessage = await MessageModel.findById(message._id)
         .populate("sender", "name avatar")
-        .populate("chat");
+        .populate("chat")
+        .populate("replyTo");
 
       // 🛰 Emit to chat room
       io.to(chat._id.toString()).emit("new-message", populatedMessage);

@@ -16,7 +16,9 @@ export const fetchMessages = async (req: Request, res: Response) => {
       sortBy,
       orderBy,
       includeChat,
+      skip,
     } = req.query as unknown as MessageQueryParams;
+    console.log(req.query);
 
     // Validate required params
     if (!chatId) {
@@ -58,6 +60,7 @@ export const fetchMessages = async (req: Request, res: Response) => {
       search,
       page: page ? Number(page) : undefined,
       limit: limit ? Number(limit) : undefined,
+      skip: skip ? Number(skip) : undefined,
       sortBy,
       orderBy,
       includeChat: includeChat === "true", // from query string it's string

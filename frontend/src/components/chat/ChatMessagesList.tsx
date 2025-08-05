@@ -1,32 +1,34 @@
 "use client";
 
-import { Chat, Message, User } from "@/src/types";
+import { useMessageStore } from "@/src/store/useMessageStore";
+import { Chat, User } from "@/src/types";
 import { ArrowDown } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import LoadMoreLoader from "../loaders/LoadMoreLoader";
 import ChatMessageBubble from "./messages/MessageBubble";
 import TypingDots from "./messages/TypingDots";
 
 interface ChatMessagesListProps {
-  messages: Message[];
   currentUser: User | null;
   activeChat: Chat;
   loading: boolean;
-  hasMoreMessages: boolean;
   onLoadMore: () => void;
 }
 
 const ChatMessagesList = ({
-  messages,
   currentUser,
   activeChat,
   loading,
-  hasMoreMessages,
   onLoadMore,
 }: ChatMessagesListProps) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const topObserverRef = useRef<HTMLDivElement | null>(null); // for load more
   const bottomObserverRef = useRef<HTMLDivElement | null>(null); // for scroll-to-bottom visibility
+
+  const messages = useMessageStore((s) => s.messages);
+  const totalMessages = useMessageStore((s) => s.totalMessages);
+  const hasMoreMessages = useMemo(() => messages.length < totalMessages, [messages, totalMessages])
+
 
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const [hasNewMessageInBottom, setHasNewMessageInBottom] = useState(false);

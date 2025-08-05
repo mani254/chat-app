@@ -2,12 +2,16 @@ import { useUserStore } from '@/src/store/useUserStore';
 import { Chat, User } from '@/src/types';
 import { ArrowLeft, Info, Phone, Video } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import AvatarDiv from '../../ui/Avatar';
+import FeatureComingSoonModal from '../../ui/FeatureCommingSoonModal';
 
 const MessageHeader = ({ chat }: { chat: Chat }) => {
   const router = useRouter()
   const currentUser = useUserStore((s) => s.currentUser);
   const activeUsers = useUserStore((s) => s.activeUsers);
+
+  const [openFeatureCommingSoonModal, setOpenFeatureCommingSoonModal] = useState(false)
 
   const isGroupChat = chat.isGroupChat;
 
@@ -50,39 +54,43 @@ const MessageHeader = ({ chat }: { chat: Chat }) => {
   }
 
   return (
-    <div className="h-16 flex gap-3 items-center justify-between border-b bg-background border-background-accent shadow-sm px-4">
+    <>
+      <div className="h-16 flex gap-3 items-center justify-between border-b bg-background border-background-accent shadow-sm px-4">
 
-      <div className='flex gap-2 items-center' onClick={handleBack}>
-        <div className='p-2 rounded-full bg-background-accent cursor-pointer md:hidden'>
-          <ArrowLeft size={19} />
+        <div className='flex gap-2 items-center' onClick={handleBack}>
+          <div className='p-2 rounded-full bg-background-accent cursor-pointer md:hidden'>
+            <ArrowLeft size={19} />
+          </div>
+
+          {/* Left side */}
+          <div className="flex items-center gap-3">
+            <AvatarDiv user={partner as User} className="w-8 h-8" />
+
+            <div className="flex flex-col">
+              <h5 className="text-lg font-semibold">{partner?.name || 'Unknown'}</h5>
+              {renderStatus()}
+            </div>
+          </div>
         </div>
 
-        {/* Left side */}
-        <div className="flex items-center gap-3">
-          <AvatarDiv user={partner as User} className="w-8 h-8" />
+        {/* Right side */}
+        <div className="flex gap-2 items-center">
+          <div className="p-2 bg-background-accent rounded-full cursor-pointer hover:bg-background-accent/80 transition" onClick={() => setOpenFeatureCommingSoonModal(true)}>
+            <Phone size={19} />
+          </div>
 
-          <div className="flex flex-col">
-            <h5 className="text-lg font-semibold">{partner?.name || 'Unknown'}</h5>
-            {renderStatus()}
+          <div className="p-2 bg-background-accent rounded-full cursor-pointer hover:bg-background-accent/80 transition" onClick={() => setOpenFeatureCommingSoonModal(true)}>
+            <Video size={19} />
+          </div>
+
+          <div className="p-2 bg-background-accent rounded-full cursor-pointer hover:bg-background-accent/80 transition" onClick={() => setOpenFeatureCommingSoonModal(true)}>
+            <Info size={19} />
           </div>
         </div>
       </div>
+      <FeatureComingSoonModal open={openFeatureCommingSoonModal} onOpenChange={setOpenFeatureCommingSoonModal} />
+    </>
 
-      {/* Right side */}
-      <div className="flex gap-2 items-center">
-        <div className="p-2 bg-background-accent rounded-full cursor-pointer hover:bg-background-accent/80 transition">
-          <Phone size={19} />
-        </div>
-
-        <div className="p-2 bg-background-accent rounded-full cursor-pointer hover:bg-background-accent/80 transition">
-          <Video size={19} />
-        </div>
-
-        <div className="p-2 bg-background-accent rounded-full cursor-pointer hover:bg-background-accent/80 transition">
-          <Info size={19} />
-        </div>
-      </div>
-    </div>
   );
 };
 

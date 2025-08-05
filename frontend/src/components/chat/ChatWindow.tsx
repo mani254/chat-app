@@ -29,11 +29,11 @@ const ChatWindow = () => {
   const activeChat = useChatStore((s) => s.activeChat);
   const setActiveChat = useChatStore((s) => s.setActiveChat);
 
-  const messages = useMessageStore((s) => s.messages);
+
   const loadMessages = useMessageStore((s) => s.loadMessages);
   const resetMessages = useMessageStore((s) => s.resetMessages);
   const loadingMessages = useMessageStore((s) => s.loadingMessages);
-  const totalMessages = useMessageStore((s) => s.totalMessages);
+
 
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
 
@@ -43,7 +43,6 @@ const ChatWindow = () => {
   useEffect(() => {
     const chatId = searchParams.get("chatId");
 
-    console.log(isDesktop, 'isdesktop')
     if (!isDesktop && !chatId) {
       toggleSidebar(true);
       setActiveChat(null);
@@ -82,7 +81,6 @@ const ChatWindow = () => {
 
   if (!activeChat) return null;
 
-  const hasMoreMessages = messages.length < totalMessages;
 
   return (
     <div className="flex-1 flex flex-col h-full relative bg-green-200">
@@ -101,20 +99,13 @@ const ChatWindow = () => {
           <MessageHeader chat={activeChat} />
         </div>
         <ChatMessagesList
-          messages={messages}
           currentUser={currentUser}
           activeChat={activeChat}
           loading={loadingMessages}
-          hasMoreMessages={hasMoreMessages}
           onLoadMore={() => loadMessages({ chatId: activeChat._id })}
         />
-
         <MessageInputArea activeChat={activeChat} />
-
       </div>
-
-
-
     </div>
   );
 };

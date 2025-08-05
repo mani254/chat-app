@@ -30,7 +30,8 @@ class UserService {
         fetchFields,
       } = query;
 
-      const skip = page && limit ? (Number(page) - 1) * Number(limit) : 0;
+      const skip =
+        query?.skip || (page && limit) ? (Number(page) - 1) * Number(limit) : 0;
       const matchStage = this.getMatchState(query);
 
       // Build dynamic stages

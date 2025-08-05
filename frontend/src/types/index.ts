@@ -4,6 +4,7 @@ export interface UserQueryParams {
   orderBy?: string;
   page?: number;
   limit?: number;
+  skip?: number;
   fetchFields?: Record<string, number>;
   filterMain?: boolean;
   isOnline?: boolean;
@@ -15,6 +16,7 @@ export interface ChatQueryParams {
   orderBy?: string;
   page?: number;
   limit?: number;
+  skip?: number;
   fetchFields?: Record<string, number>;
   userId?: string;
   isGroupChat?: boolean;
@@ -30,6 +32,18 @@ export interface User {
   isOnline?: boolean;
 }
 
+export interface MessageWithoutSenderAndChat {
+  _id: string;
+  chat: string;
+  sender: string;
+  content: string;
+  readBy: string[];
+  messageType: "text" | "image" | "file" | "note";
+  createdAt: string;
+  midText: boolean;
+  replyTo?: Message;
+}
+
 export interface Message {
   _id: string;
   chat: string | Chat;
@@ -39,6 +53,7 @@ export interface Message {
   messageType: "text" | "image" | "file" | "note";
   createdAt: string;
   midText: boolean;
+  replyTo?: MessageWithoutSenderAndChat;
 }
 
 export interface Chat {
@@ -59,6 +74,7 @@ export interface MessageQueryParams {
   search?: string;
   page?: number;
   limit?: number;
+  skip?: number;
   sortBy?: "createdAt" | "updatedAt";
   orderBy?: "asc" | "desc";
   fetchFields?: Record<string, number>;
