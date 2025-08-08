@@ -129,9 +129,6 @@ class MessageService {
 
       const [result] = await Message.aggregate(pipeline);
 
-      result.messages.forEach((element: any) => {
-        console.log(element.content, "message");
-      });
       return result || { totalItems: 0, messages: [] };
     } catch (error: any) {
       console.error("Error while fetching messages:", error);

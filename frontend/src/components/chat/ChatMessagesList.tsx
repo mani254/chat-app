@@ -24,6 +24,8 @@ const ChatMessagesList = ({
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const topObserverRef = useRef<HTMLDivElement | null>(null); // for load more
   const bottomObserverRef = useRef<HTMLDivElement | null>(null); // for scroll-to-bottom visibility
+  const previousScrollHeight = useRef<number>(0);
+  const loadingMore = useRef<boolean>(false);
 
   const messages = useMessageStore((s) => s.messages);
   const totalMessages = useMessageStore((s) => s.totalMessages);
@@ -42,7 +44,12 @@ const ChatMessagesList = ({
 
     const observer = new IntersectionObserver(
       ([entry]) => {
+        // if (entry.isIntersecting && !loading && hasMoreMessages) {
+        //   onLoadMore();
+        // }
         if (entry.isIntersecting && !loading && hasMoreMessages) {
+          previousScrollHeight.current = scrollEl.scrollHeight;
+          loadingMore.current = true;
           onLoadMore();
         }
       },
@@ -95,6 +102,19 @@ const ChatMessagesList = ({
     setInitialScrollDone(false);
   }, [activeChat?._id]);
 
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container || !loadingMore.current) return;
+
+    requestAnimationFrame(() => {
+      const newScrollHeight = container.scrollHeight;
+      const diff = newScrollHeight - previousScrollHeight.current;
+
+      container.scrollTop += diff; // 👈 Maintain visual scroll position
+      loadingMore.current = false;
+    });
+  }, [messages]);
+
   // 🔽 When new message arrives, track if user is near bottom
   useEffect(() => {
     const container = scrollRef.current;
@@ -142,7 +162,7 @@ const ChatMessagesList = ({
       {/* ⬇️ Scroll to Bottom Button */}
       {showScrollToBottom && (
         <button
-          className="absolute bottom-24 right-1/2 -translate-x-1/2  bg-primary/85 text-white px-4 py-2 rounded-full shadow-lg transition hover:bg-primary/90"
+          className="fixed bottom-24 right-1/2 -translate-x-1/2  bg-primary/85 text-white px-4 py-2 rounded-full shadow-lg transition hover:bg-primary/90"
           onClick={() => {
             if (scrollRef.current) {
               scrollRef.current.scrollTo({
