@@ -85,6 +85,47 @@
   --sidebar-ring: 217.2 91.2% 59.8%;
 }
 
+.light-orange {
+  --background: 33, 100%, 98%;
+  --foreground: 25, 35%, 20%;
+
+  --background-accent: 33, 100%, 95%;
+  --foreground-accent: 27, 35%, 40%;
+
+  --primary-color: 28, 90%, 55%;
+  --primary-accent: 33, 100%, 97%;
+
+  --card: 0, 0%, 100%;
+  --card-foreground: 25, 40%, 15%;
+
+  --popover: 0, 0%, 100%;
+  --popover-foreground: 25, 40%, 15%;
+
+  --muted: 33, 45%, 92%; /* soft orange-muted background */
+  --muted-foreground: 28, 25%, 40%;
+
+  --accent: 33, 90%, 95%;
+  --accent-foreground: 28, 45%, 20%;
+
+  --destructive: 0, 84%, 60%; /* red for destructive */
+  --destructive-foreground: 0, 0%, 100%;
+
+  --border: 33, 40%, 90%;
+  --input: 33, 40%, 90%;
+  --ring: 28, 90%, 55%;
+
+  --radius: 0.5rem;
+
+  --sidebar-background: 33, 100%, 97%;
+  --sidebar-foreground: 25, 40%, 15%;
+
+  --sidebar-accent: 33, 90%, 93%;
+  --sidebar-accent-foreground: 28, 45%, 20%;
+
+  --sidebar-border: 33, 40%, 90%;
+  --sidebar-ring: 28, 90%, 55%;
+}
+
 @theme inline {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));

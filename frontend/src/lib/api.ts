@@ -1,33 +1,29 @@
 import axios from "axios";
-import { userStore } from "../store/useUserStore";
 
 const baseURL = process.env.NEXT_PUBLIC_API_BACKEND_URL;
-const instance = axios.create({
-  baseURL: baseURL,
-  withCredentials: true,
+
+const api = axios.create({
+  baseURL,
+  withCredentials: true, // very important for cookies
 });
 
-instance.interceptors.response.use(
+// Interceptor
+api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    // Only retry once
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
-        const refreshRes = await instance.get("/api/auth/refresh");
-        const newAccessToken = refreshRes.data?.accessToken;
-
-        if (newAccessToken) {
-          localStorage.setItem("accessToken", newAccessToken);
-          userStore.getState().setToken(newAccessToken);
-          return instance(originalRequest); // Retry the original request
-        }
+        await axios.get(`${baseURL}/api/auth/refresh`, {
+          withCredentials: true, // send refresh cookie
+        });
+        return api(originalRequest); // retry original request
       } catch (refreshError) {
         console.error("Refresh failed", refreshError);
-        userStore.getState().logout();
+        // optional: redirect to login
       }
     }
 
@@ -35,4 +31,4 @@ instance.interceptors.response.use(
   }
 );
 
-export default instance;
+export default api;

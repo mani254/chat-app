@@ -45,11 +45,7 @@ async function loginUser(credentials: {
     const response = await axios.post<{
       message: string;
       data: User;
-      accessToken: string;
-      refreshToken: string;
     }>("/api/auth/login", credentials);
-    const accessToken = response.data.accessToken;
-    localStorage.setItem("accessToken", accessToken);
     return response.data.data;
   } catch (err: any) {
     const errorMessage = err.response?.data?.message || err.message;
@@ -76,7 +72,7 @@ interface UserState {
   users: User[];
   activeUsers: User[];
   isAuthenticated: boolean;
-  token?: string;
+  // token?: string;
 
   page: number;
   limit: number;
@@ -90,7 +86,7 @@ interface UserState {
   }) => Promise<User | null>;
   logout: () => Promise<void>;
   getCurrentUser: () => Promise<void>;
-  setToken: (token: string) => void;
+  // setToken: (token: string) => void;
 
   loadUsers: (
     search: string,
@@ -120,12 +116,11 @@ export const useUserStore = create<UserState>()(
 
       login: async ({ email, password }) => {
         const loggedInUser = await loginUser({ email, password });
-        const accessToken = window.localStorage.getItem("accessToken") || "";
         if (loggedInUser) {
           set({
             currentUser: loggedInUser,
             isAuthenticated: true,
-            token: accessToken,
+            // token: undefined,
           });
         }
         return loggedInUser;
@@ -134,9 +129,8 @@ export const useUserStore = create<UserState>()(
       logout: async () => {
         const res = await signOut();
         if (res) {
-          localStorage.removeItem("accessToken");
           set({
-            token: undefined,
+            // token: undefined,
             currentUser: null,
             isAuthenticated: false,
             users: [],
@@ -145,7 +139,7 @@ export const useUserStore = create<UserState>()(
         }
       },
 
-      setToken: (token) => set({ token }),
+      // setToken: (_token) => set({ token: undefined }),
 
       getCurrentUser: async () => {
         try {

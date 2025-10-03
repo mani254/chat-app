@@ -4,14 +4,12 @@ import { Socket } from "socket.io-client";
 import { getSocket } from "../lib/socket";
 import { useUserStore } from "../store/useUserStore";
 
-export const useSocket = (token: string) => {
+export const useSocket = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
-    if (!token) return;
-
-    const sock = getSocket(token);
+    const sock = getSocket();
 
     sock.connect();
 
@@ -50,7 +48,7 @@ export const useSocket = (token: string) => {
       sock.off("connect_error");
       sock.disconnect();
     };
-  }, [token]);
+  }, []);
 
   return { socket, connected };
 };

@@ -3,9 +3,19 @@ import jwt from "jsonwebtoken";
 import { Socket } from "socket.io";
 import User from "../models/User";
 
+function parseCookies(cookieHeader?: string): Record<string, string> {
+  if (!cookieHeader) return {};
+  return cookieHeader.split(";").reduce((acc: Record<string, string>, part) => {
+    const [key, ...rest] = part.trim().split("=");
+    acc[decodeURIComponent(key)] = decodeURIComponent(rest.join("="));
+    return acc;
+  }, {});
+}
+
 export const authenticateSocket = async (socket: Socket, next: any) => {
   try {
-    const token = socket.handshake.auth?.token;
+    const cookies = parseCookies(socket.handshake.headers.cookie);
+    const token = cookies["accessToken"];
 
     if (!token) throw new Error("Authentication token not provided");
 

@@ -6,24 +6,24 @@ import { useEffect, useState } from "react";
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
-  const { isAuthenticated, setToken, getCurrentUser } = useUserStore();
+  const { isAuthenticated, getCurrentUser } = useUserStore();
   const [checkingAuth, setCheckingAuth] = useState(true);
 
   useEffect(() => {
     const initializeAuth = async () => {
-      const localToken = localStorage.getItem("accessToken");
-      if (!localToken) {
-        router.replace("/login");
-        return;
-      }
-
-      setToken(localToken);
       await getCurrentUser();
       setCheckingAuth(false);
     };
 
     initializeAuth();
-  }, [router, setToken, getCurrentUser]);
+  }, [router, getCurrentUser]);
+
+  // Redirect after render cycle completes to avoid state updates during render
+  useEffect(() => {
+    if (!checkingAuth && !isAuthenticated) {
+      router.replace("/login");
+    }
+  }, [checkingAuth, isAuthenticated, router]);
 
 
   if (checkingAuth) {
@@ -35,7 +35,6 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!isAuthenticated) {
-    router.replace("/login");
     return null;
   }
 

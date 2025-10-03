@@ -4,10 +4,8 @@ import { devtools } from "zustand/middleware";
 interface UIState {
   isSidebarOpen: boolean;
   toggleSidebar: (value?: boolean) => void;
-  theme: "light-theme" | "navyDark" | "dark" | "pink";
-  setTheme: (
-    theme: "light-theme" | "navyDark" | "dark" | "pink" | "orange"
-  ) => void;
+  theme: "light-theme" | "navyDark" | "light-orange";
+  setTheme: (theme: "light-theme" | "navyDark" | "light-orange") => void;
 }
 
 export const useUIStore = create<UIState>()(
@@ -28,7 +26,7 @@ export const useUIStore = create<UIState>()(
         }
       },
 
-      setTheme: (theme: "light-theme" | "navyDark" | "dark" | "pink") => {
+      setTheme: (theme: "light-theme" | "navyDark" | "light-orange") => {
         set({ theme }, false, "setTheme");
       },
     }),
