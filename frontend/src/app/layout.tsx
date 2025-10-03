@@ -23,10 +23,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="h-full">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background text-foreground selection:bg-primary/20 selection:text-foreground/90`}
       >
+        {/* Decorative, theme-aware background accents */}
+        <div className="pointer-events-none fixed inset-0 -z-10">
+          <div className="absolute inset-0 opacity-[0.4] md:opacity-[0.35] mix-blend-soft-light bg-[radial-gradient(60%_40%_at_20%_20%,hsl(var(--background-accent))_0%,transparent_60%),radial-gradient(50%_35%_at_80%_10%,hsl(var(--primary-accent))_0%,transparent_60%),radial-gradient(70%_50%_at_50%_110%,hsl(var(--background-accent))_0%,transparent_70%)]" />
+        </div>
+
         {/* <Providers> */}
         <Sonner />
         {children}

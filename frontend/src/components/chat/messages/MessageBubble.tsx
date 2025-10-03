@@ -38,11 +38,11 @@ const ChatMessageBubble = ({ message, isOwn, showName, systemMessage }: ChatMess
       )}
       <div
         className={cn(
-          "relative inline-block px-4 py-2 rounded-2xl max-w-full break-words",
+          "relative inline-block px-4 py-2 rounded-2xl max-w-full break-words shadow-sm",
           isOwn
-            ? "bg-blue-600 text-white rounded-br-sm message-bubble-own"
-            : "bg-background-accent rounded-bl-sm message-bubble-other",
-          systemMessage && "bg-background-accent/50 text-foreground-accent py-1"
+            ? "bg-primary text-white rounded-br-sm message-bubble-own"
+            : "bg-background-accent rounded-bl-sm message-bubble-other border border-border/60",
+          systemMessage && "bg-background-accent/60 text-foreground-accent py-1 shadow-none border-0"
         )}
       >
         {(message.messageType === "text") && (
@@ -62,10 +62,10 @@ const ChatMessageBubble = ({ message, isOwn, showName, systemMessage }: ChatMess
         )}
       </div>
       {!message.midText && (
-        <div className={cn("text-xs text-gray-500 dark:text-gray-400 mt-1", isOwn ? "text-right" : "text-left")}>
+        <div className={cn("text-xs text-foreground-accent mt-1", isOwn ? "text-right" : "text-left")}>
           <span>{formatMessageTime(message.createdAt)}</span>
           {isOwn && (
-            <span className="ml-1 text-blue-600">{message.readBy.length > 1 ? "✓✓" : "✓"}</span>
+            <span className="ml-1 text-primary">{message.readBy.length > 1 ? "✓✓" : "✓"}</span>
           )}
         </div>
       )}

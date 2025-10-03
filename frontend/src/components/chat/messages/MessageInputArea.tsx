@@ -101,8 +101,8 @@ const MessageInputArea = ({ activeChat }: ChatInputAreaProps) => {
   }
 
   return (
-    <div className="px-2 border-t bg-background absolute w-full bottom-0 right-0">
-      <div className="flex items-center gap-2">
+    <div className="px-3 md:px-4 border-t border-border bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/70 absolute w-full bottom-0 right-0">
+      <div className="flex items-center gap-2 py-2">
         <div className="flex-1 relative">
           <textarea
             ref={textareaRef}
@@ -111,18 +111,18 @@ const MessageInputArea = ({ activeChat }: ChatInputAreaProps) => {
             onKeyPress={handleKeyPress}
             rows={1}
             placeholder="Type a message..."
-            className="min-h-[44px] max-h-[120px] resize-none bg-background-accent/30 border-background-accent rounded-full w-full px-4 py-3 pr-20"
+            className="min-h-[44px] max-h-[120px] resize-none w-full px-4 py-3 pr-20 rounded-2xl bg-background-accent/60 border border-border placeholder:text-foreground-accent/70 focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
           <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center gap-1">
-            <Button variant="ghost" size="sm" onClick={() => setShowEmojiPicker(!showEmojiPicker)} className="w-8 h-8 p-0 hover:bg-background-accent">
+            <Button variant="ghost" size="sm" onClick={() => setShowEmojiPicker(!showEmojiPicker)} className="w-8 h-8 p-0 hover:bg-background-accent rounded-full">
               <Smile className="w-4 h-4" />
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => fileInputRef.current?.click()} className="w-8 h-8 p-0 hover:bg-background-accent">
+            <Button variant="ghost" size="sm" onClick={() => fileInputRef.current?.click()} className="w-8 h-8 p-0 hover:bg-background-accent rounded-full">
               <Paperclip className="w-4 h-4" />
             </Button>
           </div>
         </div>
-        <Button onClick={() => handleSendMessage()} disabled={!input.trim()} className="w-11 h-11 rounded-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50">
+        <Button onClick={() => handleSendMessage()} disabled={!input.trim()} className="w-11 h-11 rounded-full bg-primary hover:bg-primary/90 disabled:opacity-50">
           <Send className="w-4 h-4" />
         </Button>
       </div>
@@ -132,7 +132,7 @@ const MessageInputArea = ({ activeChat }: ChatInputAreaProps) => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            className="absolute bottom-20 right-4"
+            className="absolute bottom-24 right-4 drop-shadow-lg"
           >
             <EmojiPicker onEmojiClick={handleEmojiClick} />
           </motion.div>

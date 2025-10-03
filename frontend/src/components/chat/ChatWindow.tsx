@@ -83,7 +83,7 @@ const ChatWindow = () => {
 
 
   return (
-    <div className="flex-1 flex flex-col h-full relative bg-green-200">
+    <div className="flex-1 flex flex-col h-full relative bg-background">
 
       <div className="relative -z-50 hidden">
         <audio controls ref={audioRef} src='../../assets/sounds/message-arrived-sound-effect.mp3' />
@@ -95,7 +95,7 @@ const ChatWindow = () => {
 
       <div className="flex flex-col h-full">
 
-        <div className="sticky top-0">
+        <div className="sticky top-0 z-20 bg-background/80 backdrop-blur border-b border-border">
           <MessageHeader chat={activeChat} />
         </div>
         <ChatMessagesList

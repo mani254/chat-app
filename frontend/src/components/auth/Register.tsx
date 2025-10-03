@@ -90,11 +90,11 @@ const Register = (): React.ReactElement => {
   return (
     <form onSubmit={handleSubmit}>
       <div className="mt-3">
-        <h4 className="text-center sm:text-start font-semibold">Welcome! Create your account</h4>
-        <p className="text-center sm:text-start font-regular text-opacity-60 mt-2">
+        <h4 className="text-center sm:text-start font-semibold tracking-tight">Welcome! Create your account</h4>
+        <p className="text-center sm:text-start text-foreground-accent mt-2">
           Already have account?{' '}
           <span>
-            <Link href="/login" className="text-blue-500 font-medium">
+            <Link href="/login" className="text-primary font-medium hover:underline">
               Login
             </Link>
           </span>

@@ -49,11 +49,11 @@ const Login = (): React.ReactElement => {
   return (
     <form onSubmit={handleSubmit}>
       <div className="mt-3">
-        <h4 className="text-center sm:text-start font-semibold">Sign in to your account</h4>
-        <p className="text-center sm:text-start font-regular text-opacity-60 mt-2">
+        <h4 className="text-center sm:text-start font-semibold tracking-tight">Sign in to your account</h4>
+        <p className="text-center sm:text-start text-foreground-accent mt-2">
           Not a member?{' '}
           <span>
-            <Link href="/register" className="text-blue-500 font-medium">
+            <Link href="/register" className="text-primary font-medium hover:underline">
               Create Account
             </Link>
           </span>
@@ -88,14 +88,14 @@ const Login = (): React.ReactElement => {
       <div className="flex justify-end mt-2">
         <button
           type="button"
-          className="font-medium text-blue-500 text-end cursor-pointer inline-block"
+          className="font-medium text-primary text-end cursor-pointer inline-block hover:underline"
           onClick={handleForgotPassword}
         >
           Forgot Password?
         </button>
       </div>
 
-      <Button type="submit" className='w-full py-5 hover:bg-opacity-90 mt-5'>
+      <Button type="submit" className='w-full py-5 mt-5'>
         Sign In
       </Button>
     </form>

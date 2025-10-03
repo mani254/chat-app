@@ -42,7 +42,7 @@ const NewChatModal = () => {
       trigger={
         <button
           aria-label="New Chat"
-          className="flex items-center justify-center w-10 h-10 rounded-full shadow-md border border-background-accent transition cursor-pointer text-background hover:text-background-accent"
+          className="flex items-center justify-center w-11 h-11 rounded-full shadow border border-border bg-background/80 backdrop-blur transition cursor-pointer hover:bg-background-accent/60"
         >
           <Plus className="w-5 h-5 text-primary" />
         </button>
@@ -56,7 +56,7 @@ const NewChatModal = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className={cn(
-              "w-full pl-10 pr-4 py-2 rounded-2xl border border-foreground-accent/50 text-sm"
+              "w-full pl-10 pr-4 py-2 rounded-2xl border border-border bg-background placeholder:text-foreground-accent/70 text-sm"
             )}
             style={{ minHeight: 38 }}
           />

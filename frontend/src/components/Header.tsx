@@ -30,11 +30,11 @@ const Header = () => {
   }, [router])
 
   return (
-    <div className="h-16 flex items-center justify-between border-b border-background-accent shadow-sm px-4">
+    <div className="h-16 flex items-center justify-between border-b border-border bg-background/80 backdrop-blur px-4">
       {/* Left side */}
       <div className="flex items-center gap-3">
 
-        <h1 className="text-xl font-semibold">
+        <h1 className="text-xl font-semibold tracking-tight">
           Chats
         </h1>
 
@@ -43,24 +43,24 @@ const Header = () => {
       <div className="flex gap-2 items-center">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <div className="p-2 bg-background-accent rounded-full cursor-pointer hover:bg-background-accent/80 transition">
+            <div className="p-2 bg-background-accent/60 rounded-full cursor-pointer hover:bg-background-accent transition shadow-sm">
               <Ellipsis size={19} />
             </div>
           </DropdownMenuTrigger>
 
           <DropdownMenuContent onClick={() => setOpenFeatureCommingSoonModal(true)}
-            className="w-64 bg-background shadow-xl border border-border rounded-lg z-10"
+            className="w-64 bg-background/95 backdrop-blur shadow-xl border border-border rounded-xl z-10"
             align="start"
           >
             {/* User Info Header */}
-            <div className="px-4 py-3 border-b border-border">
+            <div className="px-4 py-3 border-b border-border/80">
               <div className="flex items-center gap-3">
                 <AvatarDiv />
                 <div>
                   <p className="text-sm font-semibold text-foreground">
                     {currentUser?.name}
                   </p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-foreground-accent">
                     {currentUser?.email}
                   </p>
                 </div>
@@ -102,7 +102,7 @@ const Header = () => {
           <Video size={19} />
         </div>
 
-        <div className="p-2 bg-background-accent rounded-full cursor-pointer" onClick={() => setOpenFeatureCommingSoonModal(true)}>
+        <div className="p-2 bg-background-accent/60 rounded-full cursor-pointer hover:bg-background-accent transition shadow-sm" onClick={() => setOpenFeatureCommingSoonModal(true)}>
           <Settings size={19} />
         </div>
 

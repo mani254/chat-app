@@ -138,7 +138,7 @@ const ChatMessagesList = ({
       </div>
 
       {/* 💬 Chat Messages */}
-      <div className="space-y-4">
+      <div className="space-y-3 md:space-y-4">
         {messages.map((message) => {
           const isOwn = message.sender._id === currentUser?._id;
           const showName = activeChat?.isGroupChat && !isOwn;
@@ -162,7 +162,7 @@ const ChatMessagesList = ({
       {/* ⬇️ Scroll to Bottom Button */}
       {showScrollToBottom && (
         <button
-          className="fixed bottom-24 right-1/2 -translate-x-1/2  bg-primary/85 text-white px-4 py-2 rounded-full shadow-lg transition hover:bg-primary/90"
+          className="fixed bottom-24 right-1/2 -translate-x-1/2 bg-primary text-white px-3.5 py-2 rounded-full shadow-md hover:shadow-lg transition-colors hover:bg-primary/90"
           onClick={() => {
             if (scrollRef.current) {
               scrollRef.current.scrollTo({
@@ -176,7 +176,7 @@ const ChatMessagesList = ({
         >
           <ArrowDown />
           {hasNewMessageInBottom && (
-            <div className="w-3 h-3 bg-orange-300 absolute right-0 bottom-0 rounded-full" />
+            <div className="w-3 h-3 bg-primary/70 absolute right-0 bottom-0 rounded-full ring-2 ring-background" />
           )}
         </button>
       )}
