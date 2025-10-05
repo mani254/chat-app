@@ -95,7 +95,7 @@ const ChatMessageBubble = ({
   return (
     <motion.div initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}>
-      {message?.replyTo && <div className="flex justify-end">
+      {message?.replyTo && <div className={cn(`flex`, isOwn ? "justify-end" : "justify-start pl-10")}>
         <ReplyPreview replyTo={message.replyTo} view={true} />
       </div>}
       <div

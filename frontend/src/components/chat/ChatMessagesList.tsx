@@ -130,7 +130,7 @@ const ChatMessagesList = ({
   }, [messages]);
 
   return (
-    <div className="px-4 pb-[110px] overflow-y-auto bg-background h-full scrollbar-custom relative" ref={scrollRef}>
+    <div className="px-4 pb-[110px] overflow-y-auto h-full scrollbar-custom" ref={scrollRef}>
       {/* 🔼 Top Observer (for infinite scroll) */}
 
       <div ref={topObserverRef} className="h-8 flex justify-center items-center ">
@@ -162,7 +162,7 @@ const ChatMessagesList = ({
       {/* ⬇️ Scroll to Bottom Button */}
       {showScrollToBottom && (
         <button
-          className="fixed bottom-24 right-1/2 -translate-x-1/2 bg-primary text-white px-3.5 py-2 rounded-full shadow-md hover:shadow-lg transition-colors hover:bg-primary/90"
+          className="absolute bottom-[120px] left-1/2 -translate-x-1/2 bg-primary text-white px-3.5 py-2 rounded-full shadow-md hover:shadow-lg transition-colors hover:bg-primary/90"
           onClick={() => {
             if (scrollRef.current) {
               scrollRef.current.scrollTo({
