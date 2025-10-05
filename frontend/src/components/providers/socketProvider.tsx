@@ -1,7 +1,6 @@
 "use client";
 
 import { useSocket } from "@/src/socket/useSocket";
-import { useUserStore } from "@/src/store/useUserStore";
 import React, { createContext, useContext } from "react";
 
 interface SocketContextType {
@@ -20,9 +19,8 @@ export const useSocketContext = () => {
 };
 
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
-  const token = useUserStore((state) => state.token);
 
-  const { socket, connected } = useSocket(token!);
+  const { socket, connected } = useSocket();
 
   return (
     <SocketContext.Provider value={{ socket, connected }}>

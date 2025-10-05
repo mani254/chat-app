@@ -32,10 +32,10 @@ export interface User {
   isOnline?: boolean;
 }
 
-export interface MessageWithoutSenderAndChat {
+export interface MessageWithoutChat {
   _id: string;
   chat: string;
-  sender: string;
+  sender: User;
   content: string;
   readBy: string[];
   messageType: "text" | "image" | "file" | "note";
@@ -53,7 +53,7 @@ export interface Message {
   messageType: "text" | "image" | "file" | "note";
   createdAt: string;
   midText: boolean;
-  replyTo?: MessageWithoutSenderAndChat;
+  replyTo?: MessageWithoutChat;
 }
 
 export interface Chat {

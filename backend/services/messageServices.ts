@@ -1,6 +1,7 @@
 // services/messageService.ts
 import { Types } from "mongoose";
 import Message, { IMessage } from "../models/Message";
+import User from "../models/User";
 import { MessageFetchResult, MessageQueryParams } from "../types";
 
 class MessageService {
@@ -126,10 +127,33 @@ class MessageService {
           },
         },
       ];
-
       const [result] = await Message.aggregate(pipeline);
 
-      return result || { totalItems: 0, messages: [] };
+      if (!result) {
+        return { totalItems: 0, messages: [] };
+      }
+
+      // ✅ Fix: properly handle async user lookups
+      const formattedMessages = await Promise.all(
+        result.messages.map(async (message: any) => {
+          if (message?.replyTo?.sender) {
+            const user = await User.findById(message.replyTo.sender);
+            return {
+              ...message,
+              replyTo: {
+                ...message.replyTo,
+                sender: user || "Unknown user",
+              },
+            };
+          }
+          return message;
+        })
+      );
+
+      return {
+        ...result,
+        messages: formattedMessages,
+      };
     } catch (error: any) {
       console.error("Error while fetching messages:", error);
       throw new Error(error.message);

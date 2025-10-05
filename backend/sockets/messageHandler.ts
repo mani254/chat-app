@@ -7,6 +7,7 @@ interface SendMessagePayload {
   receiverId?: string;
   content: string;
   messageType?: "text" | "image" | "file";
+  replyTo?: string;
 }
 
 export const registerMessageHandlers = (socket: Socket, io: Server) => {
@@ -26,6 +27,7 @@ export const registerMessageHandlers = (socket: Socket, io: Server) => {
         content: data.content,
         readBy: [user._id],
         messageType: data.messageType || "text",
+        replyTo: data?.replyTo,
       });
 
       chat.latestMessage = message._id;

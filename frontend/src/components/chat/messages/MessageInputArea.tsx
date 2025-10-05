@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Chat } from "@/src/types";
+import { useReplyStore } from "@/src/store/useReplyStore";
+import { Chat, MessageWithoutChat } from "@/src/types";
 import EmojiPicker from "emoji-picker-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Paperclip, Send, Smile } from "lucide-react";
@@ -7,6 +8,7 @@ import { useRef, useState } from "react";
 
 import { useUserStore } from "@/src/store/useUserStore";
 import { useSocketContext } from "../../providers/socketProvider";
+import ReplyPreview from "./ReplyToPreview";
 
 interface ChatInputAreaProps {
   activeChat: Chat;
@@ -20,6 +22,7 @@ const MessageInputArea = ({ activeChat }: ChatInputAreaProps) => {
 
   const { socket } = useSocketContext();
   const currentUser = useUserStore((s) => s.currentUser);
+  const { replyTo, clearReplyTo } = useReplyStore();
 
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isTyping = useRef(false);
@@ -63,10 +66,12 @@ const MessageInputArea = ({ activeChat }: ChatInputAreaProps) => {
       chatId: activeChat._id,
       content: input,
       messageType: 'text',
+      replyTo: replyTo?._id
     });
     console.log('send-message event emmited', input)
     setInput("");
     setShowEmojiPicker(false);
+    clearReplyTo(); // Clear replyTo after sending message
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
@@ -103,6 +108,7 @@ const MessageInputArea = ({ activeChat }: ChatInputAreaProps) => {
   return (
     <div className="px-3 md:px-4 border-t border-border bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/70 absolute w-full bottom-0 right-0">
       <div className="flex items-center gap-2 py-2">
+
         <div className="flex-1 relative">
           <textarea
             ref={textareaRef}
@@ -121,6 +127,9 @@ const MessageInputArea = ({ activeChat }: ChatInputAreaProps) => {
               <Paperclip className="w-4 h-4" />
             </Button>
           </div>
+          {replyTo && <div className="absolute w-full bottom-[100%]">
+            <ReplyPreview replyTo={replyTo as MessageWithoutChat} onCancel={clearReplyTo} view={false} />
+          </div>}
         </div>
         <Button onClick={() => handleSendMessage()} disabled={!input.trim()} className="w-11 h-11 rounded-full bg-primary hover:bg-primary/90 disabled:opacity-50">
           <Send className="w-4 h-4" />
