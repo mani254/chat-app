@@ -24,7 +24,8 @@ const ReplyPreview = ({ replyTo, onCancel, className, view = true }: ReplyPrevie
     <div
       className={cn(
         "flex items-start gap-2 px-3 py-2 mb-1 rounded-lg border border-border/50 bg-background-accent/50 text-xs cursor-pointer hover:bg-background-accent/70 transition-colors relative",
-        className
+        className,
+
       )}
     >
       {!view && <div className="absolute top-2 right-2" onClick={onCancel}>
@@ -45,7 +46,8 @@ const ReplyPreview = ({ replyTo, onCancel, className, view = true }: ReplyPrevie
         )}
 
         {replyTo.messageType === "media" && (
-          <div className="py-1">
+          <div className="py-1 opacity-90 relative rounded-xl overflow-hidden">
+            {/* <div className="bg-black/10 w-full h-full absolute z-20"></div> */}
             <MediaGridPreview items={(replyTo.mediaLinks || []).map((url) => ({ url }))} />
           </div>
         )}
