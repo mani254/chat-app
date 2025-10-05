@@ -18,10 +18,7 @@ class MessageService {
       matchStage.sender = new Types.ObjectId(senderId);
     }
 
-    if (
-      messageType &&
-      ["text", "image", "file", "note"].includes(messageType)
-    ) {
+    if (messageType && ["text", "media", "note"].includes(messageType)) {
       matchStage.messageType = messageType;
     }
 

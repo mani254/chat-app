@@ -83,7 +83,7 @@ const ChatWindow = () => {
 
 
   return (
-    <div className="flex-1 flex flex-col h-full relative bg-background">
+    <div className="flex-1 flex flex-col  h-full relative bg-background">
 
       <div className="relative -z-50 hidden">
         <audio controls ref={audioRef} src='../../assets/sounds/message-arrived-sound-effect.mp3' />

@@ -38,7 +38,8 @@ export interface MessageWithoutChat {
   sender: User;
   content: string;
   readBy: string[];
-  messageType: "text" | "image" | "file" | "note";
+  messageType: "text" | "media" | "note";
+  mediaLinks: string[];
   createdAt: string;
   midText: boolean;
   replyTo?: Message;
@@ -50,7 +51,8 @@ export interface Message {
   sender: User;
   content: string;
   readBy: string[];
-  messageType: "text" | "image" | "file" | "note";
+  messageType: "text" | "media" | "note";
+  mediaLinks: string[];
   createdAt: string;
   midText: boolean;
   replyTo?: MessageWithoutChat;
@@ -70,7 +72,7 @@ export interface Chat {
 export interface MessageQueryParams {
   chatId?: string;
   senderId?: string;
-  messageType?: "text" | "image" | "file" | "note";
+  messageType?: "text" | "media" | "note";
   search?: string;
   page?: number;
   limit?: number;

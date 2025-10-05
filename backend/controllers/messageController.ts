@@ -28,7 +28,7 @@ export const fetchMessages = async (req: Request, res: Response) => {
 
     const allowedSortFields = ["createdAt", "updatedAt"];
     const allowedOrderValues = ["asc", "desc"];
-    const allowedTypes = ["text", "image", "file", "note"];
+    const allowedTypes = ["text", "media", "note"];
 
     if (sortBy && !allowedSortFields.includes(sortBy)) {
       res.status(400).json({

@@ -9,10 +9,10 @@ import { cn } from "@/lib/utils";
 import { useReplyStore } from "@/src/store/useReplyStore";
 import { Message } from "@/src/types";
 import { motion } from "framer-motion";
-import { Paperclip } from "lucide-react";
-import Image from "next/image";
 import { useRef, useState } from "react";
 import AvatarDiv from "../../ui/Avatar";
+import MediaGridPreview from "./MediaGridPreview";
+import MediaViewerDialog from "./MediaViewerDialog";
 import MessageActions from "./MessageActions";
 import ReplyPreview from "./ReplyToPreview";
 
@@ -53,6 +53,15 @@ const ChatMessageBubble = ({
     setOpen(true);
   };
 
+  // media viewer state
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerIndex, setViewerIndex] = useState(0);
+
+  const handleOpenViewer = (index: number) => {
+    setViewerIndex(index);
+    setViewerOpen(true);
+  };
+
   // bubble content
   const bubbleContent = (
     <div
@@ -65,25 +74,30 @@ const ChatMessageBubble = ({
           ? "bg-primary text-white rounded-br-sm message-bubble-own"
           : "bg-background-accent rounded-bl-sm message-bubble-other border border-border/60",
         systemMessage &&
-        "bg-background-accent/60 text-foreground-accent py-1 shadow-none border-0"
+        "bg-background-accent/60 text-foreground-accent py-1 shadow-none border-0",
+        message.messageType === "media" && "bg-background-accent"
       )}
     >
       {message.messageType === "text" && (
         <p className="text-sm whitespace-pre-wrap">{message.content}</p>
       )}
-      {message.messageType === "image" && (
-        <Image
-          src={message.content}
-          alt="Shared image"
-          width={300}
-          height={300}
-          className="rounded-lg max-w-full h-auto"
-        />
-      )}
-      {message.messageType === "file" && (
-        <div className="flex items-center gap-2">
-          <Paperclip className="w-4 h-4" />
-          <span className="text-sm">{message.content}</span>
+
+      {message.messageType === "media" && (
+        <div>
+          <div className="px-0 py-0">
+            <MediaGridPreview
+              items={(message.mediaLinks || []).map((url) => ({ url }))}
+              onOpenViewer={handleOpenViewer}
+            />
+            <MediaViewerDialog
+              open={viewerOpen}
+              onOpenChange={setViewerOpen}
+              items={(message.mediaLinks || []).map((url) => ({ url }))}
+              currentIndex={viewerIndex}
+              onNavigate={setViewerIndex}
+            />
+          </div>
+          <p className="text-black text-left italic mt-2 bg-gray-300 px-2 py-1 rounded-xl">{message.content}</p>
         </div>
       )}
       {message.messageType === "note" && (

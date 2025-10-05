@@ -39,7 +39,7 @@ export interface ChatFetchResult {
 export interface MessageQueryParams {
   chatId?: string;
   senderId?: string;
-  messageType?: "text" | "image" | "file" | "note";
+  messageType?: "text" | "media" | "note";
   search?: string;
   page?: number;
   limit?: number;

@@ -2,10 +2,8 @@
 
 import { cn } from "@/lib/utils";
 import { MessageWithoutChat } from "@/src/types";
-import { Paperclip, X } from "lucide-react";
-import Image from "next/image";
-
-
+import { X } from "lucide-react";
+import MediaGridPreview from "./MediaGridPreview";
 
 interface ReplyPreviewProps {
   replyTo: MessageWithoutChat;
@@ -46,25 +44,9 @@ const ReplyPreview = ({ replyTo, onCancel, className, view = true }: ReplyPrevie
           </p>
         )}
 
-        {replyTo.messageType === "image" && (
-          <div className="flex items-center gap-2">
-            <Image
-              src={replyTo.content}
-              alt="Replied image"
-              width={30}
-              height={30}
-              className="rounded-sm"
-            />
-            <span className="text-xs text-foreground/80">Photo</span>
-          </div>
-        )}
-
-        {replyTo.messageType === "file" && (
-          <div className="flex items-center gap-2">
-            <Paperclip className="w-3 h-3 text-muted-foreground" />
-            <span className="truncate text-xs text-foreground/80">
-              {truncateText(replyTo.content, 40)}
-            </span>
+        {replyTo.messageType === "media" && (
+          <div className="py-1">
+            <MediaGridPreview items={(replyTo.mediaLinks || []).map((url) => ({ url }))} />
           </div>
         )}
 

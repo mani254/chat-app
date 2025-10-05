@@ -6,7 +6,8 @@ export interface IMessage extends Document {
   sender: Types.ObjectId;
   content: string;
   readBy: Types.ObjectId[];
-  messageType: "text" | "image" | "file" | "note";
+  messageType: "text" | "media" | "note";
+  mediaLinks: string[];
   midText?: boolean;
   replyTo?: Types.ObjectId;
 }
@@ -19,8 +20,12 @@ const MessageSchema: Schema<IMessage> = new Schema(
     readBy: [{ type: Schema.Types.ObjectId, ref: "User" }],
     messageType: {
       type: String,
-      enum: ["text", "image", "file", "note"],
+      enum: ["text", "media", "note"],
       default: "text",
+    },
+    mediaLinks: {
+      type: [String],
+      default: [],
     },
     midText: {
       type: Boolean,

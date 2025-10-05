@@ -66,6 +66,7 @@ export const useMessageStore = create<MessageState>()(
           return { messages: [...state.messages, message] };
         });
       },
+
       loadMessages: async ({ chatId, reset = false, limit }) => {
         const { messages, loadingMessages } = get();
         if (loadingMessages) return;

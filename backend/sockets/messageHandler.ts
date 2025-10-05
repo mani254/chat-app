@@ -6,7 +6,7 @@ interface SendMessagePayload {
   chatId: string;
   receiverId?: string;
   content: string;
-  messageType?: "text" | "image" | "file";
+  messageType?: "text" | "media" | "note";
   replyTo?: string;
 }
 

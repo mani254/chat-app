@@ -8,6 +8,7 @@ import { useRef, useState } from "react";
 
 import { useUserStore } from "@/src/store/useUserStore";
 import { useSocketContext } from "../../providers/socketProvider";
+import FilePreviewList from "./FilePreviewList";
 import ReplyPreview from "./ReplyToPreview";
 
 interface ChatInputAreaProps {
@@ -17,6 +18,7 @@ interface ChatInputAreaProps {
 const MessageInputArea = ({ activeChat }: ChatInputAreaProps) => {
   const [input, setInput] = useState<string>("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [files, setFiles] = useState<undefined | File[]>();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -99,17 +101,25 @@ const MessageInputArea = ({ activeChat }: ChatInputAreaProps) => {
   }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (file && activeChat) {
-      console.log("File uploaded:", file.name);
+    const fileList = e.target.files;
+    if (fileList && activeChat) {
+      setFiles(Array.from(fileList));
     }
   }
+
+  const handleRemove = (index: number) => {
+    setFiles((prev) => prev?.filter((_, i) => i !== index));
+  };
 
   return (
     <div className="px-3 md:px-4 border-t border-border bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/70 absolute w-full bottom-0 right-0">
       <div className="flex items-center gap-2 py-2">
-
         <div className="flex-1 relative">
+          {files && (
+            <div className="flex absolute w-full bottom-[105%]">
+              <FilePreviewList onRemove={handleRemove} files={files} />
+            </div>
+          )}
           <textarea
             ref={textareaRef}
             value={input}
@@ -151,8 +161,9 @@ const MessageInputArea = ({ activeChat }: ChatInputAreaProps) => {
         ref={fileInputRef}
         type="file"
         className="hidden"
-        accept="image/*,.pdf,.doc,.docx,.txt"
+        accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt"
         onChange={handleFileChange}
+        multiple={true}
       />
     </div>
   );
