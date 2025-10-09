@@ -44,6 +44,10 @@ export default function MediaGridPreview({ items, onOpenViewer, className }: Med
           const vid = isVideoUtil(m.type, m.url);
           const aud = isAudioUtil(m.type, m.url);
 
+          if (m.url) {
+            console.log(m.type, m.url, img)
+          }
+
           return (
             <button
               key={`${m.url}-${idx}`}

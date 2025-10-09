@@ -8,8 +8,10 @@ import {
 } from "@aws-sdk/client-s3";
 import { getSignedUrl as sign } from "@aws-sdk/s3-request-presigner";
 import { randomUUID } from "crypto";
+import dotenv from "dotenv";
 import mime from "mime-types";
 import { BUCKET, r2 } from "../config/cloudfare";
+dotenv.config();
 
 export async function bulkDeleteFiles(keys: string[]) {
   if (!keys.length) return { deleted: [] };
@@ -44,15 +46,15 @@ export async function getSignedUrl(key: string, expiresInSeconds = 3600) {
 }
 
 export async function listFilesByTenant(params: {
-  tenantId: string;
+  chatId: string;
   maxKeys?: number;
   continuationToken?: string;
 }) {
-  const { tenantId, maxKeys = 20, continuationToken } = params;
+  const { chatId, maxKeys = 20, continuationToken } = params;
   const res = await r2.send(
     new ListObjectsV2Command({
       Bucket: BUCKET,
-      Prefix: `${tenantId}/`,
+      Prefix: `${chatId}/`,
       MaxKeys: maxKeys,
       ContinuationToken: continuationToken,
     })
@@ -71,9 +73,9 @@ export async function listFilesByTenant(params: {
 }
 
 export async function renameFile(oldKey: string, newFileName: string) {
-  const tenantId = oldKey.split("/")[0];
+  const chatId = oldKey.split("/")[0];
   const ext = oldKey.split(".").pop();
-  const newKey = `${tenantId}/${newFileName}.${ext}`;
+  const newKey = `${chatId}/${newFileName}.${ext}`;
 
   await r2.send(
     new CopyObjectCommand({
@@ -95,7 +97,7 @@ export async function renameFile(oldKey: string, newFileName: string) {
 }
 
 export async function uploadMultipleFiles(params: {
-  tenantId: string;
+  chatId: string;
   files: { buffer: Buffer; originalName: string }[];
   maxSizeMB?: number;
   allowedTypes?: string[];
@@ -114,7 +116,7 @@ export async function uploadMultipleFiles(params: {
 }
 
 export async function uploadSingleFile(params: {
-  tenantId: string;
+  chatId: string;
   fileBuffer: Buffer;
   originalName: string;
   maxSizeMB?: number;
@@ -122,7 +124,7 @@ export async function uploadSingleFile(params: {
   makePublic?: boolean;
 }) {
   const {
-    tenantId,
+    chatId,
     fileBuffer,
     originalName,
     maxSizeMB = 20,
@@ -138,7 +140,7 @@ export async function uploadSingleFile(params: {
     throw new Error(`Invalid type: ${mimeType}`);
 
   const ext = mime.extension(mimeType) || "bin";
-  const key = `${tenantId}/${randomUUID()}.${ext}`;
+  const key = `${chatId}/${randomUUID()}.${ext}`;
 
   await r2.send(
     new PutObjectCommand({

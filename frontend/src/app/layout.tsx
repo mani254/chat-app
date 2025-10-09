@@ -33,8 +33,8 @@ export default function RootLayout({
         </div>
 
         {/* <Providers> */}
-        <Sonner />
         {children}
+        <Sonner />
         {/* </Providers> */}
       </body>
     </html>

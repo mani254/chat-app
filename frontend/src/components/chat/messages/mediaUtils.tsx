@@ -3,7 +3,10 @@ import React from "react";
 
 export function isImage(type?: string, url?: string) {
   if (type) return type.startsWith("image/");
-  return !!url && /(\.png|\.jpg|\.jpeg|\.gif|\.webp|\.avif)(\?.*)?$/i.test(url);
+  if (!url) return false;
+
+  const cleanUrl = String(url).trim().replace(/[\r\n\u200B\uFEFF]/g, '');
+  return /\.(png|jpe?g|gif|webp|avif)([\?#].*)?$/i.test(cleanUrl);
 }
 
 export function isVideo(type?: string, url?: string) {

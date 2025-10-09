@@ -1,21 +1,7 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import axios from "../lib/api";
-import { Message, MessageQueryParams } from "../types";
-
-async function fetchMessages(
-  params: MessageQueryParams
-): Promise<{ messages: Message[]; totalItems: number }> {
-  try {
-    const res = await axios.get("/api/messages", { params });
-    return res.data;
-  } catch (err: any) {
-    const msg = err.response?.data?.message || err.message;
-    console.error("Error fetching messages:", msg);
-    window.alert(msg);
-    return { messages: [], totalItems: 0 };
-  }
-}
+import { fetchMessages } from "../lib/messageApi";
+import { Message } from "../types";
 
 interface MessageState {
   messages: Message[];

@@ -2,7 +2,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Ellipsis, LogOut, Moon, Settings, User, Video } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
-import { signOut, useUserStore } from "../store/useUserStore";
+import { signOut } from "../lib/userApi";
+import { useUserStore } from "../store/useUserStore";
 import AvatarDiv from "./ui/Avatar";
 import FeatureComingSoonModal from "./ui/FeatureCommingSoonModal";
 
