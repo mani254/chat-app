@@ -23,7 +23,7 @@ import useMediaQuery from "@/src/hooks/useMediaQuery";
 interface ResponsiveModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  trigger: React.ReactNode;
+  trigger?: React.ReactNode;
   children: React.ReactNode;
   title?: string;
   description?: string;
@@ -43,10 +43,10 @@ export const ResponsiveModal = ({
   if (isDesktop) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogTrigger asChild>{trigger}</DialogTrigger>
+        {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
         <DialogContent className="p-0 overflow-hidden bg-background rounded-3xl">
           {title && (
-            <DialogHeader className="p-5 pb-1 border-b border-border">
+            <DialogHeader className="p-4 pb-1 border-b border-border">
               <DialogTitle>{title}</DialogTitle>
               {description && (
                 <DialogDescription aria-describedby={undefined}>
@@ -63,10 +63,10 @@ export const ResponsiveModal = ({
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerTrigger asChild>{trigger}</DrawerTrigger>
-      <DrawerContent className="p-0 overflow-hidden bg-background rounded-3xl max-h-full">
+      {trigger && <DrawerTrigger asChild>{trigger}</DrawerTrigger>}
+      <DrawerContent className="p-0 overflow-hidden bg-background rounded-0 md:rounded-3xl">
         {title && (
-          <DrawerHeader className="px-4 pt-4 border-b border-border">
+          <DrawerHeader className="px-3 pt-2 border-b border-border">
             <DrawerTitle>{title}</DrawerTitle>
             {description && <DrawerDescription>{description}</DrawerDescription>}
           </DrawerHeader>

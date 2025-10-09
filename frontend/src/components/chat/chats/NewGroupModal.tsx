@@ -1,7 +1,7 @@
 "use client";
 
 import clsx from "clsx";
-import { Plus, Search, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
@@ -14,10 +14,13 @@ import { Input } from "@/components/ui/input";
 import { ResponsiveModal } from "../../ui/ResponsiveModal";
 import UserList from "../users/UsersList";
 
+interface NewGroupModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
 
-const NewGroupModal = () => {
+const NewGroupModal = ({ open, onOpenChange }: NewGroupModalProps) => {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [groupName, setGroupName] = useState("");
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
@@ -47,8 +50,9 @@ const NewGroupModal = () => {
     };
 
     const chat = await createChat(payload);
+
     if (chat) {
-      setOpen(false);
+      onOpenChange(false);
       setGroupName("");
       setSelectedUsers([]);
       router.push(`/?chatId=${chat._id}`);
@@ -58,18 +62,10 @@ const NewGroupModal = () => {
   return (
     <ResponsiveModal
       open={open}
-      onOpenChange={setOpen}
-      title="Create a group"
-      trigger={
-        <button
-          aria-label="New Group"
-          className="flex items-center justify-center w-10 h-10 rounded-full shadow-md border border-background-accent transition cursor-pointer text-background hover:text-background-accent"
-        >
-          <Plus className="w-5 h-5 text-primary" />
-        </button>
-      }
+      onOpenChange={onOpenChange}
+      title="Start a new Group"
     >
-      <div className="h-[90vh] md:h-auto min-h-80 md:max-h-96">
+      <div className="h-[80vh] md:h-[500px]">
         {/* Group Name Input */}
         <div className="px-5">
           <Input
@@ -118,7 +114,7 @@ const NewGroupModal = () => {
         {/* User List */}
         <UserList
           search={search}
-          enabled={open}
+          enabled={true}
           selectedUserIds={selectedUserIds}
           onClick={handleToggleUser}
           highlightSelected

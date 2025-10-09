@@ -5,50 +5,42 @@ import { cn } from "@/lib/utils";
 import { useChatStore } from "@/src/store/useChatStore";
 import { useUserStore } from "@/src/store/useUserStore";
 import { User } from "@/src/types";
-import { Plus, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { ResponsiveModal } from "../../ui/ResponsiveModal";
 import UserList from "../users/UsersList";
 
-const NewChatModal = () => {
+interface NewChatModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+const NewChatModal = ({ open, onOpenChange }: NewChatModalProps) => {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const createChat = useChatStore((s) => s.createChat);
+  const currentUser = useUserStore((s) => s.currentUser);
 
-  const createChat = useChatStore((state) => state.createChat);
-  const currentUser = useUserStore((state) => state.currentUser);
-
-  const handleCreateChat = useCallback(
-    async (user: User) => {
-      const info = {
-        users: [currentUser!._id, user._id],
-        isGroupChat: false,
-        name: "",
-        groupAdmin: undefined,
-      };
-      const res = await createChat(info);
-      setOpen(false);
-      router.push(`/?chatId=${res._id}`);
-    },
-    [createChat, currentUser, router]
-  );
+  const handleCreateChat = async (user: User) => {
+    const info = {
+      users: [currentUser!._id, user._id],
+      isGroupChat: false,
+      name: "",
+      groupAdmin: undefined,
+    };
+    const res = await createChat(info);
+    onOpenChange(false); // closes
+    router.push(`/?chatId=${res._id}`);
+  };
 
   return (
     <ResponsiveModal
       open={open}
-      onOpenChange={setOpen}
+      onOpenChange={onOpenChange}
       title="Start a new chat"
-      trigger={
-        <button
-          aria-label="New Chat"
-          className="flex items-center justify-center w-11 h-11 rounded-full shadow border border-border bg-background/80 backdrop-blur transition cursor-pointer hover:bg-background-accent/60"
-        >
-          <Plus className="w-5 h-5 text-primary" />
-        </button>
-      }
     >
-      <div className="h-[90vh] md:h-96">
+      <div className="h-[80vh] md:h-[500px]">
         {/* Search Bar */}
         <div className="relative mx-5">
           <Input
@@ -66,7 +58,7 @@ const NewChatModal = () => {
         </div>
 
         {/* User List */}
-        <UserList search={search} enabled={open} onClick={handleCreateChat} />
+        <UserList search={search} enabled={true} onClick={handleCreateChat} />
       </div>
     </ResponsiveModal>
   );

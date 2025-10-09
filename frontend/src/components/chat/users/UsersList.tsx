@@ -34,11 +34,13 @@ const UserList = ({
   );
 
   return (
-    <div className="h-full px-4 py-4 overflow-y-auto scrollbar-custom" ref={scrollRef}>
+    <div className="h-full px-4 py-4 overflow-y-auto scrollbar-custom " ref={scrollRef}>
       {loadingUsers && users.length === 0 ? (
-        Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-14 rounded-2xl bg-background-accent" />
-        ))
+        <div className="flex flex-col gap-2">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-14 rounded-2xl bg-background-accent" />
+          ))}
+        </div>
       ) : users.length === 0 ? (
         <div className="text-gray-400 text-center py-6 text-sm">No users found.</div>
       ) : (
