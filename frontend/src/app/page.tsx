@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 import { ProtectedRoute } from "../components/auth/Protected";
@@ -7,6 +8,7 @@ import PlusButton from "../components/chat/chats/PlusButton";
 import ChatSidebar from "../components/chat/ChatSidebar";
 import ChatWindow from "../components/chat/ChatWindow";
 import { SocketProvider } from "../components/providers/socketProvider";
+import { useChatStore } from "../store/useChatStore";
 import { useUIStore } from "../store/useUiStore";
 
 export default function Home() {
@@ -15,6 +17,8 @@ export default function Home() {
   useEffect(() => {
     document.body.className = theme;
   }, [theme]);
+
+  const activeChat = useChatStore((s) => s.activeChat);
 
   return (
     <ProtectedRoute>
@@ -30,7 +34,9 @@ export default function Home() {
             <ChatWindow />
           </motion.main>
         </div>
-        <div className="w-auto fixed left-20 bottom-20 z-10">
+        <div className={cn("fixed w-min right-10 md:left-10 bottom-14 z-10",
+          activeChat && "hidden md:block"
+        )}>
           <PlusButton />
         </div>
       </SocketProvider>

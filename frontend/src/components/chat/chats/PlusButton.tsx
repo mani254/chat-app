@@ -24,7 +24,7 @@ const PlusButton = () => {
         {showMenu && (
           <>
             <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
-            <div className="absolute bottom-full left-0 mb-2 w-48 bg-background border border-border rounded-2xl shadow-lg z-50 overflow-hidden">
+            <div className="absolute bottom-full right-0 md:left-0 mb-2 w-48 bg-background border border-border rounded-2xl shadow-sm z-50 overflow-hidden">
               <button
                 onClick={() => setActiveModal("chat")}
                 className="w-full flex items-center gap-3 px-4 py-3 hover:bg-background-accent/70 transition-colors"
