@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { useMediaUpload } from "@/src/hooks/useMediaUpload";
 import api from "@/src/lib/api";
 import { useReplyStore } from "@/src/store/useReplyStore";
 import { useUserStore } from "@/src/store/useUserStore";
@@ -10,13 +11,15 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useSocketContext } from "../../providers/socketProvider";
 import FilePreviewList from "./FilePreviewList";
+import { MediaUploadProgressList, MediaUploadSummary } from "./MediaUploadProgress";
 import ReplyPreview from "./ReplyToPreview";
 
 interface ChatInputAreaProps {
   activeChat: Chat;
+  setSendingMedia: (value: boolean) => void;
 }
 
-const MessageInputArea = ({ activeChat }: ChatInputAreaProps) => {
+const MessageInputArea = ({ activeChat, setSendingMedia }: ChatInputAreaProps) => {
   const [input, setInput] = useState<string>("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [files, setFiles] = useState<undefined | File[]>();
@@ -27,6 +30,16 @@ const MessageInputArea = ({ activeChat }: ChatInputAreaProps) => {
   const { socket } = useSocketContext();
   const currentUser = useUserStore((s) => s.currentUser);
   const { replyTo, clearReplyTo } = useReplyStore();
+
+  const {
+    uploadState,
+    initializeUploads,
+    updateUploadProgress,
+    completeUpload,
+    failUpload,
+    retryUpload,
+    clearUploads,
+  } = useMediaUpload();
 
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isTyping = useRef(false);
@@ -79,25 +92,56 @@ const MessageInputArea = ({ activeChat }: ChatInputAreaProps) => {
 
     let mediaLinks: string[] = [];
     if (files && files.length > 0) {
+      setSendingMedia(true);
+
+      // Initialize upload tracking
+      const uploads = initializeUploads(files);
+
       try {
-        const uploads = await Promise.all(
-          files.map(async (file) => {
+        const uploadPromises = uploads.map(async (upload) => {
+          try {
+            // Simulate progress updates
+            const progressInterval = setInterval(() => {
+              const randomProgress = Math.min(upload.progress + Math.random() * 20, 90);
+              updateUploadProgress(upload.fileId, randomProgress);
+            }, 200);
+
             const form = new FormData();
-            form.append("file", file);
-            form.append('chatId', activeChat._id)
+            form.append("file", upload.file);
+            form.append('chatId', activeChat._id);
+
             const { data } = await api.post(`/api/messages/upload`, form, {
               headers: { "Content-Type": "multipart/form-data" },
             });
+
+            clearInterval(progressInterval);
+            completeUpload(upload.fileId, data.url, data.mimeType, data.size);
             return data.url as string;
-          })
-        );
-        mediaLinks = uploads;
+          } catch (err: any) {
+            const errorMessage = err?.response?.data?.message || err?.message || "Upload failed";
+            failUpload(upload.fileId, errorMessage);
+            throw err;
+          }
+        });
+
+        mediaLinks = await Promise.all(uploadPromises);
+
+        // Clear any failed uploads that weren't retried
+        const failedUploads = uploadState.uploads.filter(upload => upload.status === 'failed');
+        if (failedUploads.length > 0) {
+          toast.error(`${failedUploads.length} file(s) failed to upload`, {
+            description: "You can retry failed uploads or send without them.",
+          });
+        }
+
       } catch (err: any) {
         toast.error("Upload failed", {
           description: err?.response?.data?.message || err?.message || "Something went wrong while uploading.",
         });
         setSending(false);
         return;
+      } finally {
+        setSendingMedia(false);
       }
     }
 
@@ -132,6 +176,7 @@ const MessageInputArea = ({ activeChat }: ChatInputAreaProps) => {
     setShowEmojiPicker(false);
     clearReplyTo();
     setFiles(undefined);
+    clearUploads();
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
@@ -170,14 +215,36 @@ const MessageInputArea = ({ activeChat }: ChatInputAreaProps) => {
   };
 
   return (
-    <div className="px-3 md:px-4 border-t border-border bg-background absolute w-full bottom-0 right-0">
+    <div className="px-3 md:px-4 border-t border-border bg-background absolute w-full bottom-0 right-0 z-[50]">
       <div className="flex items-center gap-2 py-2">
         <div className="flex-1 relative">
-          {files && (
+          {/* Upload Progress */}
+          {uploadState.isUploading && (
+            <div className="absolute w-full bottom-[105%] mb-2">
+              <div className="bg-background-accent/95 backdrop-blur-sm border border-border rounded-lg p-3 shadow-lg">
+                <MediaUploadSummary
+                  totalFiles={uploadState.uploads.length}
+                  completedCount={uploadState.completedCount}
+                  failedCount={uploadState.failedCount}
+                  totalProgress={uploadState.totalProgress}
+                  isUploading={uploadState.isUploading}
+                />
+                <MediaUploadProgressList
+                  uploads={uploadState.uploads}
+                  onRetry={retryUpload}
+                  className="mt-2"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* File Preview */}
+          {files && !uploadState.isUploading && (
             <div className="flex absolute w-full bottom-[105%]">
               <FilePreviewList onRemove={handleRemove} files={files} />
             </div>
           )}
+
           <textarea
             ref={textareaRef}
             value={input}
@@ -199,7 +266,7 @@ const MessageInputArea = ({ activeChat }: ChatInputAreaProps) => {
             <ReplyPreview replyTo={replyTo as MessageWithoutChat} onCancel={clearReplyTo} view={false} />
           </div>}
         </div>
-        <Button onClick={() => handleSendMessage()} disabled={!input.trim() || sending} className="w-11 h-11 rounded-full bg-primary hover:bg-primary/90 disabled:opacity-50">
+        <Button onClick={() => handleSendMessage()} disabled={!input.trim() || sending || uploadState.isUploading} className="w-11 h-11 rounded-full bg-primary hover:bg-primary/90 disabled:opacity-50">
           <Send className="w-4 h-4" />
         </Button>
       </div>
@@ -219,7 +286,7 @@ const MessageInputArea = ({ activeChat }: ChatInputAreaProps) => {
         ref={fileInputRef}
         type="file"
         className="hidden"
-        accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt"
+        accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.zip,.rar,.7z,.tar,.gz,.js,.ts,.jsx,.tsx,.py,.java,.cpp,.c,.cs,.php,.rb,.go,.rs,.swift,.kt,.html,.css,.scss,.sass,.less,.json,.xml,.yaml,.yml"
         onChange={handleFileChange}
         multiple={true}
       />

@@ -5,6 +5,7 @@ import { Chat, User } from "@/src/types";
 import { ArrowDown } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import LoadMoreLoader from "../loaders/LoadMoreLoader";
+import { MediaSkeleton } from "./messages/MediaSkeleton";
 import ChatMessageBubble from "./messages/MessageBubble";
 import TypingDots from "./messages/TypingDots";
 
@@ -13,6 +14,7 @@ interface ChatMessagesListProps {
   activeChat: Chat;
   loading: boolean;
   onLoadMore: () => void;
+  sendingMedia: boolean;
 }
 
 const ChatMessagesList = ({
@@ -20,6 +22,7 @@ const ChatMessagesList = ({
   activeChat,
   loading,
   onLoadMore,
+  sendingMedia,
 }: ChatMessagesListProps) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const topObserverRef = useRef<HTMLDivElement | null>(null); // for load more
@@ -154,6 +157,13 @@ const ChatMessagesList = ({
           );
         })}
         <TypingDots />
+        {sendingMedia && (
+          <div className="flex justify-end">
+            <div className="bg-background-accent/50 border border-border rounded-2xl px-4 py-2 max-w-[80%]">
+              <MediaSkeleton count={1} />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* 👇 Bottom Observer for scroll-to-bottom visibility */}

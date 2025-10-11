@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { useChatStore } from "@/src/store/useChatStore";
 import { useMessageStore } from "@/src/store/useMessageStore";
@@ -16,7 +16,6 @@ import { useUIStore } from "@/src/store/useUiStore";
 import ChatMessagesList from "./ChatMessagesList";
 import MessageHeader from "./messages/MessageHeader";
 import MessageInputArea from "./messages/MessageInputArea";
-
 
 const ChatWindow = () => {
   const searchParams = useSearchParams();
@@ -38,6 +37,8 @@ const ChatWindow = () => {
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
 
   const isDesktop = useMediaQuery("(min-width: 768px)");
+
+  const [sendingMedia, setSendingMedia] = useState(false);
 
   // On chat change: reset and join socket room
   useEffect(() => {
@@ -103,8 +104,9 @@ const ChatWindow = () => {
           activeChat={activeChat}
           loading={loadingMessages}
           onLoadMore={() => loadMessages({ chatId: activeChat._id })}
+          sendingMedia={sendingMedia}
         />
-        <MessageInputArea activeChat={activeChat} />
+        <MessageInputArea activeChat={activeChat} setSendingMedia={setSendingMedia} />
       </div>
     </div>
   );

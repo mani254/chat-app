@@ -139,7 +139,13 @@ export async function uploadSingleFile(params: {
   if (allowedTypes && !allowedTypes.includes(mimeType))
     throw new Error(`Invalid type: ${mimeType}`);
 
-  const ext = mime.extension(mimeType) || "bin";
+  // Preserve the original file extension instead of using mime.extension()
+  // This ensures files like MP3 are stored with .mp3 instead of .mpga
+  const lastDotIndex = originalName.lastIndexOf(".");
+  const ext =
+    lastDotIndex > 0 && lastDotIndex < originalName.length - 1
+      ? originalName.substring(lastDotIndex + 1).toLowerCase()
+      : "bin";
   const key = `${chatId}/${randomUUID()}.${ext}`;
 
   await r2.send(

@@ -2,163 +2,199 @@
 
 import { cn } from "@/lib/utils";
 import LoadMoreLoader from "@/src/components/loaders/LoadMoreLoader";
-import { createMediaItemFromUrl } from "@/src/utils/fileExtraction";
+import { MediaItem } from "@/src/types/media";
 import { VideoIcon } from "lucide-react";
 import Image from "next/image";
-import { useMemo, useState } from "react";
-import { getFileIconByType, isAudio as isAudioUtil, isImage as isImageUtil, isVideo as isVideoUtil } from "./mediaUtils";
-
-export type MediaItem = {
-  url: string;
-  name?: string;
-  type?: string; // mime type if available
-  sizeBytes?: number;
-};
+import { useState } from "react";
+import { MediaSkeleton } from "./MediaSkeleton";
+import {
+  formatBytes,
+  getFileIconByType,
+  isAudio as isAudioUtil,
+  isDocument,
+  isImage as isImageUtil,
+  isVideo as isVideoUtil
+} from "./mediaUtils";
 
 interface MediaGridPreviewProps {
   items: MediaItem[];
   onOpenViewer?: (startIndex: number) => void;
   className?: string;
+  isLoading?: boolean;
 }
 
-
-function formatMoreCount(count: number) {
-  return count > 0 ? `+${count} more` : "";
-}
-
-export default function MediaGridPreview({ items, onOpenViewer, className }: MediaGridPreviewProps) {
-  items = items.map((item) => createMediaItemFromUrl(item.url))
-  const firstFour = useMemo(() => items.slice(0, 4), [items]);
-  const hasMore = items.length > 3; // show overlay tile when there are 4 or more items
-  const moreCount = items.length - 3; // overlay on the 4th tile shows +N for all after the 3rd
+export default function MediaGridPreview({ items, onOpenViewer, className, isLoading }: MediaGridPreviewProps) {
   const [loadingIdx, setLoadingIdx] = useState<number | null>(null);
+
+  // Early returns
+  if (isLoading) {
+    return <MediaSkeleton count={items.length} className={className} />;
+  }
 
   if (!items || items.length === 0) return null;
 
-  // For ≤1: stacked/single preview, not grid
-  if (items.length <= 1) {
-    return (
-      <div className={cn("flex flex-col gap-2", className)}>
-        {items.map((m, idx) => {
-          const img = isImageUtil(m.type, m.url);
-          const vid = isVideoUtil(m.type, m.url);
-          const aud = isAudioUtil(m.type, m.url);
+  const handleItemClick = (index: number) => {
+    onOpenViewer?.(index);
+  };
 
-          if (m.url) {
-            console.log(m.type, m.url, img)
-          }
+  const renderMediaItem = (item: MediaItem, index: number, isGridItem = false) => {
+    console.log(item, '-----')
+    const isImg = isImageUtil(item.type, item.url);
+    const isVid = isVideoUtil(item.type, item.url);
+    const isAud = isAudioUtil(item.type, item.url);
+    const isDoc = isDocument(item.type, item.name);
 
-          return (
-            <button
-              key={`${m.url}-${idx}`}
-              className="group relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-lg"
-              onClick={() => onOpenViewer?.(idx)}
-              aria-label={m.name || "open media"}
-            >
-              <div className="relative rounded-lg overflow-hidden w-64 border border-border bg-background-accent/40 transition-transform duration-200 ease-out hover:shadow-lg hover:scale-[1.01]">
-                {img ? (
-                  <Image
-                    src={m.url}
-                    alt={m.name || "media"}
-                    width={1200}
-                    height={800}
-                    loading="lazy"
-                    className="w-full object-cover"
-                    onLoadStart={() => setLoadingIdx(idx)}
-                    onLoadingComplete={() => setLoadingIdx((v) => (v === idx ? null : v))}
-                  />
-                ) : vid ? (
-                  <div className="w-full flex items-center justify-center bg-background-accent">
-                    <div className="absolute">
-                      {getFileIconByType(m.type, m.name, 45)}
-                    </div>
-                    <video src={m.url} className="h-56 w-auto max-w-full object-cover" muted playsInline preload="metadata" />
-                  </div>
-                ) : aud ? (
-                  <div className="p-4 flex items-center justify-center gap-2 bg-gray-200">
-                    {getFileIconByType(m.type, m.name, 45)}
-                    <audio src={m.url} controls className="w-full" />
-                  </div>
-                ) : (
-                  <div className="p-4 text-sm flex items-center justify-center gap-2 text-muted-foreground">
-                    {getFileIconByType(m.type, m.name, 45)}
-                  </div>
-                )}
-                {loadingIdx === idx && (
-                  <div className="absolute inset-0 bg-black/5 flex items-center justify-center">
-                    <LoadMoreLoader />
-                  </div>
-                )}
+    const getItemContent = () => {
+      if (isImg) {
+        return (
+          <Image
+            src={item.url}
+            alt={item.name || "media"}
+            width={isGridItem ? 600 : 1200}
+            height={isGridItem ? 400 : 800}
+            loading="lazy"
+            className={cn(
+              "object-cover",
+              isGridItem ? "w-full h-full" : "min-w-[250px] w-full"
+            )}
+            onLoadStart={() => setLoadingIdx(index)}
+            onLoadingComplete={() => setLoadingIdx((v) => (v === index ? null : v))}
+          />
+        );
+      }
+
+      if (isVid) {
+        return (
+          <div className={cn(
+            "flex items-center justify-center bg-background-accent",
+            isGridItem ? "w-full h-full relative" : "w-full"
+          )}>
+            {!isGridItem && (
+              <div className="absolute z-10">
+                {getFileIconByType(item.url, item.type, item.name, 45)}
               </div>
-            </button>
-          );
-        })}
+            )}
+            <video
+              src={item.url}
+              className={cn(
+                "object-cover",
+                isGridItem ? "w-full h-full rounded-lg" : "h-56 w-auto max-w-full"
+              )}
+              muted
+              playsInline
+              preload="metadata"
+            />
+            {isGridItem && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="bg-black/50 rounded-full p-1.5 border border-white/20 shadow-sm">
+                  <VideoIcon className="text-white" size={24} />
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      }
+
+      if (isAud) {
+        return (
+          <div className={cn(
+            "flex items-center justify-center gap-2 bg-gray-200",
+            isGridItem ? "p-2 text-muted-foreground h-full" : "p-4"
+          )}>
+            {getFileIconByType(item.url, item.type, item.name, isGridItem ? 32 : 45)}
+            {!isGridItem && <audio src={item.url} controls className="min-w-[200px]" />}
+          </div>
+        );
+      }
+
+      // Documents and other files
+      return (
+        <div className={cn(
+          "flex flex-col items-center justify-center gap-2 text-muted-foreground",
+          isDoc ? "bg-background-accent/50" : "bg-background-accent/30",
+          isGridItem ? "p-2 h-full" : "p-4"
+        )}>
+          {getFileIconByType(item.url, item.type, item.name, isGridItem ? 32 : 45)}
+          <div className="text-center w-full">
+            <p className={cn(
+              "font-medium truncate",
+              isGridItem ? "text-xs" : "text-sm"
+            )}>
+              {item.name || "Unknown File"}
+            </p>
+            {!isGridItem && item.sizeBytes && (
+              <p className="text-xs text-muted-foreground">{formatBytes(item.sizeBytes)}</p>
+            )}
+          </div>
+        </div>
+      );
+    };
+
+    return (
+      <button
+        key={`${item.url}-${index}`}
+        className={cn(
+          "group relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-lg transition-transform duration-200 ease-out hover:shadow-lg hover:scale-[1.01]",
+          isGridItem ? "overflow-hidden border border-border bg-background" : "w-full max-w-64 border border-border bg-background-accent/40"
+        )}
+        onClick={() => handleItemClick(index)}
+        aria-label={item.name || "open media"}
+      >
+        <div className={cn(
+          "relative rounded-lg overflow-hidden",
+          isGridItem ? "h-40 min-w-40 flex items-center justify-center" : ""
+        )}>
+          {getItemContent()}
+
+          {loadingIdx === index && (
+            <div className="absolute inset-0 bg-black/5 flex items-center justify-center">
+              <LoadMoreLoader />
+            </div>
+          )}
+        </div>
+      </button>
+    );
+  };
+
+  // Single item layout
+  if (items.length === 1) {
+    return (
+      <div className={cn("flex flex-col gap-2 max-w-full", className)}>
+        <div className="w-full max-w-64">
+          {renderMediaItem(items[0], 0, false)}
+        </div>
       </div>
     );
   }
 
-  // ≥2: grid of first 3, and 4th tile with overlay when applicable
-  return (
-    <div className={cn("grid grid-cols-2 gap-2", className)}>
-      {firstFour.slice(0, 3).map((m, idx) => {
-        const img = isImageUtil(m.type, m.url);
-        const vid = isVideoUtil(m.type, m.url);
-        const aud = isAudioUtil(m.type, m.url);
+  // Grid layout for multiple items
+  const firstFour = items.slice(0, 4);
+  const hasMore = items.length > 3;
+  const moreCount = items.length - 3;
 
-        return (
-          <button
-            key={`${m.url}-${idx}`}
-            className="relative overflow-hidden rounded-lg border border-border bg-background transition-transform duration-200 ease-out hover:shadow-sm hover:scale-[1.01] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-            onClick={() => onOpenViewer?.(idx)}
-            aria-label={m.name || "open media"}
-          >
-            <div className="relative h-40 min-w-40 flex items-center justify-center">
-              {img ? (
-                <Image className="w-full h-full object-cover" src={m.url} alt={m.name || "media"} width={600} height={400} loading="lazy" />
-              ) : vid ? (
-                <div className="w-full h-full relative">
-                  <video
-                    src={m.url}
-                    className="w-full h-full rounded-lg object-cover"
-                    muted
-                    playsInline
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="bg-black/50 rounded-full p-1.5 border border-white/20 shadow-sm">
-                      <VideoIcon className="text-white" size={24} />
-                    </div>
-                  </div>
-                </div>
-              ) : aud ? (
-                <div className="p-2 flex items-center justify-center text-muted-foreground">
-                  {getFileIconByType(m.type, m.name, 45)}
-                </div>
-              ) : (
-                <div className="p-2 flex items-center justify-center text-muted-foreground">
-                  {getFileIconByType(m.type, m.name, 45)}
-                </div>
-              )}
-            </div>
-          </button>
-        );
-      })}
+  return (
+    <div className={cn("grid grid-cols-2 gap-2 max-w-full", className)}>
+      {firstFour.slice(0, 3).map((item, idx) => (
+        <div key={`${item.url}-${idx}`} className="min-w-0">
+          {renderMediaItem(item, idx, true)}
+        </div>
+      ))}
 
       {/* View more tile */}
-
       {hasMore && (
-        <button
-          className="relative w-full h-full cursor-pointer rounded-lg overflow-hidden border border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-transform duration-200 ease-out hover:shadow-sm hover:scale-[1.01] bg-background"
-          onClick={() => onOpenViewer?.(3)}
-          aria-label={`open media viewer starting at item 4`}
-        >
-          <div className="absolute inset-0 bg-black/50" />
-          <span className="relative z-10 text-white text-sm font-semibold">
-            {formatMoreCount(moreCount)}
-          </span>
-        </button>
+        <div className="min-w-0">
+          <button
+            className="relative w-full h-40 cursor-pointer rounded-lg overflow-hidden border border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-transform duration-200 ease-out hover:shadow-sm hover:scale-[1.01] bg-background flex items-center justify-center"
+            onClick={() => handleItemClick(3)}
+            aria-label={`open media viewer starting at item 4`}
+          >
+            <div className="absolute inset-0 bg-black/50" />
+            <span className="relative z-10 text-white text-sm font-semibold">
+              +{moreCount} more
+            </span>
+          </button>
+        </div>
       )}
     </div>
   );
 }
-
-
