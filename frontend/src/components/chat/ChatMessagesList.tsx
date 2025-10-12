@@ -26,7 +26,6 @@ const ChatMessagesList = ({
 }: ChatMessagesListProps) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const topObserverRef = useRef<HTMLDivElement | null>(null); // for load more
-  const bottomObserverRef = useRef<HTMLDivElement | null>(null); // for scroll-to-bottom visibility
   const previousScrollHeight = useRef<number>(0);
   const loadingMore = useRef<boolean>(false);
 
@@ -38,6 +37,7 @@ const ChatMessagesList = ({
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const [hasNewMessageInBottom, setHasNewMessageInBottom] = useState(false);
   const [initialScrollDone, setInitialScrollDone] = useState(false);
+  const [isUserScrolledUp, setIsUserScrolledUp] = useState(false);
 
   // 🧭 Infinite Scroll Observer (TOP)
   const setupTopObserver = useCallback(() => {
@@ -63,32 +63,39 @@ const ChatMessagesList = ({
     return () => observer.disconnect();
   }, [loading, hasMoreMessages, onLoadMore]);
 
-  // 👁️ Scroll-to-bottom Observer (BOTTOM)
-  const setupBottomObserver = useCallback(() => {
-    const scrollEl = scrollRef.current;
-    const bottomSentinel = bottomObserverRef.current;
-    if (!scrollEl || !bottomSentinel) return;
+  // 📏 Scroll position detection for scroll-to-bottom button
+  const handleScroll = useCallback(() => {
+    const container = scrollRef.current;
+    if (!container) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setShowScrollToBottom(!entry.isIntersecting);
-      },
-      { root: scrollEl, threshold: 0.1 }
-    );
+    const scrollTop = container.scrollTop;
+    const scrollHeight = container.scrollHeight;
+    const clientHeight = container.clientHeight;
 
-    observer.observe(bottomSentinel);
-    return () => observer.disconnect();
+    // Calculate distance from bottom
+    const distanceFromBottom = scrollHeight - (scrollTop + clientHeight);
+
+    // Show scroll-to-bottom button if user has scrolled up more than 600px from bottom
+    const shouldShowButton = distanceFromBottom > 600;
+    setShowScrollToBottom(shouldShowButton);
+    setIsUserScrolledUp(shouldShowButton);
   }, []);
 
-  // Setup both observers
+  // Setup scroll listener and top observer
   useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+
     const cleanupTop = setupTopObserver();
-    const cleanupBottom = setupBottomObserver();
+
+    // Add scroll event listener
+    container.addEventListener('scroll', handleScroll);
+
     return () => {
       if (cleanupTop) cleanupTop();
-      if (cleanupBottom) cleanupBottom();
+      container.removeEventListener('scroll', handleScroll);
     };
-  }, [setupTopObserver, setupBottomObserver]);
+  }, [setupTopObserver, handleScroll]);
 
   // ✅ Initial scroll to bottom once on load
   useEffect(() => {
@@ -113,24 +120,26 @@ const ChatMessagesList = ({
       const newScrollHeight = container.scrollHeight;
       const diff = newScrollHeight - previousScrollHeight.current;
 
-      container.scrollTop += diff; // 👈 Maintain visual scroll position
+      container.scrollTop += diff; 
       loadingMore.current = false;
     });
   }, [messages]);
 
-  // 🔽 When new message arrives, track if user is near bottom
+  // 🔽 When new message arrives, handle auto-scroll behavior
   useEffect(() => {
     const container = scrollRef.current;
-    if (!container) return;
+    if (!container || messages.length === 0) return;
 
-    const scrollBottomGap = container.scrollHeight - (container.scrollTop + container.clientHeight);
-    const isAtBottom = scrollBottomGap < 100;
-
-    if (isAtBottom) {
-      container.scrollTop = container.scrollHeight;
-      setHasNewMessageInBottom(false);
+    if (!isUserScrolledUp) {
+      requestAnimationFrame(() => {
+        container.scrollTop = container.scrollHeight;
+        setHasNewMessageInBottom(false);
+      });
+    } else {
+      setHasNewMessageInBottom(true);
     }
-  }, [messages]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages.length]);
 
   return (
     <div className="px-4 pb-[110px] overflow-y-auto h-full scrollbar-custom" ref={scrollRef}>
@@ -166,8 +175,6 @@ const ChatMessagesList = ({
         )}
       </div>
 
-      {/* 👇 Bottom Observer for scroll-to-bottom visibility */}
-      <div ref={bottomObserverRef} className="h-1 w-full" />
 
       {/* ⬇️ Scroll to Bottom Button */}
       {showScrollToBottom && (
@@ -179,8 +186,12 @@ const ChatMessagesList = ({
                 top: scrollRef.current.scrollHeight,
                 behavior: "smooth",
               });
-              setShowScrollToBottom(false);
-              setHasNewMessageInBottom(false);
+              // Reset states after scrolling to bottom
+              setTimeout(() => {
+                setShowScrollToBottom(false);
+                setIsUserScrolledUp(false);
+                setHasNewMessageInBottom(false);
+              }, 300); 
             }
           }}
         >

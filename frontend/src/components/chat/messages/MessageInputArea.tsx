@@ -7,7 +7,7 @@ import { Chat, MessageWithoutChat, SocketRes } from "@/src/types";
 import EmojiPicker from "emoji-picker-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Paperclip, Send, Smile } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useSocketContext } from "../../providers/socketProvider";
 import FilePreviewList from "./FilePreviewList";
@@ -210,38 +210,52 @@ const MessageInputArea = ({ activeChat, setSendingMedia }: ChatInputAreaProps) =
     }
   }
 
-  const handleRemove = (index: number) => {
+  const handleRemove = useCallback((index: number) => {
     setFiles((prev) => prev?.filter((_, i) => i !== index));
-  };
+  }, []);
+
+  // Memoize file preview to prevent flickering
+  const filePreview = useMemo(() => {
+    if (!files || files.length === 0 || uploadState.isUploading) return null;
+    return <FilePreviewList onRemove={handleRemove} files={files} />;
+  }, [files, uploadState.isUploading, handleRemove]);
+
+  // Memoize upload progress to prevent flickering
+  const uploadProgress = useMemo(() => {
+    if (!uploadState.isUploading) return null;
+    return (
+      <div className="bg-background-accent/95 backdrop-blur-sm border border-border rounded-lg p-3 shadow-lg">
+        <MediaUploadSummary
+          totalFiles={uploadState.uploads.length}
+          completedCount={uploadState.completedCount}
+          failedCount={uploadState.failedCount}
+          totalProgress={uploadState.totalProgress}
+          isUploading={uploadState.isUploading}
+        />
+        <MediaUploadProgressList
+          uploads={uploadState.uploads}
+          onRetry={retryUpload}
+          className="mt-2"
+        />
+      </div>
+    );
+  }, [uploadState, retryUpload]);
 
   return (
     <div className="px-3 md:px-4 border-t border-border bg-background absolute w-full bottom-0 right-0 z-[50]">
       <div className="flex items-center gap-2 py-2">
         <div className="flex-1 relative">
           {/* Upload Progress */}
-          {uploadState.isUploading && (
+          {uploadProgress && (
             <div className="absolute w-full bottom-[105%] mb-2">
-              <div className="bg-background-accent/95 backdrop-blur-sm border border-border rounded-lg p-3 shadow-lg">
-                <MediaUploadSummary
-                  totalFiles={uploadState.uploads.length}
-                  completedCount={uploadState.completedCount}
-                  failedCount={uploadState.failedCount}
-                  totalProgress={uploadState.totalProgress}
-                  isUploading={uploadState.isUploading}
-                />
-                <MediaUploadProgressList
-                  uploads={uploadState.uploads}
-                  onRetry={retryUpload}
-                  className="mt-2"
-                />
-              </div>
+              {uploadProgress}
             </div>
           )}
 
           {/* File Preview */}
-          {files && !uploadState.isUploading && (
+          {filePreview && (
             <div className="flex absolute w-full bottom-[105%]">
-              <FilePreviewList onRemove={handleRemove} files={files} />
+              {filePreview}
             </div>
           )}
 
@@ -266,7 +280,7 @@ const MessageInputArea = ({ activeChat, setSendingMedia }: ChatInputAreaProps) =
             <ReplyPreview replyTo={replyTo as MessageWithoutChat} onCancel={clearReplyTo} view={false} />
           </div>}
         </div>
-        <Button onClick={() => handleSendMessage()} disabled={!input.trim() || sending || uploadState.isUploading} className="w-11 h-11 rounded-full bg-primary hover:bg-primary/90 disabled:opacity-50">
+        <Button onClick={() => handleSendMessage()} disabled={(!input.trim() && (!files || files.length === 0)) || sending || uploadState.isUploading} className="w-11 h-11 rounded-full bg-primary hover:bg-primary/90 disabled:opacity-50">
           <Send className="w-4 h-4" />
         </Button>
       </div>

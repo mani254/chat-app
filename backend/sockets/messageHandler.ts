@@ -28,19 +28,36 @@ export const registerMessageHandlers = (socket: Socket, io: Server) => {
         }
 
         const content = (data?.content || "").trim();
-        if (!content) {
+        const type = data?.messageType || "text";
+
+        // For media messages, allow empty content if mediaLinks are provided
+        if (!content && type !== "media") {
           const err = { code: "BAD_REQUEST", message: "content is required" };
           ack ? ack({ ok: false, error: err }) : socket.emit("error", err);
           return;
         }
-        if (content.length > 5000) {
+
+        // For media messages, ensure either content or mediaLinks are provided
+        if (type === "media" && !content) {
+          const links = Array.isArray(data.mediaLinks)
+            ? data.mediaLinks.filter(Boolean)
+            : [];
+          if (links.length === 0) {
+            const err = {
+              code: "BAD_REQUEST",
+              message: "content or mediaLinks required for media message",
+            };
+            ack ? ack({ ok: false, error: err }) : socket.emit("error", err);
+            return;
+          }
+        }
+        if (content && content.length > 5000) {
           const err = { code: "BAD_REQUEST", message: "content too long" };
           ack ? ack({ ok: false, error: err }) : socket.emit("error", err);
           return;
         }
 
         const allowedTypes = ["text", "media", "note"] as const;
-        const type = data?.messageType || "text";
         if (!allowedTypes.includes(type)) {
           const err = { code: "BAD_REQUEST", message: "invalid messageType" };
           ack ? ack({ ok: false, error: err }) : socket.emit("error", err);
