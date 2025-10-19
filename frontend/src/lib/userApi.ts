@@ -73,3 +73,85 @@ export const signOut = async (): Promise<{ message: string } | null> => {
     return null;
   }
 };
+
+// OTP functions
+export async function generateOtp(
+  email: string,
+  type: string = "email_verification"
+): Promise<boolean> {
+  try {
+    const response = await api.post<{ message: string }>("/api/otp/generate", {
+      email,
+      type,
+    });
+    console.log(response);
+    return true;
+  } catch (err: any) {
+    const errorMessage = err.response?.data?.message || err.message;
+    console.error(errorMessage, "error while generating OTP");
+    toast.error("Failed to send verification code", {
+      description: errorMessage,
+    });
+    return false;
+  }
+}
+
+export async function verifyOtp(
+  email: string,
+  otp: string,
+  type: string = "email_verification"
+): Promise<boolean> {
+  try {
+    const response = await api.post<{
+      message: string;
+      data: { verified: boolean };
+    }>("/api/otp/verify", {
+      email,
+      otp,
+      type,
+    });
+    return response.data.data.verified;
+  } catch (err: any) {
+    const errorMessage = err.response?.data?.message || err.message;
+    console.error(errorMessage, "error while verifying OTP");
+    toast.error("Verification failed", {
+      description: errorMessage,
+    });
+    return false;
+  }
+}
+
+export async function resendOtp(
+  email: string,
+  type: string = "email_verification"
+): Promise<boolean> {
+  try {
+    await api.post<{ message: string }>("/api/otp/resend", {
+      email,
+      type,
+    });
+    return true;
+  } catch (err: any) {
+    const errorMessage = err.response?.data?.message || err.message;
+    console.error(errorMessage, "error while resending OTP");
+    toast.error("Failed to resend verification code", {
+      description: errorMessage,
+    });
+    return false;
+  }
+}
+
+// Google OAuth functions
+export async function initiateGoogleLogin(): Promise<string | null> {
+  try {
+    const response = await api.get<{ authUrl: string }>("/api/auth/google");
+    return response.data.authUrl;
+  } catch (err: any) {
+    const errorMessage = err.response?.data?.message || err.message;
+    console.error(errorMessage, "error while initiating Google login");
+    toast.error("Error initiating Google login", {
+      description: errorMessage,
+    });
+    return null;
+  }
+}

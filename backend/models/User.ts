@@ -5,12 +5,17 @@ import mongoose, { Document, Schema } from "mongoose";
 export interface IUser extends Document {
   name: string;
   email: string;
-  password: string;
+  password?: string; // Optional for OAuth users
   avatar?: string;
-  gender: "male" | "female" | "other";
+  gender?: "male" | "female" | "other";
   status?: string;
   isOnline?: boolean;
   birthday?: Date;
+  // OAuth fields
+  provider?: "credentials" | "google";
+  providerId?: string;
+  phone?: string;
+  emailVerified?: boolean;
 }
 
 const UserSchema = new Schema<IUser>(
@@ -31,7 +36,9 @@ const UserSchema = new Schema<IUser>(
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
+      required: function (this: IUser) {
+        return this.provider === "credentials" || !this.provider;
+      },
       minlength: [6, "Password should be at least 6 characters"],
     },
     gender: {
@@ -56,12 +63,29 @@ const UserSchema = new Schema<IUser>(
       type: Boolean,
       default: false,
     },
+    // OAuth fields
+    provider: {
+      type: String,
+      enum: ["credentials", "google"],
+      default: "credentials",
+    },
+    providerId: {
+      type: String,
+      sparse: true, // Allows multiple null values
+    },
+    phone: {
+      type: String,
+    },
+    emailVerified: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
 
 UserSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
+  if (!this.isModified("password") || !this.password) return next();
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });

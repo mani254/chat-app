@@ -1,7 +1,13 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import axios from "../lib/api";
-import { fetchUsers, loginUser, registerUser, signOut } from "../lib/userApi";
+import {
+  fetchUsers,
+  initiateGoogleLogin,
+  loginUser,
+  registerUser,
+  signOut,
+} from "../lib/userApi";
 import { User } from "../types";
 
 interface UserState {
@@ -21,6 +27,7 @@ interface UserState {
     email: string;
     password: string;
   }) => Promise<User | null>;
+  loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
   getCurrentUser: () => Promise<void>;
   // setToken: (token: string) => void;
@@ -61,6 +68,14 @@ export const useUserStore = create<UserState>()(
           });
         }
         return loggedInUser;
+      },
+
+      loginWithGoogle: async () => {
+        const authUrl = await initiateGoogleLogin();
+        if (authUrl) {
+          // Redirect to Google OAuth
+          window.location.href = authUrl;
+        }
       },
 
       logout: async () => {

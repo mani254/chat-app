@@ -1,6 +1,5 @@
 'use client';
 
-
 import { Button } from '@/components/ui/button';
 import { useUserStore } from '@/src/store/useUserStore';
 import { validation } from '@/src/utils/validations';
@@ -9,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { PasswordInput } from '../FormComponents/PasswordInput';
 import { TextInput } from '../FormComponents/TextInput';
+import OtpVerification from './OtpVerification';
 
 
 interface RegisterData {
@@ -26,7 +26,6 @@ interface ErrorState {
 }
 
 const Register = (): React.ReactElement => {
-
   const [registerData, setRegisterData] = useState<RegisterData>({
     email: '',
     password: '',
@@ -40,6 +39,9 @@ const Register = (): React.ReactElement => {
     confirmPassword: '',
     name: '',
   });
+
+  const [showOtpVerification, setShowOtpVerification] = useState(false);
+  const [pendingEmail, setPendingEmail] = useState('');
 
   const registerUser = useUserStore((state) => state.register);
   const router = useRouter();
@@ -80,12 +82,53 @@ const Register = (): React.ReactElement => {
 
     const { email, password, name } = registerData;
     try {
-      await registerUser({ email, password, name });
-      router.replace('/login');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BACKEND_URL}/api/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ email, password, name }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        if (data.data?.requiresVerification) {
+          // Show OTP verification
+          setPendingEmail(email);
+          setShowOtpVerification(true);
+        } else {
+          router.replace('/login');
+        }
+      } else {
+        console.error('Registration failed:', data.message);
+      }
     } catch (error) {
       console.error('Registration failed:', error);
     }
   };
+
+  const handleOtpSuccess = () => {
+    setShowOtpVerification(false);
+    setPendingEmail('');
+    router.replace('/login');
+  };
+
+  const handleOtpResend = () => {
+    // OTP resend is handled in the OtpVerification component
+  };
+
+  if (showOtpVerification) {
+    return (
+      <OtpVerification
+        email={pendingEmail}
+        onSuccess={handleOtpSuccess}
+        onResend={handleOtpResend}
+        type="registration"
+      />
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit}>

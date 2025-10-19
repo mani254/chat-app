@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { PasswordInput } from '../FormComponents/PasswordInput';
 import { TextInput } from '../FormComponents/TextInput';
+import OtpVerification from './OtpVerification';
 
 interface LoginData {
   email: string;
@@ -18,6 +19,8 @@ const Login = (): React.ReactElement => {
     email: '',
     password: ''
   });
+  const [showOtpVerification, setShowOtpVerification] = useState(false);
+  const [pendingEmail, setPendingEmail] = useState('');
 
   const logInUser = useUserStore(state => state.login)
 
@@ -33,9 +36,29 @@ const Login = (): React.ReactElement => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     try {
-      const user = await logInUser(loginData)
-      if (user) {
-        router.replace('/');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BACKEND_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(loginData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Login successful
+        const user = await logInUser(loginData);
+        if (user) {
+          router.replace('/');
+        }
+      } else if (response.status === 403 && data.data?.requiresVerification) {
+        // Email not verified, show OTP verification
+        setPendingEmail(loginData.email);
+        setShowOtpVerification(true);
+      } else {
+        console.error('Login failed:', data.message);
       }
     } catch (error) {
       console.error('Login failed:', error);
@@ -45,6 +68,28 @@ const Login = (): React.ReactElement => {
   const handleForgotPassword = (): void => {
     // Handle forgot password logic here
   };
+
+  const handleOtpSuccess = () => {
+    setShowOtpVerification(false);
+    setPendingEmail('');
+    // Try login again after verification
+    handleSubmit({ preventDefault: () => { } } as React.FormEvent<HTMLFormElement>);
+  };
+
+  const handleOtpResend = () => {
+    // OTP resend is handled in the OtpVerification component
+  };
+
+  if (showOtpVerification) {
+    return (
+      <OtpVerification
+        email={pendingEmail}
+        onSuccess={handleOtpSuccess}
+        onResend={handleOtpResend}
+        type="login"
+      />
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit}>

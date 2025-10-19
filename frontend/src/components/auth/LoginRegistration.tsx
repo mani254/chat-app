@@ -2,9 +2,14 @@
 
 // import logo from '@/assets/images/logo.png';
 import Image from 'next/image';
-import { apple, google, loginBackground } from '../../utils';
+import { google, loginBackground } from '../../utils';
 
-const LoginRegistration = ({ children }: { children: React.ReactNode }) => {
+interface LoginRegistrationProps {
+  children: React.ReactNode;
+  onGoogleLogin?: () => void;
+}
+
+const LoginRegistration = ({ children, onGoogleLogin }: LoginRegistrationProps) => {
 
   return (
     <section className="w-full h-screen flex justify-end bg-zinc-500">
@@ -36,7 +41,10 @@ const LoginRegistration = ({ children }: { children: React.ReactNode }) => {
           </div>
 
           <div className="flex justify-around mt-6 gap-4">
-            <div className="flex items-center justify-center border border-gray-300 px-3 py-1 rounded-md bg-white shadow-sm cursor-pointer w-full">
+            <div
+              className="flex items-center justify-center border border-gray-300 px-3 py-1 rounded-md bg-white shadow-sm cursor-pointer w-full hover:bg-gray-50 transition-colors"
+              onClick={onGoogleLogin}
+            >
               <Image
                 className="w-6 mr-3"
                 src={google}
@@ -46,7 +54,7 @@ const LoginRegistration = ({ children }: { children: React.ReactNode }) => {
               />
               <p className="whitespace-nowrap font-medium">Google</p>
             </div>
-            <div className="flex items-center justify-center border border-gray-300 px-3 py-1 rounded-md bg-white shadow-sm cursor-pointer w-full">
+            {/* <div className="flex items-center justify-center border border-gray-300 px-3 py-1 rounded-md bg-white shadow-sm cursor-pointer w-full">
               <Image
                 className="w-6 mr-3"
                 src={apple}
@@ -55,7 +63,7 @@ const LoginRegistration = ({ children }: { children: React.ReactNode }) => {
                 height={24}
               />
               <p className="whitespace-nowrap font-medium">Apple</p>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

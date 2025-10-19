@@ -8,6 +8,7 @@ import { errorHandler } from "./middleware/errorMiddleware";
 import authRoutes from "./routes/authRoutes";
 import chatRouter from "./routes/chatRouter";
 import messageRouter from "./routes/messageRouter";
+import otpRoutes from "./routes/otpRoutes";
 import userRouter from "./routes/userRouter";
 
 dotenv.config();
@@ -25,6 +26,7 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api/auth", authRoutes);
+app.use("/api/otp", otpRoutes);
 
 const queryValuesToCast: Record<string, "number" | "boolean" | "object"> = {
   page: "number",
