@@ -1,58 +1,51 @@
-# Turborepo Tailwind CSS starter
+[![GitHub][opengraph-image]][opengraph-image-url]
 
-This Turborepo starter is maintained by the Turborepo core team.
+# shadcn/ui and tailwindcss v4 monorepo template
 
-## Using this example
+This template is for creating a monorepo with Turborepo, shadcn/ui, tailwindcss v4, and react v19.
 
-Run the following command:
+## One-click Deploy
 
-```sh
-npx create-turbo@latest -e with-tailwind
+You can deploy this template to Vercel with the button below:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?build-command=cd+..%2F..%2F+%26%26+pnpm+turbo+build+--filter%3Dweb...&demo-description=This+is+a+template+Turborepo+with+ShadcnUI+tailwindv4&demo-image=%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F2JxNyYATuuV7WPuJ31kF9Q%2F433990aa4c8e7524a9095682fb08f0b1%2FBasic.png&demo-title=Turborepo+%26+Next.js+Starter&demo-url=https%3A%2F%2Fexamples-basic-web.vercel.sh%2F&from=templates&project-name=Turborepo+%26+Next.js+Starter&repository-name=turborepo-shadcn-tailwind&repository-url=https%3A%2F%2Fgithub.com%2Flinkb15%2Fturborepo-shadcn-ui-tailwind-4&root-directory=apps%2Fweb&skippable-integrations=1)
+
+## Usage
+
+in the root directory run:
+
+```bash
+pnpm install
+pnpm dev
 ```
 
-## What's inside?
+## Adding components
 
-This Turborepo includes the following packages/apps:
+To add components to your app, run the following command at the root of your `web` app:
 
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app with [Tailwind CSS](https://tailwindcss.com/)
-- `web`: another [Next.js](https://nextjs.org/) app with [Tailwind CSS](https://tailwindcss.com/)
-- `ui`: a stub React component library with [Tailwind CSS](https://tailwindcss.com/) shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Building packages/ui
-
-This example is set up to produce compiled styles for `ui` components into the `dist` directory. The component `.tsx` files are consumed by the Next.js apps directly using `transpilePackages` in `next.config.ts`. This was chosen for several reasons:
-
-- Make sharing one `tailwind.config.ts` to apps and packages as easy as possible.
-- Make package compilation simple by only depending on the Next.js Compiler and `tailwindcss`.
-- Ensure Tailwind classes do not overwrite each other. The `ui` package uses a `ui-` prefix for it's classes.
-- Maintain clear package export boundaries.
-
-Another option is to consume `packages/ui` directly from source without building. If using this option, you will need to update the `tailwind.config.ts` in your apps to be aware of your package locations, so it can find all usages of the `tailwindcss` class names for CSS compilation.
-
-For example, in [tailwind.config.ts](packages/tailwind-config/tailwind.config.ts):
-
-```js
-  content: [
-    // app content
-    `src/**/*.{js,ts,jsx,tsx}`,
-    // include packages if not transpiling
-    "../../packages/ui/*.{js,ts,jsx,tsx}",
-  ],
+```bash
+pnpm dlx shadcn@latest add button -c apps/web
 ```
 
-If you choose this strategy, you can remove the `tailwindcss` and `autoprefixer` dependencies from the `ui` package.
+This will place the ui components in the `packages/ui/src/components` directory.
 
-### Utilities
+## Tailwind
 
-This Turborepo has some additional tools already setup for you:
+Your `globals.css` are already set up to use the components from the `ui` package which is imported in the `web` app.
 
-- [Tailwind CSS](https://tailwindcss.com/) for styles
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+## Using components
+
+To use the components in your app, import them from the `ui` package.
+
+```tsx
+import { Button } from '@workspace/ui/components/ui/button';
+```
+
+## More Resources
+
+- [shadcn/ui - Monorepo](https://ui.shadcn.com/docs/monorepo)
+- [Turborepo - shadcn/ui](https://turbo.build/repo/docs/guides/tools/shadcn-ui)
+- [TailwindCSS v4 - Explicitly Registering Sources](https://tailwindcss.com/docs/detecting-classes-in-source-files#explicitly-registering-sources)
+
+[opengraph-image]: https://turborepo-shadcn-tailwind.vercel.app/opengraph-image.png
+[opengraph-image-url]: https://turborepo-shadcn-tailwind.vercel.app/
