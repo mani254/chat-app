@@ -1,0 +1,42 @@
+{
+  "name": "@workspace/database",
+  "version": "0.1.0",
+  "description": "Database schemas and types for MongoDB",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c --watch",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "mongoose": "^8.6.2",
+    "slugify": "^1.6.6"
+  },
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^12.1.4",
+    "@types/mongoose": "^5.11.96",
+    "@workspace/typescript-config": "workspace:*",
+    "rimraf": "^6.0.1",
+    "rollup": "^4.50.2",
+    "typescript": "^5.8.2"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./schemas": {
+      "types": "./dist/schemas/index.d.ts",
+      "default": "./dist/schemas/index.js"
+    },
+    "./consts": {
+      "types": "./dist/consts/index.d.ts",
+      "default": "./dist/consts/index.js"
+    }
+  },
+  "files": [
+    "src"
+  ]
+}
