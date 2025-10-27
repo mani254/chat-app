@@ -2,7 +2,6 @@
 import { ProtectedRoute } from "@/components/providers/ProtectedRoute";
 import { SocketProvider } from "@/components/providers/SocketProviders";
 import { useUIStore } from "@/store/useUIStore";
-import { Toaster } from "@workspace/ui/components/sonner";
 import { useEffect } from "react";
 
 export default function Home() {
@@ -15,7 +14,6 @@ export default function Home() {
 
   return (
     <main className="">
-      <Toaster />
       <ProtectedRoute>
         <SocketProvider>
           <div></div>

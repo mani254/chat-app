@@ -10,7 +10,6 @@ import { PasswordInput } from '../formComponents/PasswordInput';
 import { TextInput } from '../formComponents/TextInput';
 import OtpVerification from './OtpVerification';
 
-
 interface RegisterData {
   email: string;
   password: string;
@@ -77,39 +76,24 @@ const Register = (): React.ReactElement => {
     }
   };
 
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
 
     if (hasErrors) return;
 
     const { email, password, name } = registerData;
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BACKEND_URL}/api/auth/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ email, password, name }),
-      });
+    const user = await registerUser({ email, password, name });
 
-      const data = await response.json();
+    if (!user) return;
 
-      if (response.ok) {
-        if (data.data?.requiresVerification) {
-          // Show OTP verification
-          setPendingEmail(email);
-          setShowOtpVerification(true);
-        } else {
-          router.replace('/login');
-        }
-      } else {
-        console.error('Registration failed:', data.message);
-      }
-    } catch (error) {
-      console.error('Registration failed:', error);
+    if (!user.emailVerified) {
+      setPendingEmail(email);
+      setShowOtpVerification(true);
+    } else {
+      router.replace('/login')
     }
+
+
   };
 
   const handleOtpSuccess = () => {

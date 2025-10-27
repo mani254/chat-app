@@ -1,7 +1,9 @@
 'use client';
 
+import { resendOtp, verfiyOtp } from '@/lib/otpApi';
 import { Button } from '@workspace/ui/components/button';
 import { toast } from '@workspace/ui/components/sonner';
+import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { TextInput } from '../formComponents/TextInput';
 
@@ -13,37 +15,36 @@ interface OtpVerificationProps {
 }
 
 const OtpVerification = ({ email, onSuccess, onResend, type = 'registration' }: OtpVerificationProps) => {
+
+  const router = useRouter();
+  // OTP input
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
+
+  // Process states
   const [isVerifying, setIsVerifying] = useState(false);
   const [isResending, setIsResending] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(600); // 10 minutes in seconds
+
+  // Resend cooldown timer (60 seconds)
+  const [resendCooldown, setResendCooldown] = useState(0);
+
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  // Countdown timer
+  // Countdown for resend cooldown
   useEffect(() => {
-    if (timeLeft > 0) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+    if (resendCooldown > 0) {
+      const timer = setTimeout(() => setResendCooldown(resendCooldown - 1), 1000);
       return () => clearTimeout(timer);
     }
-  }, [timeLeft]);
+  }, [resendCooldown]);
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
+  // --- OTP input handling ---
   const handleOtpChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return;
-
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
 
-    // Auto-focus next input
-    if (value && index < 5) {
-      inputRefs.current[index + 1]?.focus();
-    }
+    if (value && index < 5) inputRefs.current[index + 1]?.focus();
   };
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
@@ -57,104 +58,56 @@ const OtpVerification = ({ email, onSuccess, onResend, type = 'registration' }: 
     const pastedData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
     const newOtp = pastedData.split('').concat(Array(6 - pastedData.length).fill(''));
     setOtp(newOtp);
-
-    // Focus the last filled input or the first empty one
     const lastFilledIndex = Math.min(pastedData.length - 1, 5);
     inputRefs.current[lastFilledIndex]?.focus();
   };
 
+  // --- Verify OTP ---
   const handleVerify = async () => {
     const otpString = otp.join('');
     if (otpString.length !== 6) {
       toast.error('Please enter a complete 6-digit code');
       return;
     }
-
     setIsVerifying(true);
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BACKEND_URL}/api/otp/verify`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          email,
-          otp: otpString,
-          type: 'email_verification',
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        toast.success('Email verified successfully!');
-        onSuccess();
-      } else {
-        toast.error(data.message || 'Verification failed');
-        // Clear OTP on error
-        setOtp(['', '', '', '', '', '']);
-        inputRefs.current[0]?.focus();
-      }
-    } catch (error) {
-      console.error('Verification error:', error);
-      toast.error('Failed to verify code. Please try again.');
-    } finally {
-      setIsVerifying(false);
+    const result = await verfiyOtp({ email, otp: otpString, type: 'email_verification' });
+    if (result?.verified) {
+      toast.success('Email verified successfully Login to continue');
+      router.push('login');
     }
+    setIsVerifying(false);
   };
 
+  // --- Resend OTP ---
   const handleResend = async () => {
+    if (resendCooldown > 0) return;
     setIsResending(true);
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BACKEND_URL}/api/otp/resend`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          email,
-          type: 'email_verification',
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        toast.success('New verification code sent!');
-        setTimeLeft(600); // Reset timer
-        setOtp(['', '', '', '', '', '']);
-        inputRefs.current[0]?.focus();
-        onResend();
-      } else {
-        toast.error(data.message || 'Failed to resend code');
-      }
-    } catch (error) {
-      console.error('Resend error:', error);
-      toast.error('Failed to resend code. Please try again.');
-    } finally {
-      setIsResending(false);
-    }
+    await resendOtp({ email, type: 'email_verification' });
+    setIsResending(false);
   };
 
   return (
     <div className="w-full max-w-md mx-auto">
+      {/* Header */}
       <div className="text-center mb-8">
         <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
           <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+            />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+        <h2 className="text-xl font-semibold text-gray-900 mb-2">
           {type === 'registration' ? 'Verify Your Email' : 'Email Verification Required'}
         </h2>
-        <p className="text-gray-600">
-          We've sent a 6-digit verification code to
-        </p>
+        <p className="text-gray-600">We've sent a 6-digit verification code to</p>
         <p className="font-medium text-gray-900">{email}</p>
       </div>
 
+      {/* OTP Inputs */}
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-3">
           Enter verification code
@@ -171,28 +124,19 @@ const OtpVerification = ({ email, onSuccess, onResend, type = 'registration' }: 
               onChange={(e) => handleOtpChange(index, e.target.value)}
               onKeyDown={(e) => handleKeyDown(index, e)}
               onPaste={handlePaste}
-              className="w-12 h-12 text-center text-xl font-bold border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+              className="w-12 h-12 text-center text-xl font-bold border focus:ring-1 focus:ring-primary border-gray-300 rounded-lg outline-none transition-colors"
               disabled={isVerifying}
             />
           ))}
         </div>
       </div>
 
-      <div className="text-center mb-6">
-        {timeLeft > 0 ? (
-          <p className="text-sm text-gray-600">
-            Code expires in <span className="font-medium text-red-600">{formatTime(timeLeft)}</span>
-          </p>
-        ) : (
-          <p className="text-sm text-red-600 font-medium">Code has expired</p>
-        )}
-      </div>
-
+      {/* Buttons */}
       <div className="space-y-3">
         <Button
           onClick={handleVerify}
-          disabled={isVerifying || otp.join('').length !== 6 || timeLeft === 0}
-          className="w-full py-3 text-base font-medium"
+          disabled={isVerifying || otp.join('').length !== 6}
+          className="w-full py-3 text-base font-medium cursor-pointer"
         >
           {isVerifying ? (
             <div className="flex items-center justify-center">
@@ -206,30 +150,33 @@ const OtpVerification = ({ email, onSuccess, onResend, type = 'registration' }: 
 
         <Button
           onClick={handleResend}
-          disabled={isResending || timeLeft > 0}
+          disabled={isResending || resendCooldown > 0}
           variant="outline"
-          className="w-full py-3 text-base font-medium"
+          className="w-full py-3 text-base font-medium cursor-pointer"
         >
           {isResending ? (
             <div className="flex items-center justify-center">
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-600 mr-2"></div>
               Sending...
             </div>
+          ) : resendCooldown > 0 ? (
+            `Resend available in ${resendCooldown}s`
           ) : (
             'Resend Code'
           )}
         </Button>
       </div>
 
+      {/* Footer */}
       <div className="mt-6 text-center">
         <p className="text-xs text-gray-500">
-          Didn't receive the code? Check your spam folder or{' '}
+          Didn’t receive the code? Check your spam folder or{' '}
           <button
             onClick={handleResend}
-            disabled={isResending || timeLeft > 0}
+            disabled={isResending || resendCooldown > 0}
             className="text-blue-600 hover:text-blue-500 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            try again
+            {resendCooldown > 0 ? `try again in ${resendCooldown}s` : 'try again'}
           </button>
         </p>
       </div>

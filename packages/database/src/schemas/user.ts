@@ -66,6 +66,14 @@ const userSchema = new Schema(
   { timestamps: true },
 );
 
+userSchema.index({ email: 1 }, { unique: true });
+userSchema.index({ provider: 1, providerId: 1 }, { unique: true, sparse: true });
+userSchema.index({ isOnline: 1 });
+userSchema.index({ name: 1 });
+userSchema.index({ createdAt: -1 });
+userSchema.index({ emailVerified: 1 });
+userSchema.index({ gender: 1 });
+
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password') || !this.password) return next();
   const salt = await bcrypt.genSalt(10);
