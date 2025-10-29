@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
+import { AuthRequest } from '../types';
 import { generateAccessToken, generateRefreshToken } from '../utils/generateTokens';
 import { generateOtp } from './otpController';
 dotenv.config();
@@ -211,11 +212,14 @@ export const createRefreshToken = async (req: Request, res: Response) => {
   }
 };
 
-export const handleLogout = (req: Request, res: Response) => {
+export const handleLogout = async (req: AuthRequest, res: Response) => {
   try {
-    res.clearCookie('accessToken');
-    res.clearCookie('refreshToken');
-    res.json({ message: 'Logged out' });
+    const user = await User.findById(req.userId);
+    if (user) {
+      user.isOnline = false;
+      await user.save();
+    }
+    res.clearCookie('accessToken').clearCookie('refreshToken').json({ message: 'Logged out' });
   } catch (err: any) {
     console.error(err.message);
   }

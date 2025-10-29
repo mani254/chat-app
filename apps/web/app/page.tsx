@@ -1,4 +1,5 @@
 "use client";
+import ChatSidebar from "@/components/chat/ChatSidebar";
 import { ProtectedRoute } from "@/components/providers/ProtectedRoute";
 import { SocketProvider } from "@/components/providers/SocketProviders";
 import { useUIStore } from "@/store/useUIStore";
@@ -16,7 +17,9 @@ export default function Home() {
     <main className="">
       <ProtectedRoute>
         <SocketProvider>
-          <div></div>
+          <div className="h-screen bg-background-accent flex overflow-hidden">
+            <ChatSidebar />
+          </div>
         </SocketProvider>
       </ProtectedRoute>
     </main>
