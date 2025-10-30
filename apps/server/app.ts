@@ -5,6 +5,7 @@ import express from 'express';
 import connectDB from './config/db';
 import { errorHandler } from './middleware/errorHandler';
 import authRouter from './routes/authRoutes';
+import chatRouter from './routes/chatRoutes';
 import otpRouter from './routes/otpRouter';
 import userRouter from './routes/userRouter';
 
@@ -25,6 +26,7 @@ app.use(cookieParser());
 app.use('/api/auth', authRouter);
 app.use('/api/otp', otpRouter);
 app.use('/api/users', userRouter);
+app.use('/api/chats', chatRouter);
 
 app.use(errorHandler);
 

@@ -11,10 +11,10 @@ const Header = () => {
   const currentUser = useUserStore((state) => state.currentUser);
   const handleSignOut = useUserStore((state) => state.logout);
   return (
-    <div className="h-16 flex items-center justify-between border-b border-border px-4">
+    <div className="flex items-center justify-between px-2 py-2">
 
       <div className="flex items-center gap-3">
-        <h1 className="text-xl font-semibold tracking-tight">
+        <h1 className="text-lg font-semibold tracking-tight">
           Chats
         </h1>
       </div>
@@ -23,7 +23,7 @@ const Header = () => {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <div className="p-2 bg-background-accent/60 rounded-full cursor-pointer hover:bg-background-accent transition shadow-sm">
-              <Ellipsis size={19} />
+              <Ellipsis size={16} />
             </div>
           </DropdownMenuTrigger>
 
@@ -93,11 +93,11 @@ const Header = () => {
         </DropdownMenu>
 
         <div className="p-2 bg-background-accent rounded-full cursor-pointer" onClick={() => setOpenFeatureCommingSoonModal(true)}>
-          <Video size={19} />
+          <Video size={16} />
         </div>
 
         <div className="p-2 bg-background-accent/60 rounded-full cursor-pointer hover:bg-background-accent transition shadow-sm" onClick={() => setOpenFeatureCommingSoonModal(true)}>
-          <Settings size={19} />
+          <Settings size={16} />
         </div>
 
         <FeatureComingSoonModal open={openFeatureCommingSoonModal} onOpenChange={setOpenFeatureCommingSoonModal} />

@@ -74,6 +74,7 @@ const OtpVerification = ({ email, onSuccess, onResend, type = 'registration' }: 
     if (result?.verified) {
       toast.success('Email verified successfully Login to continue');
       router.push('login');
+      onSuccess();
     }
     setIsVerifying(false);
   };

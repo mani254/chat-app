@@ -1,0 +1,31 @@
+import { Users } from "lucide-react";
+
+interface NoGroupsFoundProps {
+  search: string;
+}
+
+const NoGroupsFound = ({ search }: NoGroupsFoundProps) => {
+  const showSearchHint = Boolean(search?.trim());
+
+  return (
+    <section className="flex flex-col items-center justify-center p-8 text-center text-muted-foreground select-none">
+      <div className="flex items-center justify-center w-12 h-12 rounded-full bg-muted">
+        <Users className="w-6 h-6 text-muted-foreground" />
+      </div>
+
+      <h2 className="mt-4 text-base font-medium text-foreground">No groups found</h2>
+
+      <p className="text-sm max-w-xs">
+        You haven’t created or joined any groups yet.
+      </p>
+
+      {showSearchHint && (
+        <p className="text-xs text-muted-foreground mt-1">
+          Try adjusting your search keywords.
+        </p>
+      )}
+    </section>
+  );
+};
+
+export default NoGroupsFound;

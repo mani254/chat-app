@@ -2,6 +2,9 @@
 @import 'tw-animate-css';
 
 @source "../../../../packages/ui/src/**/*.{js,ts,jsx,tsx}";
+@source "../../../../apps/web/components/**/*.{js,ts,jsx,tsx}";
+@source "../../../../apps/web/app/**/*.{js,ts,jsx,tsx}";
+@source "../../../../apps/web/hooks/**/*.{js,ts,jsx,tsx}";
 
 @custom-variant dark (&:is(.dark *));
 
