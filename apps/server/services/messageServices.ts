@@ -1,5 +1,5 @@
 // services/messageService.ts
-import { Message, MessageDocument, MessageQueryParams, User } from '@workspace/database';
+import { Message, MessageDocument, MessageQueryParams, MessageWithSender, User } from '@workspace/database';
 import { Types } from 'mongoose';
 
 class MessageService {
@@ -27,7 +27,7 @@ class MessageService {
     return matchStage;
   }
 
-  async fetchMessages(query: MessageQueryParams): Promise<{ totalItems: number; messages: MessageDocument[] }> {
+  async fetchMessages(query: MessageQueryParams): Promise<{ totalItems: number; messages: MessageWithSender[] }> {
     try {
       const { sortBy = 'createdAt', orderBy = 'desc', page, limit, fetchFields, includeChat = false } = query;
 

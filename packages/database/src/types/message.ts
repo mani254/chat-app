@@ -1,4 +1,4 @@
-import { ChatDocument, UserDocument } from '../schemas';
+import { UserDocument } from '../schemas';
 import { MessageDocument } from '../schemas/message';
 
 export interface MessageQueryParams {
@@ -17,11 +17,5 @@ export interface MessageQueryParams {
 
 export type MessageWithSender = Omit<MessageDocument, 'sender' | 'replyTo'> & {
   sender: UserDocument;
-  replyTo?: MessageWithSender;
-};
-
-export type MessageWithChatSender = Omit<MessageDocument, 'sender' | 'chat' | 'replyTo'> & {
-  sender: UserDocument;
-  chat: ChatDocument;
   replyTo?: MessageWithSender;
 };

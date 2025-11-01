@@ -3,7 +3,7 @@ import { useUserStore } from "@/store/useUserStore";
 import { PopulatedChatDocument } from "@workspace/database";
 import { Skeleton } from "@workspace/ui/components/skeleton";
 import NoGroupsFound from "../group/NoGroupFound";
-import ChatListItem from "./ChecklistItem";
+import ChatListItem from "./ChatlistItem";
 import NoChatsFound from "./NoChatFound";
 
 const ChatsList = ({ chats, search, type }: { chats: PopulatedChatDocument[], search: string, type: 'group' | 'chat' }) => {
@@ -47,7 +47,7 @@ const ChatsList = ({ chats, search, type }: { chats: PopulatedChatDocument[], se
         );
 
         return (
-          <ChatListItem chat={chat} currentUserId={currentUser?._id.toString()} isChatActive={isChatActive} haveUnreadMessages={haveUnreadMessages} />
+          <ChatListItem key={chat._id.toString()} chat={chat} currentUserId={currentUser?._id.toString()} isChatActive={isChatActive} haveUnreadMessages={haveUnreadMessages} />
         );
       })}
     </>

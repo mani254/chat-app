@@ -94,7 +94,7 @@ const ChatSidebar = () => {
           </div>
 
           {/* Scrollable List Section */}
-          {activeTab === "chats" && <ChatsTab />}
+          {activeTab === "chats" && <ChatsTab search={search} />}
           {activeTab === "groups" && <GroupsList />}
           {activeTab === "users" && <UsersList />}
 

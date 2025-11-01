@@ -6,6 +6,7 @@ import connectDB from './config/db';
 import { errorHandler } from './middleware/errorHandler';
 import authRouter from './routes/authRoutes';
 import chatRouter from './routes/chatRoutes';
+import messageRouter from './routes/messageRoutes';
 import otpRouter from './routes/otpRouter';
 import userRouter from './routes/userRouter';
 
@@ -27,6 +28,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/otp', otpRouter);
 app.use('/api/users', userRouter);
 app.use('/api/chats', chatRouter);
+app.use('/api/messages', messageRouter);
 
 app.use(errorHandler);
 

@@ -2,7 +2,6 @@
 import { User } from '@workspace/database';
 import { Server, Socket } from 'socket.io';
 import { authenticateSocket } from '../middleware/socketAuth';
-import registerUserHandlers from './userHandler';
 
 const socketHandler = async (socket: Socket, io: Server) => {
   // Authenticate
@@ -24,8 +23,6 @@ const socketHandler = async (socket: Socket, io: Server) => {
     });
 
     console.log(`${user.name} connected`);
-
-    registerUserHandlers(socket, io);
 
     socket.on('disconnect', async () => {
       await User.findByIdAndUpdate(user._id, { isOnline: false });

@@ -34,10 +34,6 @@ const messageSchema = new Schema(
       type: [String],
       default: [],
     },
-    midText: {
-      type: Boolean,
-      default: false,
-    },
     replyTo: {
       type: Schema.Types.ObjectId,
       ref: 'Message',
