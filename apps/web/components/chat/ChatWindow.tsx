@@ -78,7 +78,6 @@ const ChatWindow = () => {
           loading={loadingMessages}
           onLoadMore={() => loadMessages({ chatId: activeChat._id.toString() })}
         />
-
       </div>
 
     </div>

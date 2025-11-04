@@ -3,16 +3,20 @@ import { cn } from "@workspace/ui/lib/utils";
 export default function MessageBubbleShape({
   children,
   type,
+  media = false
 }: {
   children: React.ReactNode;
   type: "left" | "right";
+  media?: boolean;
 }) {
   return (
     <div
       className={cn(
-        "relative px-3 py-[6px] rounded-xl border shadow-sm max-w-xs",
+        "relative px-3 py-[6px] rounded-xl border shadow-sm max-w-[350px]",
         type === "left" && "bg-white border-border text-foreground",
-        type === "right" && "bg-primary border-primary/40 text-primary-accent ml-auto"
+        type === "right" && "bg-primary/90 border-primary/40 text-primary-accent ml-auto",
+        media && "px-1 py-1",
+        type === 'right' && media && "bg-primary/10"
       )}
     >
       {children}
@@ -42,12 +46,12 @@ export default function MessageBubbleShape({
               width="22"
               height="8"
               viewBox="0 0 22 8"
-              className="fill-primary stroke-current"
+              className={cn("fill-primary/90 stroke-current", media && 'fill-primary/10')}
             >
               <path d="M24 0.470588L0 0C9.81818 0.941176 9.81818 5.17647 10.9091 8L24 0.470588Z" />
             </svg>
           </div>
-          <div className="absolute w-[8px] h-[8px] top-[1px] right-[0.8px] bg-primary"></div>
+          <div className={cn("absolute w-[8px] h-[8px] top-[1px] right-[0.8px] bg-primary/90", media && 'bg-primary/10')}></div>
         </>
       )}
     </div>

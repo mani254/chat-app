@@ -2,7 +2,18 @@ import { useUserStore } from "@/store/useUserStore";
 import { formatTime } from "@/utils/formaters";
 import { MessageWithSender } from "@workspace/database";
 import { cn } from "@workspace/ui/lib/utils";
+import MediaGridView from "./MediaGridView";
 import MessageBubbleShape from "./MessageBubbleShape";
+
+const testingData = [
+  // { url: "https://pub-321aac628169468cb9a4b077e81667e7.r2.dev/6890ebb58210e375aa0dcf0d/ed5aaa33-e7a8-47c7-9884-568f892aebce.png" },
+  { url: "https://pub-321aac628169468cb9a4b077e81667e7.r2.dev/6890ebb58210e375aa0dcf0d/6a1ad632-26b5-4d0d-b863-b0b1753a492b.webp" },
+  { url: "https://file-examples.com/wp-content/storage/2017/08/file_example_PPT_250kB.ppt" },
+  { url: "https://file-examples.com/wp-content/storage/2017/02/file-sample_100kB.doc" },
+  { url: "https://samplelib.com/lib/preview/mp3/sample-15s.mp3" },
+  // { url: "https://pub-321aac628169468cb9a4b077e81667e7.r2.dev/68e80565ca041b64c850c6d5/dcbce872-ced2-4fda-8f1d-00846b73ca98.mp4" }
+  { url: "https://pdfobject.com/pdf/sample.pdf" }
+]
 
 
 const MessageBubble = ({ message }: { message: MessageWithSender }) => {
@@ -11,6 +22,8 @@ const MessageBubble = ({ message }: { message: MessageWithSender }) => {
   const isNote = message.messageType == "note"
   const isText = message.messageType == "text"
   const isMedia = message.messageType == "media"
+
+  const mediaData = message.mediaLinks.map((link) => ({ url: link })) || testingData
 
   return (
     <li
@@ -29,20 +42,6 @@ const MessageBubble = ({ message }: { message: MessageWithSender }) => {
         {message.content}
       </div>}
 
-      {/* {isText && <div className="flex items-start relative">
-        <div className=" max-w-xs bg-white border border-gray-300 rounded-xl px-3 py-2 shadow-sm ">
-          <p className="text-sm text-gray-900">0 availability?</p>
-          <span className="text-[10px] text-gray-500 block text-right mt-1">12:00 PM</span>
-        </div>
-        <div className="top-0 absolute -left-[10px]">
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="9" viewBox="0 0 22 9" fill="none" stroke="#D1D5DB">
-            <path d="M0 0.5L22 0C13 1 13 5.5 12 8.5L0 0.5Z" fill="white" />
-          </svg>
-        </div>
-        <div className="absolute w-[8px] h-[8px]  top-[1px] left-[0.8px] bg-white">
-        </div>
-      </div>
-      } */}
       {isText && (
         <MessageBubbleShape type={isOwnMessage ? "right" : "left"}>
           <div className="pb-1 pr-[50px]">
@@ -56,7 +55,13 @@ const MessageBubble = ({ message }: { message: MessageWithSender }) => {
         </MessageBubbleShape>
       )}
 
-      {isMedia && <div>media here</div>}
+      {isMedia && <div>
+        <MessageBubbleShape type={isOwnMessage ? "right" : "left"} media={true}>
+          <div className="relative z-[20]">
+            <MediaGridView items={mediaData} />
+          </div>
+        </MessageBubbleShape>
+      </div>}
 
 
     </li>
