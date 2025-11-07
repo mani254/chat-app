@@ -3,6 +3,7 @@ import { PopulatedChatDocument } from "@workspace/database";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import LoadMoreLoader from "../loaders/LoadMoreLoader";
 import MessageBubble from "./MessageBubble";
+import TypingDots from "./TypingDots";
 
 interface MessageListProps {
   activeChat: PopulatedChatDocument;
@@ -129,7 +130,11 @@ const MessageList = ({ activeChat, loading, onLoadMore }: MessageListProps) => {
             message={m}
           />
         ))}
+        <li>
+          <TypingDots />
+        </li>
       </ul>
+
       {/* BOTTOM OBSERVER (Bottom Detection) */}
       <div ref={bottomObserverRef} className="h-2" />
 

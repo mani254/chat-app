@@ -1,10 +1,13 @@
 import useMediaQuery from "@/hooks/useMediaQuery";
+import { useMessageSocket } from "@/socket/useMessageSocket";
+import { useTypingSocket } from "@/socket/useTypingSocket";
 import { useChatStore } from "@/store/useChatStore";
 import { useMessageStore } from "@/store/useMessageStore";
 import { useUIStore } from "@/store/useUIStore";
 import { mobileWidth } from "@/utils";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef } from "react";
+import MessageInputArea from "../messages/MessageInputArea";
 import MessageList from "../messages/MessageList";
 import MessageHeader from "../messages/MesssageHeader";
 import NoActiveChatScreen from "../messages/NoActiveChatScreen";
@@ -16,7 +19,6 @@ const ChatWindow = () => {
   const { socket } = useSocketContext()
 
   const audioRef = useRef<HTMLAudioElement>(null);
-  const typingSoundRef = useRef<HTMLAudioElement>(null);
 
   const activeChat = useChatStore((s) => s.activeChat);
   const setActiveChat = useChatStore((s) => s.setActiveChat);
@@ -53,19 +55,20 @@ const ChatWindow = () => {
   }, [searchParams, socket, resetMessages, setActiveChat, loadMessages, isDesktop, toggleSidebar]);
 
 
+  useMessageSocket(activeChat?._id.toString() || null, audioRef as React.RefObject<HTMLAudioElement>);
+  useTypingSocket(activeChat?._id.toString() || undefined)
+
   if (!activeChat) {
     return <NoActiveChatScreen />
   }
+
+
 
   return (
     <div className="flex-1 flex flex-col  h-full relative bg-background">
 
       <div className="relative -z-50 hidden">
-        <audio controls ref={audioRef} src="../../assets/sounds/message-arrived-sound-effect.mp3" />
-      </div>
-
-      <div className="relative -z-50 hidden">
-        <audio controls ref={typingSoundRef} src="../../assets/sounds/typing-effect.mp3" />
+        <audio controls ref={audioRef} src='../../assets/sounds/message-arrived-sound-effect.mp3' />
       </div>
 
       <div className="flex flex-col h-full">
@@ -78,6 +81,8 @@ const ChatWindow = () => {
           loading={loadingMessages}
           onLoadMore={() => loadMessages({ chatId: activeChat._id.toString() })}
         />
+
+        <MessageInputArea />
       </div>
 
     </div>

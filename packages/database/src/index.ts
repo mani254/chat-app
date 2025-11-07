@@ -7,3 +7,4 @@ export * from './schemas/otp';
 export * from './types/chat';
 export * from './types/message';
 export * from './types/otp';
+export * from './types/socket';

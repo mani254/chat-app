@@ -18,7 +18,7 @@ export default function Home() {
     <main className="">
       <ProtectedRoute>
         <SocketProvider>
-          <div className="h-screen flex overflow-hidden">
+          <div className="h-[100dvh] flex overflow-hidden">
             <ChatSidebar />
             <ChatWindow />
           </div>

@@ -1,5 +1,5 @@
 import { createChat, fetchChatById, fetchChats } from '@/lib/chatApi';
-import { CreateChatPayload, MessageDocument, PopulatedChatDocument } from '@workspace/database';
+import { CreateChatPayload, MessageDocument, MessageWithSender, PopulatedChatDocument } from '@workspace/database';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
@@ -21,7 +21,7 @@ interface ChatState {
 
   setActiveChat: (chatId: string | null) => Promise<void>;
   createChat: (info: CreateChatPayload) => Promise<PopulatedChatDocument>;
-  updateChatLatestMessage: (chatId: string, message: MessageDocument) => Promise<void>;
+  updateChatLatestMessage: (chatId: string, message: MessageWithSender) => Promise<void>;
   resetChats: () => void;
 }
 

@@ -2,6 +2,9 @@
 import { User } from '@workspace/database';
 import { Server, Socket } from 'socket.io';
 import { authenticateSocket } from '../middleware/socketAuth';
+import registerChatHandlers from './chatHandlers';
+import { registerMessageHandlers } from './messageHandlers';
+import { registerTypingHandlers } from './typingHandlers';
 
 const socketHandler = async (socket: Socket, io: Server) => {
   // Authenticate
@@ -23,6 +26,12 @@ const socketHandler = async (socket: Socket, io: Server) => {
     });
 
     console.log(`${user.name} connected`);
+
+    registerChatHandlers(socket, io);
+
+    registerMessageHandlers(socket, io);
+
+    registerTypingHandlers(socket, io);
 
     socket.on('disconnect', async () => {
       await User.findByIdAndUpdate(user._id, { isOnline: false });

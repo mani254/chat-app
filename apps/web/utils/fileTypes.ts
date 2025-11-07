@@ -1,16 +1,3 @@
-import {
-  ImageIcon,
-  VideoIcon,
-  AudioLines,
-  FileTextIcon,
-  FileSpreadsheetIcon,
-  PresentationIcon,
-  ArchiveIcon,
-  CodeIcon,
-  MailIcon,
-  FileIcon
-} from 'lucide-react';
-
 export function isImageType(url?: string, type?: string): boolean {
   if (type) return type.startsWith('image/');
   if (!url) return false;
@@ -113,24 +100,20 @@ export function getDocumentPreviewUrl(url: string, type?: string, name?: string)
     lower.endsWith('.pptx')
   ) {
     const previewUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`;
-    console.log('Office document preview URL:', previewUrl);
     return previewUrl;
   }
 
   // PDF - use Google Docs viewer
   if (lower.endsWith('.pdf')) {
     const previewUrl = `https://docs.google.com/gview?url=${encodeURIComponent(url)}&embedded=true`;
-    console.log('PDF preview URL:', previewUrl);
     return previewUrl;
   }
 
   // Text files - try to load directly
   if (lower.endsWith('.txt') || lower.endsWith('.rtf')) {
-    console.log('Text file, using direct URL:', url);
     return url;
   }
 
   console.log('No preview URL found for:', lower);
   return null;
 }
-
