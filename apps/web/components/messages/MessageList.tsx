@@ -12,7 +12,7 @@ interface MessageListProps {
 }
 
 
-const MessageList = ({ activeChat, loading, onLoadMore }: MessageListProps) => {
+const MessageList = ({ activeChat, loading, onLoadMore, }: MessageListProps) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const topObserverRef = useRef<HTMLDivElement | null>(null);
   const bottomObserverRef = useRef<HTMLDivElement | null>(null);
@@ -116,7 +116,7 @@ const MessageList = ({ activeChat, loading, onLoadMore }: MessageListProps) => {
 
 
   return (
-    <div className="relative h-full flex-1 overflow-y-auto px-3 scrollbar-custom bg-background-accent/40" ref={scrollRef}>
+    <div className="relative h-full flex-1 overflow-y-auto px-3 scrollbar-custom bg-background-accent/40" ref={scrollRef} onContextMenu={(e) => e.preventDefault()}>
       {/* TOP OBSERVER (Load More Trigger) */}
       <div ref={topObserverRef} className="min-h-6 flex justify-center items-center">
         {loading && <LoadMoreLoader />}

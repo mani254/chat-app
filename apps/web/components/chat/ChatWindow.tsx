@@ -19,6 +19,7 @@ const ChatWindow = () => {
   const { socket } = useSocketContext()
 
   const audioRef = useRef<HTMLAudioElement>(null);
+  const typingSoundRef = useRef<HTMLAudioElement>(null);
 
   const activeChat = useChatStore((s) => s.activeChat);
   const setActiveChat = useChatStore((s) => s.setActiveChat);
@@ -56,7 +57,7 @@ const ChatWindow = () => {
 
 
   useMessageSocket(activeChat?._id.toString() || null, audioRef as React.RefObject<HTMLAudioElement>);
-  useTypingSocket(activeChat?._id.toString() || undefined)
+  useTypingSocket(activeChat?._id.toString() || undefined, typingSoundRef as React.RefObject<HTMLAudioElement>)
 
   if (!activeChat) {
     return <NoActiveChatScreen />
@@ -68,7 +69,11 @@ const ChatWindow = () => {
     <div className="flex-1 flex flex-col  h-full relative bg-background">
 
       <div className="relative -z-50 hidden">
-        <audio controls ref={audioRef} src='../../assets/sounds/message-arrived-sound-effect.mp3' />
+        <audio controls ref={audioRef} src='/sounds/message-arrived-sound-effect.mp3' />
+      </div>
+
+      <div className="relative -z-50 hidden">
+        <audio controls ref={typingSoundRef} src='sounds/typing-effect.mp3' />
       </div>
 
       <div className="flex flex-col h-full">

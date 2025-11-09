@@ -248,3 +248,11 @@
   border-bottom: 6px solid transparent;
   background: transparent;
 }
+
+.no-select {
+  user-select: none; /* Standard property */
+  -webkit-user-select: none; /* Safari / iOS */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
+  pointer-events: none; /* Optional: disables clicks & right-clicks */
+}

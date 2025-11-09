@@ -5,8 +5,6 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c --watch",
     "clean": "rimraf dist"
   },
   "dependencies": {
@@ -15,28 +13,23 @@
     "slugify": "^1.6.6"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "^12.1.4",
     "@types/mongoose": "^5.11.96",
     "@workspace/typescript-config": "workspace:*",
     "rimraf": "^6.0.1",
-    "rollup": "^4.50.2",
     "typescript": "^5.8.2"
   },
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
     },
     "./schemas": {
-      "types": "./dist/schemas/index.d.ts",
-      "default": "./dist/schemas/index.js"
+      "types": "./src/schemas/index.d.ts",
+      "default": "./src/schemas/index.js"
     },
     "./consts": {
-      "types": "./dist/consts/index.d.ts",
-      "default": "./dist/consts/index.js"
+      "types": "./src/consts/index.d.ts",
+      "default": "./src/consts/index.js"
     }
-  },
-  "files": [
-    "src"
-  ]
+  }
 }
