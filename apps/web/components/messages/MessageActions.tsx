@@ -49,19 +49,6 @@ const MessageActions = ({
         {isDesktop && "Copy"}
       </Button>
 
-      {/* Forward */}
-      <Button
-        variant="ghost"
-        size={isDesktop ? "sm" : "icon"}
-        className={cn(
-          isDesktop ? "justify-start" : "flex items-center justify-center"
-        )}
-        onClick={() => setOpenFeatureCommingSoonModal(true)}
-      >
-        <Share2 className={isDesktop ? "w-4 h-4 mr-2" : "w-5 h-5"} />
-        {isDesktop && "Forward"}
-      </Button>
-
       {/* Reply */}
       <Button
         variant="ghost"
@@ -75,6 +62,23 @@ const MessageActions = ({
         {isDesktop && "Reply"}
       </Button>
 
+      {/* Forward */}
+      <Button
+        variant="ghost"
+        size={isDesktop ? "sm" : "icon"}
+        className={cn(
+          isDesktop ? "justify-start" : "flex items-center justify-center"
+        )}
+        onClick={() => {
+          setOpenFeatureCommingSoonModal(true)
+        }}
+      >
+        <Share2 className={isDesktop ? "w-4 h-4 mr-2" : "w-5 h-5"} />
+        {isDesktop && "Forward"}
+      </Button>
+
+
+
       {/* React */}
       <Button
         variant="ghost"
@@ -82,7 +86,9 @@ const MessageActions = ({
         className={cn(
           isDesktop ? "justify-start" : "flex items-center justify-center"
         )}
-        onClick={() => setOpenFeatureCommingSoonModal(true)}
+        onClick={() => {
+          setOpenFeatureCommingSoonModal(true)
+        }}
       >
         <Smile className={isDesktop ? "w-4 h-4 mr-2" : "w-5 h-5"} />
         {isDesktop && "React"}

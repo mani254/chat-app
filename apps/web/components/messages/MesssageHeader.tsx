@@ -2,6 +2,7 @@
 
 import useMediaQuery from "@/hooks/useMediaQuery";
 import { useMessageActionsStore } from "@/store/useMessageActionsStore";
+import { useReplyStore } from "@/store/useReplyStore";
 import { useUserStore } from "@/store/useUserStore";
 import { mobileWidth } from "@/utils";
 import { copyToClipboard } from "@/utils/functions";
@@ -25,6 +26,7 @@ const MessageHeader = ({ chat }: { chat: PopulatedChatDocument }) => {
     useState(false);
 
   // 🌍 Global store for message actions
+  const setReplyTo = useReplyStore(s => s.setReplyTo)
   const { showMessageActions, currentMessage, closeMessageActions } =
     useMessageActionsStore();
 
@@ -79,7 +81,7 @@ const MessageHeader = ({ chat }: { chat: PopulatedChatDocument }) => {
         )}
       >
         {/* Left Section */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3" >
           {/* Back or Close */}
           <button
             className="p-2 rounded-full bg-background-accent md:hidden"
@@ -121,27 +123,27 @@ const MessageHeader = ({ chat }: { chat: PopulatedChatDocument }) => {
         </div>
 
         {/* Right Section */}
-        <div className="flex items-center gap-2">
+        <div data-message-actions>
           {/* 📱 Only show actions here if mobile */}
           {!isDesktop && showMessageActions && currentMessage ? (
-            <MessageActions
-              onCopy={() => {
-                copyToClipboard(currentMessage?.content);
-                closeMessageActions();
-              }}
-              onForward={() => {
-                console.log("Forward clicked", currentMessage);
-                closeMessageActions();
-              }}
-              onReply={() => {
-                console.log("Reply clicked", currentMessage);
-                closeMessageActions();
-              }}
-              onReact={() => {
-                console.log("React clicked", currentMessage);
-                closeMessageActions();
-              }}
-            />
+            <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+              <MessageActions
+                onCopy={() => {
+                  copyToClipboard(currentMessage?.content);
+                  closeMessageActions();
+                }}
+                onForward={() => {
+                  closeMessageActions();
+                }}
+                onReply={() => {
+                  setReplyTo(currentMessage)
+                  closeMessageActions();
+                }}
+                onReact={() => {
+                  closeMessageActions();
+                }}
+              />
+            </div>
           ) : (
             // 💻 Desktop icons (always visible)
             <div className="flex items-center gap-2">
@@ -149,7 +151,10 @@ const MessageHeader = ({ chat }: { chat: PopulatedChatDocument }) => {
                 <button
                   key={i}
                   className="p-2 rounded-full bg-background-accent hover:bg-background-accent/80 transition"
-                  onClick={() => setOpenFeatureCommingSoonModal(true)}
+                  onClick={() => {
+                    console.log('any one of them is clicked')
+                    setOpenFeatureCommingSoonModal(true)
+                  }}
                 >
                   <Icon size={19} />
                 </button>

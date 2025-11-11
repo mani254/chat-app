@@ -13,7 +13,7 @@ const io = new SocketIOServer(server, {
     origin: [frontendUrl],
     methods: ['GET', 'POST'],
     credentials: true,
-  }, 
+  },
 });
 
 io.use(async (socket, next) => {

@@ -29,3 +29,7 @@ export async function copyToClipboard(text: string): Promise<boolean> {
     return false;
   }
 }
+
+export const wait = (ms: number = 300): Promise<void> => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
