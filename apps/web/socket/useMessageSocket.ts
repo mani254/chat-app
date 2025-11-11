@@ -1,65 +1,49 @@
+// src/socket/useMessageSocket.ts
 import { useSocketContext } from '@/components/providers/SocketProviders';
+import { useMessageStore } from '@/store/useMessageStore';
 import { MessageWithSender } from '@workspace/database';
 import { RefObject, useCallback, useEffect } from 'react';
-import { useChatStore } from '../store/useChatStore';
-import { useMessageStore } from '../store/useMessageStore';
 
 export const useMessageSocket = (activeChatId: string | null, audioRef: RefObject<HTMLAudioElement> | null) => {
   const { socket } = useSocketContext();
+  const addMessage = useMessageStore((s) => s.addMessage);
 
-  const addMessage = useMessageStore((state) => state.addMessage);
-  const updateChatLatestMessage = useChatStore((state) => state.updateChatLatestMessage);
-
-  // Memoized callback for handling new message
+  // ✅ Handler for incoming messages in currently active chat
   const handleNewMessage = useCallback(
     (message: MessageWithSender) => {
-      console.log('new message received', message);
+      if (!message || !message.chat) return;
 
-      if (typeof message.chat === 'string' || !message.chat?._id) {
-        console.log('chat is not populated inside the message');
-        return;
-      }
+      const chatId = typeof message.chat === 'string' ? message.chat : message.chat._id?.toString?.();
 
-      if (message.chat._id.toString() === activeChatId) {
-        addMessage(message);
-        if (audioRef?.current) {
+      // only add messages for the open chat
+      if (chatId !== activeChatId) return;
+
+      addMessage(message);
+
+      if (audioRef?.current) {
+        try {
           audioRef.current.currentTime = 0;
-          audioRef.current.play();
+          audioRef.current.play().catch(() => {});
+        } catch (err) {
+          console.warn('Audio play failed', err);
         }
       }
     },
     [activeChatId, addMessage, audioRef],
   );
 
-  // Memoized callback for updating chat latest message
-  const handleNewMessageChatUpdate = useCallback(
-    (message: MessageWithSender) => {
-      console.log('new message chat update received', message);
-
-      if (typeof message.chat === 'string' || !message.chat?._id) {
-        console.log('chat is not populated inside the message');
-        return;
-      }
-
-      updateChatLatestMessage(message.chat._id.toString(), message);
-    },
-    [updateChatLatestMessage],
-  );
-
+  // ✅ Register chat-specific listeners
   useEffect(() => {
-    if (!socket || !activeChatId || !audioRef?.current) return;
+    if (!socket || !activeChatId) return;
 
     socket.on('new-message', handleNewMessage);
-    console.log('new-message event listener added');
-
-    socket.on('new-message-chat-update', handleNewMessageChatUpdate);
+    console.log('[useMessageSocket] new-message listener added:', activeChatId);
 
     return () => {
       socket.off('new-message', handleNewMessage);
-      socket.off('new-message-chat-update', handleNewMessageChatUpdate);
-      console.log('event listeners removed');
+      console.log('[useMessageSocket] new-message listener removed:', activeChatId);
     };
-  }, [socket, activeChatId, audioRef, handleNewMessage, handleNewMessageChatUpdate]);
+  }, [socket, activeChatId, handleNewMessage]);
 
   return null;
 };

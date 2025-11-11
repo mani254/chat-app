@@ -1,4 +1,5 @@
 import useMediaQuery from "@/hooks/useMediaQuery";
+import { useLatestMessageSocket } from "@/socket/useLatestMessageSocket";
 import { useMessageSocket } from "@/socket/useMessageSocket";
 import { useTypingSocket } from "@/socket/useTypingSocket";
 import { useChatStore } from "@/store/useChatStore";
@@ -58,6 +59,7 @@ const ChatWindow = () => {
 
   useMessageSocket(activeChat?._id.toString() || null, audioRef as React.RefObject<HTMLAudioElement>);
   useTypingSocket(activeChat?._id.toString() || undefined, typingSoundRef as React.RefObject<HTMLAudioElement>)
+  useLatestMessageSocket()
 
   if (!activeChat) {
     return <NoActiveChatScreen />
