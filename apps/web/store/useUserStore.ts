@@ -138,7 +138,7 @@ export const useUserStore = create<UserState>()(
       addActiveUser: (user: UserDocument) =>
         set((state) => {
           const exists = state.activeUsers.find((u) => u._id === user._id);
-          if (exists) return {};
+          if (exists) return { activeUsers: state.activeUsers };
 
           return {
             activeUsers: [user, ...state.activeUsers],

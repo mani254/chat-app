@@ -65,8 +65,6 @@ const ChatWindow = () => {
     return <NoActiveChatScreen />
   }
 
-
-
   return (
     <div className="flex-1 flex flex-col  h-full relative bg-background">
 
