@@ -10,6 +10,7 @@ interface ChatState {
   limit: number;
   totalChats: number;
   loadingChats: boolean;
+  activeTab: 'chats' | 'groups' | 'users';
 
   loadChats: (params?: {
     search?: string;
@@ -20,6 +21,7 @@ interface ChatState {
   }) => Promise<void>;
 
   setActiveChat: (chatId: string | null) => Promise<void>;
+  setActiveTab: (tab: 'chats' | 'groups' | 'users') => void;
   createChat: (info: CreateChatPayload) => Promise<PopulatedChatDocument>;
   updateChatLatestMessage: (chatId: string, message: MessageWithSender) => Promise<void>;
   resetChats: () => void;
@@ -34,6 +36,7 @@ export const useChatStore = create<ChatState>()(
       limit: 10,
       totalChats: 0,
       loadingChats: false,
+      activeTab: 'chats',
 
       // ✅ Paginated fetch with reset support
       loadChats: async (params = {}) => {
@@ -79,6 +82,12 @@ export const useChatStore = create<ChatState>()(
         try {
           const chat = await fetchChatById(chatId);
           if (chat) {
+            if (chat.isGroupChat && get().activeTab !== 'groups') {
+              set({ activeTab: 'groups' });
+            }
+            if (!chat.isGroupChat && get().activeTab !== 'chats') {
+              set({ activeTab: 'chats' });
+            }
             set({ activeChat: chat });
           } else {
             console.warn('No chat found for ID:', chatId);
@@ -87,6 +96,8 @@ export const useChatStore = create<ChatState>()(
           console.error('Failed to set active chat:', err);
         }
       },
+
+      setActiveTab: (tab: 'chats' | 'groups' | 'users') => set({ activeTab: tab }),
 
       // ✅ Create chat and set as active
       createChat: async (info: CreateChatPayload) => {
@@ -128,6 +139,13 @@ export const useChatStore = create<ChatState>()(
             const fetchedChat = await fetchChatById(chatId);
 
             if (fetchedChat) {
+              //todo: only push if the feteched chat matches the current activeTab
+              if (fetchedChat.isGroupChat && get().activeTab !== 'groups') {
+                return;
+              }
+              if (!fetchedChat.isGroupChat && get().activeTab !== 'chats') {
+                return;
+              }
               // ✅ Update latestMessage
               fetchedChat.latestMessage = message;
 

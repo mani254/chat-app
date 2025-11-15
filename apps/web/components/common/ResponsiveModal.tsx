@@ -44,8 +44,7 @@ export const ResponsiveModal = ({
       <Dialog open={open} onOpenChange={onOpenChange}>
         {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
         <DialogContent
-          className="bg-background rounded-3xl border border-border p-0 shadow-xl 
-          focus:outline-none focus:ring-0"
+          className="bg-background rounded-3xl border border-border p-0 shadow-xl focus:outline-none focus:ring-0 max-h-dvh"
         >
           {/* Close Button */}
           {/* <button
@@ -76,8 +75,8 @@ export const ResponsiveModal = ({
     <Drawer open={open} onOpenChange={onOpenChange}>
       {trigger && <DrawerTrigger asChild>{trigger}</DrawerTrigger>}
       <DrawerContent
-        className="bg-background rounded-t-3xl p-0 shadow-xl focus:outline-none focus:ring-0"
-      >
+        className="w-full bg-background rounded-t-3xl p-0 shadow-xl focus:outline-none focus:ring-0 h-[90vh] ">
+
         {/* Pull Handle */}
         <div className="w-full flex justify-center py-2">
           <div className="h-1.5 w-12 rounded-full bg-foreground/30" />
@@ -102,6 +101,6 @@ export const ResponsiveModal = ({
 
         {children}
       </DrawerContent>
-    </Drawer>
+    </Drawer >
   );
 };

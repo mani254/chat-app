@@ -5,6 +5,8 @@ export interface CreateChatPayload {
   isGroupChat: boolean;
   name?: string;
   groupAdmin?: string;
+  description?: string;
+  avatar?: string;
 }
 
 export interface ChatQueryParams {

@@ -33,7 +33,7 @@ const userSchema = new Schema(
     },
     avatar: {
       type: String,
-      default: 'https://res.cloudinary.com/dd2cl2oly/image/upload/v1744854393/default-image_l4b8k8.svg',
+      default: '',
     },
     status: {
       type: String,

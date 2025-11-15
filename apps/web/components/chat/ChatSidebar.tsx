@@ -1,4 +1,5 @@
 import useMediaQuery from "@/hooks/useMediaQuery";
+import { useChatStore } from "@/store/useChatStore";
 import { useUIStore } from "@/store/useUIStore";
 import { useUserStore } from "@/store/useUserStore";
 import { mobileWidth } from "@/utils";
@@ -8,16 +9,19 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { TextInput } from "../formComponents/TextInput";
+import ActiveUsersTab from "../users/ActiveUsersTab";
 import ChatsTab from "./ChatsTab";
 import Header from "./Header";
 
 const ChatSidebar = () => {
+
   const isSidebarOpen = useUIStore((s) => s.isSidebarOpen);
   const setActiveUsers = useUserStore((s) => s.setActiveUsers);
   const isDesktop = useMediaQuery(`(min-width: ${mobileWidth}px)`);
-
+  const activeChat = useChatStore((s) => s.activeChat);
+  const activeTab = useChatStore((s) => s.activeTab);
+  const setActiveTab = useChatStore((s) => s.setActiveTab);
   const [search, setSearch] = useState("");
-  const [activeTab, setActiveTab] = useState("chats");
 
   useEffect(() => {
     setActiveUsers();
@@ -55,7 +59,7 @@ const ChatSidebar = () => {
             </div>
 
             {/* Tabs (only triggers here) */}
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="px-2">
+            <Tabs value={activeTab} onValueChange={setActiveTab as any} className="px-2">
               <TabsList className="h-auto flex justify-start gap-1 bg-transparent p-0 overflow-x-auto">
                 <TabsTrigger
                   value="chats"
@@ -95,8 +99,8 @@ const ChatSidebar = () => {
 
           {/* Scrollable List Section */}
           {activeTab === "chats" && <ChatsTab search={search} />}
-          {activeTab === "groups" && <GroupsList />}
-          {activeTab === "users" && <UsersList />}
+          {activeTab === "groups" && <ChatsTab search={search} variant="group" />}
+          {activeTab === "users" && <ActiveUsersTab search={search} />}
 
         </motion.div>
       )}
@@ -106,6 +110,5 @@ const ChatSidebar = () => {
 
 // Your list components (temporarily placeholders)
 const GroupsList = () => <div>groups</div>;
-const UsersList = () => <div>users</div>;
 
 export default ChatSidebar;

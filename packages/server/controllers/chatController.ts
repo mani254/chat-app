@@ -67,7 +67,7 @@ export const getChatById = async (req: AuthRequest, res: Response) => {
 
 export const createChat = async (req: AuthRequest, res: Response) => {
   try {
-    const { users, isGroupChat, name, groupAdmin } = req.body;
+    const { users, isGroupChat, name, groupAdmin, description, avatar } = req.body;
 
     if (!users || !Array.isArray(users) || users.length === 0) {
       res.status(400).json({ message: 'Users array is required' });
@@ -96,6 +96,8 @@ export const createChat = async (req: AuthRequest, res: Response) => {
         isGroupChat,
         name,
         groupAdmin,
+        avatar,
+        description,
       },
       req.userId as Types.ObjectId,
     );

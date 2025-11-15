@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef } from "react";
 import LoadMoreLoader from "../loaders/LoadMoreLoader";
 import ChatsList from "./ChatsList";
 
-const ChatsTab = ({ search }: { search: string | undefined }) => {
+const ChatsTab = ({ search, variant = 'chat' }: { search: string | undefined; variant?: 'chat' | 'group' }) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const observerRef = useRef<HTMLDivElement | null>(null);
 
@@ -16,7 +16,7 @@ const ChatsTab = ({ search }: { search: string | undefined }) => {
   const currentUser = useUserStore((s) => s.currentUser);
   const debouncedSearch = useRef(
     debounce(
-      (params: { search?: string; userId: string, isGroupChat: false }) => {
+      (params: { search?: string; userId: string; isGroupChat: boolean }) => {
         loadChats({ ...params, reset: true });
       },
       300
@@ -24,10 +24,12 @@ const ChatsTab = ({ search }: { search: string | undefined }) => {
   ).current;
 
   // Triggers debounced search whenever `search` or `currentUser` changes.
+  const isGroup = variant === 'group';
+
   useEffect(() => {
     if (!currentUser) return;
-    debouncedSearch({ search, userId: currentUser._id.toString(), isGroupChat: false });
-  }, [search, currentUser, debouncedSearch]);
+    debouncedSearch({ search, userId: currentUser._id.toString(), isGroupChat: isGroup });
+  }, [search, currentUser, debouncedSearch, isGroup]);
 
 
   const observeSentinel = useCallback(() => {
@@ -39,7 +41,7 @@ const ChatsTab = ({ search }: { search: string | undefined }) => {
       ([entry]) => {
         const hasMore = chats.length < totalChats;
         if (entry?.isIntersecting && !loadingChats && hasMore) {
-          loadChats({ search, userId: currentUser?._id.toString(), isGroupChat: false });
+          loadChats({ search, userId: currentUser?._id.toString(), isGroupChat: isGroup });
         }
       },
       { root: container, threshold: 1 }
@@ -61,7 +63,7 @@ const ChatsTab = ({ search }: { search: string | undefined }) => {
       className="flex-1 overflow-y-auto scrollbar-hidden px-2 py-2 space-y-1"
     >
 
-      <ChatsList chats={chats} search={search || ''} type="chat" />
+      <ChatsList chats={chats} search={search || ''} type={isGroup ? 'group' : 'chat'} />
 
       <div ref={observerRef} className="h-8 flex justify-center items-center">
         {loadingChats && chats.length > 0 && <LoadMoreLoader />}

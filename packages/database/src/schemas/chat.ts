@@ -9,6 +9,11 @@ const chatSchema = new Schema(
       trim: true,
       maxlength: [100, 'Chat name should be less than 100 characters'],
     },
+    description: {
+      type: String,
+      trim: true,
+      maxlength: [300, 'Chat description should be less than 300 characters'],
+    },
     isGroupChat: {
       type: Boolean,
       default: false,
@@ -33,7 +38,7 @@ const chatSchema = new Schema(
     },
     avatar: {
       type: String,
-      default: 'https://res.cloudinary.com/dd2cl2oly/image/upload/v1744854393/default-image_l4b8k8.svg',
+      default: '',
     },
   },
   { timestamps: true },

@@ -73,7 +73,9 @@ class ChatService {
             },
             latestMessage: 1,
             name: 1,
+            description: 1,
             isGroupChat: 1,
+            avatar: 1,
             createdAt: 1,
             updatedAt: 1,
           },
@@ -144,7 +146,7 @@ class ChatService {
   }
 
   async createChat(data: CreateChatPayload, userId: Types.ObjectId): Promise<ChatDocument> {
-    const { users, isGroupChat, name, groupAdmin } = data;
+    const { users, isGroupChat, name, groupAdmin, description, avatar } = data;
     const userObjectIds = users.map((id) => {
       if (!Types.ObjectId.isValid(id)) {
         throw new Error(`Invalid user ID: ${id}`);
@@ -188,6 +190,14 @@ class ChatService {
 
       chatData.name = name;
       chatData.groupAdmin = new Types.ObjectId(groupAdmin);
+    }
+
+    if (description && description.trim() !== '') {
+      chatData.description = description.trim();
+    }
+
+    if (avatar && typeof avatar === 'string' && avatar.trim() !== '') {
+      chatData.avatar = avatar.trim();
     }
 
     const createdChat = await Chat.create(chatData);

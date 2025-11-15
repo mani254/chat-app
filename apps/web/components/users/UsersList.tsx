@@ -1,6 +1,3 @@
-// components/shared/UserList.tsx
-
-
 import { useSearchUsers } from "@/hooks/useSearchUsers";
 import { UserDocument } from "@workspace/database";
 import { Skeleton } from "@workspace/ui/components/skeleton";

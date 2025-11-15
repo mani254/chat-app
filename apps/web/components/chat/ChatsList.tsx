@@ -26,7 +26,7 @@ const ChatsList = ({ chats, search, type }: { chats: PopulatedChatDocument[], se
     if (type === 'chat') {
       return <NoChatsFound search={search} />;
     }
-    if (type = "group") {
+    if (type === "group") {
       return <NoGroupsFound search={search} />;
     }
   }

@@ -9,6 +9,7 @@ import chatRouter from './routes/chatRoutes';
 import messageRouter from './routes/messageRoutes';
 import otpRouter from './routes/otpRouter';
 import userRouter from './routes/userRouter';
+import uploadRouter from './routes/uploadRouter';
 
 dotenv.config();
 connectDB();
@@ -29,6 +30,7 @@ app.use('/api/otp', otpRouter);
 app.use('/api/users', userRouter);
 app.use('/api/chats', chatRouter);
 app.use('/api/messages', messageRouter);
+app.use('/api/uploads', uploadRouter);
 
 app.use(errorHandler);
 
