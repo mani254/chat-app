@@ -93,19 +93,26 @@ export const registerMessageHandlers = (socket: Socket, io: Server) => {
       chat.latestMessage = message._id;
       await chat.save();
 
-      const populatedMessage = await Message.findById(message._id)
-        .populate('sender')
-        .populate('chat')
-        .populate('replyTo');
+      const actualMessage = await Message.findById(message._id);
+      if (!actualMessage) {
+        const err = { code: 'NOT_FOUND', message: 'Message not found' };
+        ack ? ack({ ok: false, error: err }) : socket.emit('error', err);
+        return;
+      }
+
+      const populatedReplyTo = await Message.findById(actualMessage.replyTo).populate('sender', 'name avatar color');
+
+      actualMessage.sender = user;
+      actualMessage.replyTo = populatedReplyTo as any;
 
       // 🛰 Emit to chat room
-      io.to(chat._id.toString()).emit('new-message', populatedMessage);
+      io.to(chat._id.toString()).emit('new-message', actualMessage);
 
       for (const userId of chat.users) {
-        io.to(userId.toString()).emit('new-message-chat-update', populatedMessage);
+        io.to(userId.toString()).emit('new-message-chat-update', actualMessage);
       }
       // Ack success
-      if (ack) ack({ ok: true, data: populatedMessage });
+      if (ack) ack({ ok: true, data: actualMessage });
     } catch (err: any) {
       console.error('send-message error:', err);
       const errorPayload = {
