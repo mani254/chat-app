@@ -34,7 +34,7 @@ export default function MessageBubbleShape({
               <path d="M0 0.5L22 0C13 1 13 5.5 12 8.5L0 0.5Z" />
             </svg>
           </div>
-          <div className="absolute w-[8px] h-[8px] top-[1px] left-[0.8px] bg-white"></div>
+          <div className="absolute w-[8px] h-[8px] top-px left-[0.8px] bg-white"></div>
         </>
       )}
 
@@ -51,7 +51,7 @@ export default function MessageBubbleShape({
               <path d="M24 0.470588L0 0C9.81818 0.941176 9.81818 5.17647 10.9091 8L24 0.470588Z" />
             </svg>
           </div>
-          <div className={cn("absolute w-[8px] h-[8px] top-[1px] right-[0.8px] bg-primary/90", media && 'bg-primary/10')}></div>
+          <div className={cn("absolute w-[8px] h-[8px] top-px right-[0.8px] bg-primary/90", media && 'bg-primary/10')}></div>
         </>
       )}
     </div>

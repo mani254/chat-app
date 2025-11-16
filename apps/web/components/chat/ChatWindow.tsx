@@ -5,6 +5,7 @@ import { useTypingSocket } from "@/socket/useTypingSocket";
 import { useChatStore } from "@/store/useChatStore";
 import { useMessageStore } from "@/store/useMessageStore";
 import { useUIStore } from "@/store/useUIStore";
+import { useUserStore } from "@/store/useUserStore";
 import { mobileWidth } from "@/utils";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef } from "react";
@@ -18,6 +19,7 @@ const ChatWindow = () => {
 
   const searchParams = useSearchParams();
   const { socket } = useSocketContext()
+  const setActiveUsers = useUserStore((s) => s.setActiveUsers);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const typingSoundRef = useRef<HTMLAudioElement>(null);
@@ -56,10 +58,16 @@ const ChatWindow = () => {
     }
   }, [searchParams, socket, resetMessages, setActiveChat, loadMessages, isDesktop, toggleSidebar]);
 
+  useEffect(() => {
+    setActiveUsers();
+  }, [setActiveUsers])
+
 
   useMessageSocket(activeChat?._id.toString() || null, audioRef as React.RefObject<HTMLAudioElement>);
   useTypingSocket(activeChat?._id.toString() || undefined, typingSoundRef as React.RefObject<HTMLAudioElement>)
   useLatestMessageSocket()
+
+
 
   if (!activeChat) {
     return <NoActiveChatScreen />

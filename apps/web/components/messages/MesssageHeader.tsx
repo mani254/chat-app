@@ -22,6 +22,8 @@ const MessageHeader = ({ chat }: { chat: PopulatedChatDocument }) => {
   const activeUsers = useUserStore((s) => s.activeUsers);
   const isDesktop = useMediaQuery(`(min-width: ${mobileWidth}px)`);
 
+  console.log(activeUsers, 'activeUsers')
+
   const [openFeatureCommingSoonModal, setOpenFeatureCommingSoonModal] =
     useState(false);
 

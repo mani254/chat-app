@@ -42,6 +42,7 @@ export const useMessageStore = create<MessageState>()(
       setTypingInfo: (typingInfo) => set({ typingInfo }),
 
       addMessage: (message: MessageWithSender) => {
+        console.log('messageInAddMessage', message);
         set((state) => {
           const exists = state.messages.some((m) => m._id === message._id);
           if (exists) return {};

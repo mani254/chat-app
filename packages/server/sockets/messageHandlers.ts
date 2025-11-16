@@ -27,25 +27,6 @@ export const registerMessageHandlers = (socket: Socket, io: Server) => {
       const content = (data?.content || '').trim();
       const type = data?.messageType || 'text';
 
-      // For media messages, allow empty content if mediaLinks are provided
-      if (!content && type !== 'media') {
-        const err = { code: 'BAD_REQUEST', message: 'content is required' };
-        ack ? ack({ ok: false, error: err }) : socket.emit('error', err);
-        return;
-      }
-
-      // For media messages, ensure either content or mediaLinks are provided
-      if (type === 'media' && !content) {
-        const links = Array.isArray(data.mediaLinks) ? data.mediaLinks.filter(Boolean) : [];
-        if (links.length === 0) {
-          const err = {
-            code: 'BAD_REQUEST',
-            message: 'content or mediaLinks required for media message',
-          };
-          ack ? ack({ ok: false, error: err }) : socket.emit('error', err);
-          return;
-        }
-      }
       if (content && content.length > 5000) {
         const err = { code: 'BAD_REQUEST', message: 'content too long' };
         ack ? ack({ ok: false, error: err }) : socket.emit('error', err);
@@ -113,7 +94,7 @@ export const registerMessageHandlers = (socket: Socket, io: Server) => {
       await chat.save();
 
       const populatedMessage = await Message.findById(message._id)
-        .populate('sender', 'name avatar')
+        .populate('sender')
         .populate('chat')
         .populate('replyTo');
 

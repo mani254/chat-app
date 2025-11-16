@@ -1,6 +1,7 @@
 // src/components/messages/renderMessageContent.tsx
 "use client";
 
+import { useChatStore } from "@/store/useChatStore";
 import { formatTime } from "@/utils/formaters";
 import { MessageWithSender } from "@workspace/database";
 import { cn } from "@workspace/ui/lib/utils";
@@ -19,6 +20,8 @@ export function RenderMessageContent({
   const isMedia = message.messageType === "media";
   const isNote = message.messageType === "note";
 
+  const currentChat = useChatStore((s) => s.activeChat);
+
   if (isNote) {
     return (
       <div className="max-w-[75%] px-3 py-1 rounded-2xl border border-border text-[11px] bg-background">
@@ -29,12 +32,12 @@ export function RenderMessageContent({
 
   if (isText) {
     return (
-      <div className="pb-1 pr-[50px] relative">
+      <div className="pb-1 pr-[56px] relative">
         <p className="text-[15px] select-none">{message.content}</p>
         {showMeta && (
           <span
             className={cn(
-              "absolute bottom-0.5 right-2 text-[10px] select-none",
+              "absolute bottom-0 right-1 text-[10px] select-none",
               isOwnMessage
                 ? "text-primary-accent/85"
                 : "text-foreground-accent/85"

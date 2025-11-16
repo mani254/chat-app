@@ -1,6 +1,8 @@
 import { useMessageStore } from "@/store/useMessageStore";
+import { useUserStore } from "@/store/useUserStore";
 import { PopulatedChatDocument } from "@workspace/database";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import AvatarDiv from "../common/AvatarDiv";
 import LoadMoreLoader from "../loaders/LoadMoreLoader";
 import MessageBubble from "./MessageBubble";
 import TypingDots from "./TypingDots";
@@ -19,6 +21,7 @@ const MessageList = ({ activeChat, loading, onLoadMore, }: MessageListProps) => 
 
   const messages = useMessageStore((s) => s.messages);
   const totalMessages = useMessageStore((s) => s.totalMessages);
+  const currentUser = useUserStore((s) => s.currentUser);
 
   const hasMoreMessages = useMemo(
     () => messages.length < totalMessages,
@@ -124,12 +127,19 @@ const MessageList = ({ activeChat, loading, onLoadMore, }: MessageListProps) => 
 
       {/* Messages list */}
       <ul className="flex flex-col gap-3">
-        {messages.map((m) => (
-          <MessageBubble
-            key={m._id.toString()}
-            message={m}
-          />
-        ))}
+        {messages.map((m) => {
+
+          const isOwnMessage = m.sender._id === currentUser?._id;
+          return (
+            <div className="flex gap-[2px]" key={m._id.toString()}>
+              {activeChat.isGroupChat && m.messageType !== "note" && !isOwnMessage && <AvatarDiv user={m.sender} className="w-6 h-6" />}
+              <MessageBubble
+                key={m._id.toString()}
+                message={m}
+              />
+            </div>
+          )
+        })}
         <li>
           <TypingDots />
         </li>

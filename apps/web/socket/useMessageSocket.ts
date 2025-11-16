@@ -18,6 +18,7 @@ export const useMessageSocket = (activeChatId: string | null, audioRef: RefObjec
       // only add messages for the open chat
       if (chatId !== activeChatId) return;
 
+      console.log('logging the message on reply', message);
       addMessage(message);
 
       if (audioRef?.current) {

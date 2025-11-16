@@ -1,13 +1,12 @@
 import useMediaQuery from "@/hooks/useMediaQuery";
 import { useChatStore } from "@/store/useChatStore";
 import { useUIStore } from "@/store/useUIStore";
-import { useUserStore } from "@/store/useUserStore";
 import { mobileWidth } from "@/utils";
 import { Tabs, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
 import { cn } from "@workspace/ui/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { TextInput } from "../formComponents/TextInput";
 import ActiveUsersTab from "../users/ActiveUsersTab";
 import ChatsTab from "./ChatsTab";
@@ -16,16 +15,11 @@ import Header from "./Header";
 const ChatSidebar = () => {
 
   const isSidebarOpen = useUIStore((s) => s.isSidebarOpen);
-  const setActiveUsers = useUserStore((s) => s.setActiveUsers);
+
   const isDesktop = useMediaQuery(`(min-width: ${mobileWidth}px)`);
-  const activeChat = useChatStore((s) => s.activeChat);
   const activeTab = useChatStore((s) => s.activeTab);
   const setActiveTab = useChatStore((s) => s.setActiveTab);
   const [search, setSearch] = useState("");
-
-  useEffect(() => {
-    setActiveUsers();
-  }, [setActiveUsers]);
 
   return (
     <AnimatePresence>

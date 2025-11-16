@@ -25,8 +25,6 @@ const ChatListItem = ({ chat, currentUserId, isChatActive, haveUnreadMessages }:
 
   if (!partner) return null;
 
-  console.log(chat, '----------------------------')
-
   return (
     <button
       onClick={() => {

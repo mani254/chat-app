@@ -1,5 +1,6 @@
 "use client";
 
+import { useChatStore } from "@/store/useChatStore";
 import { MessageWithSender } from "@workspace/database";
 import { cn } from "@workspace/ui/lib/utils";
 import { motion } from "framer-motion";
@@ -16,6 +17,8 @@ interface ReplyComponentProps {
 const ReplyComponent = ({ reply, onClose, variant = "view", className }: ReplyComponentProps) => {
   const isInputVariant = variant === "input";
 
+  const currentChat = useChatStore((state) => state.activeChat)
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
@@ -26,24 +29,27 @@ const ReplyComponent = ({ reply, onClose, variant = "view", className }: ReplyCo
         "flex items-start gap-2 border border-border rounded-lg relative overflow-hidden",
         isInputVariant
           ? "bg-background w-full px-3 py-2 shadow-sm"
-          : "bg-black/10 px-2 py-2",
+          : "bg-background/40 px-2 py-2",
         className
       )}
     >
       {/* Left colored indicator */}
-      <div
+      {currentChat?.isGroupChat && <div
         className={cn(
           "w-1 rounded-full",
-          isInputVariant ? "bg-primary/80 h-12" : "bg-primary/60 h-10"
+          isInputVariant ? "h-12" : "h-10"
         )}
-      />
+        style={{ backgroundColor: reply.sender?.color || "#444" }}
+      />}
 
       {/* Reply content */}
       <div className="flex flex-col flex-1 overflow-hidden">
-        <span className="text-xs font-medium text-muted-foreground truncate">
-          {reply.sender?.name || "Unknown User"}
-        </span>
-        <div className="max-w-full overflow-hidden">
+        {currentChat?.isGroupChat &&
+          <span className="text-xs font-medium truncate" style={{ color: reply.sender?.color || "#444" }}>  {reply.sender?.name || "Unknown User"}
+          </span>
+        }
+
+        <div className="max-w-full overflow-hidden text-foreground">
           <RenderMessageContent message={reply} showMeta={false} />
         </div>
       </div>

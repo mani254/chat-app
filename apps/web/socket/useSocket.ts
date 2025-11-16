@@ -25,7 +25,7 @@ export const useSocket = (): { socket: Socket | null; connected: boolean } => {
 
     sock.on('user-online', ({ userData }) => {
       console.log('👤 User Online:', userData);
-      useUserStore.getState().addActiveUser(userData);
+      useUserStore.getState().addActiveUser({ ...userData._doc, isOnline: true });
     });
 
     sock.on('user-offline', ({ userId }) => {
