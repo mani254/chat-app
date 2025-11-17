@@ -7,7 +7,7 @@ import { useMessageStore } from "@/store/useMessageStore";
 import { useUIStore } from "@/store/useUIStore";
 import { useUserStore } from "@/store/useUserStore";
 import { mobileWidth } from "@/utils";
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useRef } from "react";
 import MessageInputArea from "../messages/MessageInputArea";
 import MessageList from "../messages/MessageList";
@@ -17,6 +17,7 @@ import { useSocketContext } from "../providers/SocketProviders";
 
 const ChatWindow = () => {
 
+  const params = useParams();
   const searchParams = useSearchParams();
   const { socket } = useSocketContext()
   const setActiveUsers = useUserStore((s) => s.setActiveUsers);
@@ -36,7 +37,10 @@ const ChatWindow = () => {
 
   // On chat change: reset and join socket room
   useEffect(() => {
-    const chatId = searchParams.get("chatId");
+    const paramId = typeof params?.chatId === 'string' ? params.chatId : Array.isArray(params?.chatId) ? params.chatId[0] : undefined;
+    const qpId = searchParams.get("chatId");
+    const chatId = paramId || qpId || undefined;
+    const isValidId = !!chatId && /^[a-fA-F0-9]{24}$/.test(chatId);
 
     if (!isDesktop && !chatId) {
       toggleSidebar(true);
@@ -44,19 +48,19 @@ const ChatWindow = () => {
       resetMessages();
     }
 
-    if (!chatId || !socket) return;
+    if (!isValidId || !socket) return;
 
     resetMessages();
-    setActiveChat(chatId).then(() => {
-      socket.emit("join-chat", chatId);
+    setActiveChat(chatId!).then(() => {
+      socket.emit("join-chat", chatId!);
       console.log("Joined Room:", chatId);
-      loadMessages({ chatId, reset: true });
+      loadMessages({ chatId: chatId!, reset: true });
     });
     return () => {
-      socket.emit("leave-chat", chatId);
+      if (isValidId) socket.emit("leave-chat", chatId!);
       console.log("Left Room:", chatId);
     }
-  }, [searchParams, socket, resetMessages, setActiveChat, loadMessages, isDesktop, toggleSidebar]);
+  }, [params, searchParams, socket, resetMessages, setActiveChat, loadMessages, isDesktop, toggleSidebar]);
 
   useEffect(() => {
     setActiveUsers();

@@ -28,7 +28,7 @@ const ChatListItem = ({ chat, currentUserId, isChatActive, haveUnreadMessages }:
   return (
     <button
       onClick={() => {
-        router.push(`/?chatId=${chat._id}`);
+        router.push(`/chat/${chat._id}`);
         if (window.innerWidth < 768) toggleSidebar();
       }}
       className={cn(

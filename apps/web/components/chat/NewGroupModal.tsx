@@ -153,7 +153,7 @@ const NewGroupModal = ({ open, onOpenChange }: NewGroupModalProps) => {
       if (chat && chat._id) {
         onOpenChange(false);
         resetAll();
-        router.push(`/?chatId=${chat._id}`);
+        router.push(`/chat/${chat._id}`);
       } else {
         toast.error("Failed to create group");
       }

@@ -31,7 +31,7 @@ const NewChatModal = ({ open, onOpenChange }: NewChatModalProps) => {
     };
     const res = await createChat(info);
     onOpenChange(false); // closes
-    router.push(`/?chatId=${res._id}`);
+    router.push(`/chat/${res._id}`);
   };
 
   return (
