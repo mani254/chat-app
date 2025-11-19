@@ -1,8 +1,14 @@
 {
   "name": "@workspace/typescript-config",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "license": "PROPRIETARY",
+  "author": "mani254",
+  "keywords": [
+    "typescript",
+    "tsconfig",
+    "workspace"
+  ],
   "publishConfig": {
     "access": "public"
   }

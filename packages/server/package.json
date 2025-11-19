@@ -1,15 +1,23 @@
 {
   "name": "server",
-  "version": "1.0.0",
-  "description": "chat-app server backend folder",
+  "version": "0.0.1",
+  "description": "OpenChat server backend (Express + Socket.IO)",
   "main": "server.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server.ts",
     "start": "node server.ts"
   },
-  "keywords": [],
-  "author": "Manikanta",
+  "keywords": [
+    "openchat",
+    "chat",
+    "express",
+    "socket.io",
+    "mongodb",
+    "mongoose",
+    "typescript"
+  ],
+  "author": "mani254",
   "license": "ISC",
   "packageManager": "pnpm@10.17.1",
   "dependencies": {

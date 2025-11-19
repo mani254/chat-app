@@ -1,9 +1,18 @@
 {
   "name": "@workspace/database",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Database schemas and types for MongoDB",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "author": "mani254",
+  "keywords": [
+    "openchat",
+    "chat",
+    "mongodb",
+    "mongoose",
+    "schemas",
+    "typescript"
+  ],
   "scripts": {
     "clean": "rimraf dist"
   },

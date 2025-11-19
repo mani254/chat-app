@@ -3,6 +3,17 @@
   "version": "0.0.1",
   "type": "module",
   "private": true,
+  "description": "OpenChat web application (Next.js)",
+  "author": "mani254",
+  "keywords": [
+    "openchat",
+    "chat",
+    "nextjs",
+    "react",
+    "socket.io",
+    "tailwind",
+    "typescript"
+  ],
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",

@@ -1,7 +1,22 @@
 {
-  "name": "turborepo-shadcn-ui-tailwind-4",
+  "name": "openchat",
   "version": "0.0.1",
   "private": true,
+  "description": "OpenChat — Open Source WhatsApp for Developers",
+  "author": "mani254",
+  "license": "MIT",
+  "keywords": [
+    "chat",
+    "openchat",
+    "whatsapp-like",
+    "nextjs",
+    "express",
+    "socket.io",
+    "mongodb",
+    "mongoose",
+    "tailwind",
+    "typescript"
+  ],
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",

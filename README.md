@@ -1,51 +1,105 @@
-[![GitHub][opengraph-image]][opengraph-image-url]
+# OpenChat — Open Source WhatsApp for Developers
 
-# shadcn/ui and tailwindcss v4 monorepo template
+Build, customize, and deploy your own secure messaging platform with modern web technologies. Open source WhatsApp alternative for developers and communities.
 
-This template is for creating a monorepo with Turborepo, shadcn/ui, tailwindcss v4, and react v19.
+## 1) Project Explanation
+- OpenChat is a complete, production-ready chat application that includes authentication, real-time messaging, typing indicators, media uploads, and a clean, extensible architecture.
+- The project is organized as a Turborepo monorepo with an isolated Next.js web app and an Express/Socket.IO backend, plus shared database schemas.
+- It’s designed to be easy to adopt and extend—use it as-is, or tailor the database and UI to fit your product.
 
-## One-click Deploy
+## 2) Why This Repository Helps
+- Clear separation of concerns: web client, server API, sockets, and database schemas are modular and decoupled.
+- Proven patterns: cookie-based JWT auth with refresh flow, robust validation, and clean service/controller layers.
+- Extensibility: you can add features (reactions, read receipts, voice notes, etc.) without rewriting core modules.
+- Purpose: serve as a ready-to-run reference implementation and a foundation you can integrate into new or existing apps.
 
-You can deploy this template to Vercel with the button below:
+Good things about this structure:
+- Monorepo with shared tooling and consistent TypeScript standards.
+- Isolated chat app that can run on its own subdomain or be embedded.
+- Reusable database layer using Mongoose—extend schemas to match your needs.
+- Socket-first design for real-time messaging and presence events.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?build-command=cd+..%2F..%2F+%26%26+pnpm+turbo+build+--filter%3Dweb...&demo-description=This+is+a+template+Turborepo+with+ShadcnUI+tailwindv4&demo-image=%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F2JxNyYATuuV7WPuJ31kF9Q%2F433990aa4c8e7524a9095682fb08f0b1%2FBasic.png&demo-title=Turborepo+%26+Next.js+Starter&demo-url=https%3A%2F%2Fexamples-basic-web.vercel.sh%2F&from=templates&project-name=Turborepo+%26+Next.js+Starter&repository-name=turborepo-shadcn-tailwind&repository-url=https%3A%2F%2Fgithub.com%2Flinkb15%2Fturborepo-shadcn-ui-tailwind-4&root-directory=apps%2Fweb&skippable-integrations=1)
+## 3) Project Setup and Usage (Structure, not folders)
+You can include this “chat-block” into your product with minimal changes. Two common strategies:
 
-## Usage
+- Strategy A: Isolated app on a subdomain
+  - Because this is a Turborepo and the chat app is isolated, you can deploy it as a separate application (e.g., `chat.yourdomain.com`).
+  - Keep it independent, integrate with your main app via SSO/JWT or shared auth cookies.
+  - This lets you maintain the chat feature as its own lifecycle and team, while sharing the same database if desired.
 
-in the root directory run:
+- Strategy B: Modify `web` and extend the database
+  - You can directly customize the Next.js web app and extend the MongoDB schemas to fit your domain.
+  - Authentication (credentials + Google OAuth), OTP verification, and refresh token handling are already implemented—most heavy lifting is done.
+  - Focus your effort on chat UI/UX and additional features rather than rebuilding auth and messaging from scratch.
 
+## 4) Contributions
+I’m making this open source to help developers quickly ship reliable messaging features and to learn from real-world patterns. If this saves you time, consider contributing:
+- Improve features, docs, tests, or accessibility.
+- Follow the same folder structure and reuse existing code patterns to stay in sync.
+- Open issues with clear steps; submit PRs with concise descriptions and screenshots for UI changes.
+
+## 5) Run Locally and Environment Variables
+
+### Requirements
+- Node.js `>=22`
+- pnpm `@10.x`
+- MongoDB (local or Atlas)
+- Optional: Cloudflare R2 for media uploads, Brevo SMTP for OTP emails, Google OAuth for social login
+
+### Install & Start (Workspace)
 ```bash
 pnpm install
 pnpm dev
 ```
 
-## Adding components
-
-To add components to your app, run the following command at the root of your `web` app:
-
+### Run Individually
 ```bash
-pnpm dlx shadcn@latest add button -c apps/web
+# Backend (Express + Socket.IO)
+pnpm --filter server dev
+
+# Frontend (Next.js)
+pnpm --filter web dev
 ```
 
-This will place the ui components in the `packages/ui/src/components` directory.
+### Environment Variables
 
-## Tailwind
+Create `packages/server/.env`:
+```env
+NODE_ENV=development
+PORT=5000
+MONGO_URI=mongodb://localhost:27017/openchat
+FRONTEND_URL=http://localhost:3000
 
-Your `globals.css` are already set up to use the components from the `ui` package which is imported in the `web` app.
+# JWT secrets
+JWT_ACCESS_SECRET=replace-with-strong-secret
+JWT_REFRESH_SECRET=replace-with-strong-secret
 
-## Using components
+# Cloudflare R2 (optional, for uploads)
+R2_ENDPOINT=https://<account-id>.r2.cloudflarestorage.com
+R2_ACCESS_KEY_ID=...
+R2_SECRET_ACCESS_KEY=...
+R2_BUCKET_NAME=openchat
 
-To use the components in your app, import them from the `ui` package.
+# SMTP via Brevo (for OTP emails)
+SMTP_USER=your-brevo-username
+SIB_API_KEY=your-brevo-api-key
 
-```tsx
-import { Button } from '@workspace/ui/components/ui/button';
+# Google OAuth (optional)
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+GOOGLE_REDIRECT_URI=http://localhost:5000/api/auth/google/callback
 ```
 
-## More Resources
+Create `apps/web/.env.local`:
+```env
+NEXT_PUBLIC_API_BACKEND_URL=http://localhost:5000
+```
 
-- [shadcn/ui - Monorepo](https://ui.shadcn.com/docs/monorepo)
-- [Turborepo - shadcn/ui](https://turbo.build/repo/docs/guides/tools/shadcn-ui)
-- [TailwindCSS v4 - Explicitly Registering Sources](https://tailwindcss.com/docs/detecting-classes-in-source-files#explicitly-registering-sources)
+### Notes
+- Cookies are HttpOnly and use `sameSite: 'lax'` locally; set `secure: true` and `sameSite: 'none'` in production behind HTTPS.
+- CORS must include your frontend origin (e.g., `FRONTEND_URL=http://localhost:3000`).
+- If socket connect errors with `Unauthorized`, the client auto-attempts a token refresh—verify your JWT secrets and cookie policies.
 
-[opengraph-image]: https://turborepo-shadcn-tailwind.vercel.app/opengraph-image.png
-[opengraph-image-url]: https://turborepo-shadcn-tailwind.vercel.app/
+---
+
+If you adopt this project, share what you built! Feedback and contributions help make OpenChat better for everyone.
