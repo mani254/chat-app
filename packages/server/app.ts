@@ -11,6 +11,8 @@ import otpRouter from './routes/otpRouter';
 import userRouter from './routes/userRouter';
 import uploadRouter from './routes/uploadRouter';
 import adminRouter from './routes/adminRoutes';
+import videoRouter from './routes/videoRoutes';
+import moderationRouter from './routes/moderationRoutes';
 
 dotenv.config();
 connectDB();
@@ -33,6 +35,8 @@ app.use('/api/chats', chatRouter);
 app.use('/api/messages', messageRouter);
 app.use('/api/uploads', uploadRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/videos', videoRouter);
+app.use('/api/moderation', moderationRouter);
 
 app.use(errorHandler);
 

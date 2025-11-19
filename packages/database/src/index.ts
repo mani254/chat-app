@@ -8,3 +8,5 @@ export * from './types/chat';
 export * from './types/message';
 export * from './types/otp';
 export * from './types/socket';
+export * from './schemas/video';
+export * from './schemas/moderation';
