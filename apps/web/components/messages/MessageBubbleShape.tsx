@@ -13,8 +13,8 @@ export default function MessageBubbleShape({
     <div
       className={cn(
         "relative px-3 py-[6px] rounded-xl border shadow-sm max-w-[350px]",
-        type === "left" && "bg-white border-border text-foreground",
-        type === "right" && "bg-primary/90 border-primary/40 text-primary ml-auto",
+        type === "left" && "bg-background border-border text-foreground",
+        type === "right" && "bg-primary/90 border-primary/40 text-primary-invert ml-auto",
         media && "px-1 py-1",
         type === 'right' && media && "bg-primary/10"
       )}
@@ -29,12 +29,12 @@ export default function MessageBubbleShape({
               width="22"
               height="9"
               viewBox="0 0 22 9"
-              className="fill-white stroke-current"
+              className="fill-background stroke-current"
             >
               <path d="M0 0.5L22 0C13 1 13 5.5 12 8.5L0 0.5Z" />
             </svg>
           </div>
-          <div className="absolute w-[8px] h-[8px] top-px left-[0.8px] bg-white"></div>
+          <div className="absolute w-[8px] h-[8px] top-px left-[0.8px] bg-background"></div>
         </>
       )}
 

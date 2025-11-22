@@ -6,13 +6,17 @@
 @source "../../../../apps/web/app/**/*.{js,ts,jsx,tsx}";
 @source "../../../../apps/web/hooks/**/*.{js,ts,jsx,tsx}";
 
-@custom-variant dark (&:is(.dark *));
+/* @custom-variant dark (&:is(.dark *)); */
 
 @theme {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
+/* =========================
+   DEFAULT THEME (Light)
+   Modern light theme with blue primary accents
+========================= */
 :root {
   /* Background system */
   --background: 0, 0%, 100%;
@@ -51,15 +55,10 @@
   --radius: 0.5rem;
 
   --sidebar-background: 0 0% 98%;
-
   --sidebar-foreground: 240 5.3% 26.1%;
-
   --sidebar-accent: 240 4.8% 95.9%;
-
   --sidebar-accent-foreground: 240 5.9% 10%;
-
   --sidebar-border: 220 13% 91%;
-
   --sidebar-ring: 217.2 91.2% 59.8%;
 
   /* Status indicator colors */
@@ -93,6 +92,170 @@
   --focus-ring-offset: 0, 0%, 100%; /* Focus ring offset color */
 }
 
+/* =========================
+   DARK THEME
+   Deep blue-gray theme optimized for low-light environments
+   WCAG AA compliant contrast ratios
+========================= */
+.dark {
+  /* Background system - Dark blues and grays */
+  --background: 220, 40%, 8%; /* Very dark blue-gray */
+  --background-accent: 220, 35%, 15%; /* Dark accent */
+  --background-invert: 220, 15%, 95%; /* Light for inversion */
+
+  /* Foreground system - Light grays and whites */
+  --foreground: 220, 15%, 90%; /* Light gray text */
+  --foreground-accent: 220, 15%, 75%; /* Medium light gray */
+  --foreground-invert: 220, 40%, 8%; /* Dark for inversion */
+
+  /* Primary system - Adjusted blue for dark theme */
+  --primary-color: 220, 85%, 65%; /* Brighter blue for dark backgrounds */
+  --primary-accent: 220, 85%, 20%; /* Dark blue accent */
+  --primary-invert: 0, 0%, 100%; /* White for inversion */
+
+  --card: 220 35% 15%; /* Dark card background */
+  --card-foreground: 220 15% 90%; /* Light card text */
+
+  --popover: 220 35% 15%; /* Dark popover background */
+  --popover-foreground: 220 15% 90%; /* Light popover text */
+
+  --muted: 220 30% 25%; /* Dark muted background */
+  --muted-foreground: 220 15% 70%; /* Medium light muted text */
+
+  --accent: 220 35% 20%; /* Dark accent background */
+  --accent-foreground: 220 15% 95%; /* Light accent text */
+
+  --destructive: 0 70% 50%; /* Slightly muted red for dark theme */
+  --destructive-foreground: 0 0% 100%; /* White text on destructive */
+
+  --border: 220 25% 25%; /* Dark border */
+  --input: 220 25% 25%; /* Dark input background */
+  --ring: 220 85% 65%; /* Bright blue ring */
+
+  --radius: 0.5rem;
+
+  --sidebar-background: 220 35% 12%; /* Dark sidebar */
+  --sidebar-foreground: 220 15% 85%; /* Light sidebar text */
+  --sidebar-accent: 220 35% 20%; /* Dark sidebar accent */
+  --sidebar-accent-foreground: 220 15% 95%; /* Light sidebar accent text */
+  --sidebar-border: 220 25% 25%; /* Dark sidebar border */
+  --sidebar-ring: 220 85% 65%; /* Bright blue sidebar ring */
+
+  /* Status indicator colors - Adjusted for dark theme visibility */
+  --status-online: 142, 70%, 45%; /* Brighter green for dark theme */
+  --status-offline: 220, 15%, 65%; /* Light gray for offline */
+  --status-away: 38, 85%, 55%; /* Bright yellow for away */
+  --status-busy: 0, 75%, 55%; /* Bright red for busy */
+
+  /* File type colors - Adjusted for dark theme */
+  --file-image: 217, 85%, 70%; /* Brighter blue for images */
+  --file-video: 262, 80%, 75%; /* Brighter purple for videos */
+  --file-audio: 38, 85%, 60%; /* Bright yellow for audio */
+  --file-document: 0, 75%, 60%; /* Bright red for documents */
+  --file-archive: 30, 85%, 65%; /* Bright orange for archives */
+  --file-code: 265, 85%, 80%; /* Bright indigo for code */
+  --file-email: 142, 70%, 45%; /* Bright green for email */
+  --file-default: 220, 15%, 65%; /* Light gray for unknown files */
+
+  /* Semantic colors - Adjusted for dark theme */
+  --success: 142, 70%, 45%; /* Brighter green success */
+  --success-bg: 142, 70%, 20%; /* Dark green success background */
+  --warning: 38, 85%, 55%; /* Bright yellow warning */
+  --warning-bg: 38, 85%, 20%; /* Dark yellow warning background */
+  --error: 0, 75%, 55%; /* Bright red error */
+  --error-bg: 0, 75%, 20%; /* Dark red error background */
+  --info: 217, 85%, 70%; /* Brighter blue info */
+  --info-bg: 217, 85%, 20%; /* Dark blue info background */
+
+  /* Focus and accessibility - Adjusted for dark theme */
+  --focus-ring: 220, 85%, 65%; /* Bright blue focus ring */
+  --focus-ring-offset: 220, 40%, 8%; /* Dark focus ring offset */
+}
+
+/* =========================
+   ORANGE THEME
+   Warm orange-based theme with complementary colors
+   Maintains luminance levels for consistent visual hierarchy
+========================= */
+.orange {
+  /* Background system - Warm off-whites and light oranges */
+  --background: 30, 25%, 98%; /* Warm off-white */
+  --background-accent: 30, 20%, 94%; /* Light warm accent */
+  --background-invert: 25, 85%, 15%; /* Dark brown for inversion */
+
+  /* Foreground system - Dark browns and charcoals */
+  --foreground: 25, 35%, 20%; /* Dark brown text */
+  --foreground-accent: 25, 25%, 40%; /* Medium brown text */
+  --foreground-invert: 30, 25%, 98%; /* Light for inversion */
+
+  /* Primary system - Orange-based primary colors */
+  --primary-color: 25, 80%, 55%; /* Vibrant orange primary */
+  --primary-accent: 25, 80%, 96%; /* Light orange accent */
+  --primary-invert: 0, 0%, 100%; /* White for inversion */
+
+  --card: 30 25% 98%; /* Warm card background */
+  --card-foreground: 25 35% 20%; /* Dark brown card text */
+
+  --popover: 30 25% 98%; /* Warm popover background */
+  --popover-foreground: 25 35% 20%; /* Dark brown popover text */
+
+  --muted: 30 20% 92%; /* Light warm muted background */
+  --muted-foreground: 25 25% 45%; /* Medium brown muted text */
+
+  --accent: 35 40% 92%; /* Warm yellow accent background */
+  --accent-foreground: 25 35% 15%; /* Dark brown accent text */
+
+  --destructive: 0 75% 55%; /* Red destructive (consistent) */
+  --destructive-foreground: 0 0% 100%; /* White text on destructive */
+
+  --border: 30 20% 85%; /* Warm light brown border */
+  --input: 30 20% 92%; /* Warm input background */
+  --ring: 25 80% 55%; /* Orange ring */
+
+  --radius: 0.5rem;
+
+  --sidebar-background: 30 25% 96%; /* Warm light sidebar */
+  --sidebar-foreground: 25 30% 25%; /* Dark brown sidebar text */
+  --sidebar-accent: 35 40% 88%; /* Warm yellow sidebar accent */
+  --sidebar-accent-foreground: 25 35% 15%; /* Dark brown sidebar accent text */
+  --sidebar-border: 30 20% 85%; /* Warm light brown sidebar border */
+  --sidebar-ring: 25 80% 55%; /* Orange sidebar ring */
+
+  /* Status indicator colors - Orange theme variations */
+  --status-online: 142, 70%, 40%; /* Green adjusted for orange theme */
+  --status-offline: 25, 20%, 60%; /* Brown-gray for offline */
+  --status-away: 45, 85%, 55%; /* Golden yellow for away */
+  --status-busy: 0, 80%, 60%; /* Bright red for busy */
+
+  /* File type colors - Orange theme variations */
+  --file-image: 200, 85%, 65%; /* Blue adjusted for orange theme */
+  --file-video: 280, 75%, 70%; /* Purple adjusted for orange theme */
+  --file-audio: 45, 85%, 55%; /* Golden yellow for audio */
+  --file-document: 0, 80%, 60%; /* Red for documents */
+  --file-archive: 25, 80%, 55%; /* Orange for archives (primary) */
+  --file-code: 270, 80%, 75%; /* Indigo adjusted for orange theme */
+  --file-email: 142, 70%, 40%; /* Green adjusted for orange theme */
+  --file-default: 25, 20%, 60%; /* Brown-gray for unknown files */
+
+  /* Semantic colors - Orange theme variations */
+  --success: 142, 70%, 40%; /* Green adjusted for orange theme */
+  --success-bg: 142, 70%, 96%; /* Light green success background */
+  --warning: 45, 85%, 55%; /* Golden yellow warning */
+  --warning-bg: 45, 85%, 96%; /* Light golden warning background */
+  --error: 0, 80%, 60%; /* Bright red error */
+  --error-bg: 0, 80%, 96%; /* Light red error background */
+  --info: 200, 85%, 65%; /* Blue adjusted for orange theme */
+  --info-bg: 200, 85%, 96%; /* Light blue info background */
+
+  /* Focus and accessibility - Orange theme */
+  --focus-ring: 25, 80%, 55%; /* Orange focus ring */
+  --focus-ring-offset: 30, 25%, 98%; /* Warm white focus ring offset */
+}
+
+/* =========================
+   THEME INLINE MAPPINGS
+   HSL color mappings for all themes
+========================= */
 @theme inline {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
@@ -152,6 +315,10 @@
   --color-focus-ring-offset: hsl(var(--focus-ring-offset));
 }
 
+/* =========================
+   BASE STYLES
+   Universal styles for all themes
+========================= */
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -162,6 +329,10 @@
   }
 }
 
+/* =========================
+   UTILITY STYLES
+   Reusable utility classes
+========================= */
 .shadow {
   box-shadow: 0px 0px 5px 1px hsl(var(--background-accent));
 }
@@ -178,11 +349,12 @@
 }
 
 /* =========================
- custome scrollbar css
+   CUSTOM SCROLLBAR
+   Consistent scrollbar styling across themes
 ========================= */
 .scrollbar-custom {
   scrollbar-width: thin;
-  scrollbar-color: #6b7280 transparent;
+  scrollbar-color: hsl(var(--foreground-accent)) transparent;
 }
 
 .scrollbar-custom::-webkit-scrollbar {
@@ -195,7 +367,7 @@
 }
 
 .scrollbar-custom::-webkit-scrollbar-thumb {
-  background-color: #6b7280;
+  background-color: hsl(var(--foreground-accent));
   border-radius: 8px;
   border: 2px solid transparent;
   background-clip: content-box;
@@ -203,7 +375,8 @@
 }
 
 .scrollbar-custom::-webkit-scrollbar-thumb:hover {
-  background-color: #4b5563;
+  background-color: hsl(var(--foreground-accent));
+  opacity: 0.8;
 }
 
 .scrollbar-custom::-webkit-scrollbar-corner {
@@ -211,9 +384,9 @@
 }
 
 /* =========================
- css for the message bubble
+   MESSAGE BUBBLE STYLES
+   Chat message styling with theme support
 ========================= */
-
 .message-bubble-other::before {
   content: '';
   position: absolute;
@@ -240,10 +413,54 @@
   background: transparent;
 }
 
+/* =========================
+   ACCESSIBILITY UTILITIES
+   User interaction controls
+========================= */
 .no-select {
   user-select: none; /* Standard property */
   -webkit-user-select: none; /* Safari / iOS */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE/Edge */
   pointer-events: none; /* Optional: disables clicks & right-clicks */
+}
+
+/* =========================
+   THEME SWITCHING UTILITIES
+   Classes for smooth theme transitions
+========================= */
+.theme-transition {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --foreground: 220, 13%, 10%;
+    --background: 0, 0%, 100%;
+  }
+
+  .dark {
+    --foreground: 220, 15%, 95%;
+    --background: 220, 40%, 5%;
+  }
+
+  .orange {
+    --foreground: 25, 35%, 15%;
+    --background: 30, 25%, 99%;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .theme-transition {
+    transition: none;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    transition: none;
+  }
 }

@@ -5,7 +5,7 @@ interface AudioNoteProps {
 }
 
 const AudioNote: React.FC<AudioNoteProps> = ({ audioSrc }) => (
-  <div className="p-4 bg-white shadow-sm rounded-lg max w-full h-full flex items-center justify-center">
+  <div className="p-4 bg-background shadow-sm rounded-lg max w-full h-full flex items-center justify-center">
     <audio
       src={audioSrc}
       controls

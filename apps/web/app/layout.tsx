@@ -27,9 +27,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased `}>
+      <body className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased`}>
         <Toaster />
-
         {children}
       </body>
     </html>

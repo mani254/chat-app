@@ -23,7 +23,7 @@ const LoginRegistration = ({ children, onGoogleLogin }: LoginRegistrationProps) 
           priority
         />
       </div>
-      <div className="w-full md:w-[700px] sm:min-w-[500px] bg-white p-5 sm:p-10 flex items-center">
+      <div className="w-full md:w-[700px] sm:min-w-[500px] bg-background p-5 sm:p-10 flex items-center">
         <div className="w-full">
           <Image
             className="m-auto block sm:m-0 w-12 h-12"

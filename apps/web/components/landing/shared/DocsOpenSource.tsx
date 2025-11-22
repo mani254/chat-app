@@ -131,7 +131,7 @@ export default function DocsOpenSource() {
           >
             <Link
               href="https://github.com/openchat/openchat"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-primary text-primary hover:bg-primary/90 transition-colors text-lg font-semibold"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-primary text-primary-invert hover:bg-primary/90 transition-colors text-lg font-semibold"
             >
               <Github className="w-5 h-5" />
               Start Contributing

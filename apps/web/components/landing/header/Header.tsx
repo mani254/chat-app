@@ -7,7 +7,6 @@ import { useState } from "react";
 
 const NAV_ITEMS = [
   { label: "Explore", href: "#features" },
-  { label: "Chat Explore", href: "/chat", highlight: true },
   { label: "Docs", href: "#docs" },
   { label: "OpenSource", href: "#opensource" },
   { label: "Contributors", href: "#contributors" },
@@ -30,8 +29,8 @@ export default function Header({ className = "" }: HeaderProps) {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <MessageCircle className="w-8 h-8 text-primary" />
-            <span className="text-xl font-bold">OpenChat</span>
+            <MessageCircle className="w-8 h-8 text-primary-invert" />
+            <span className="text-xl font-bold ">OpenChat</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -51,7 +50,7 @@ export default function Header({ className = "" }: HeaderProps) {
           <div className="flex items-center gap-4">
             <Link
               href="/chat"
-              className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary hover:bg-primary/90 transition-colors text-sm font-medium"
+              className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-invert hover:bg-primary/90 transition-colors text-sm font-medium"
             >
               <Compass className="w-4 h-4" />
               Explore
@@ -81,10 +80,7 @@ export default function Header({ className = "" }: HeaderProps) {
                   <Link
                     key={item.label}
                     href={item.href}
-                    className={`text-sm font-medium transition-colors hover:text-primary ${item.highlight
-                      ? "bg-primary text-primary px-3 py-2 rounded-lg"
-                      : "text-foreground/80"
-                      }`}
+                    className={`text-sm font-medium transition-colors hover:text-primary text-foreground/80}`}
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {item.label === "Chat Explore" && <Compass className="w-4 h-4 inline mr-2" />}

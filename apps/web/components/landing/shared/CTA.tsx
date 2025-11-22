@@ -42,7 +42,7 @@ export default function CTA({
               href="/chat"
               className={`inline-flex items-center gap-2 px-8 py-4 rounded-xl transition-colors text-lg font-semibold ${isPrimary
                 ? 'bg-background text-foreground hover:bg-background/90'
-                : 'bg-primary text-primary hover:bg-primary/90'
+                : 'bg-primary text-primary-invert hover:bg-primary/90'
                 }`}
             >
               Start Building
