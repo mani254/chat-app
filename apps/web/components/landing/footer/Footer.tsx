@@ -1,6 +1,6 @@
 "use client";
 
-import { Github, Linkedin, MessageCircle, Twitter } from "lucide-react";
+import { Github, Linkedin, MessageCircle } from "lucide-react";
 import Link from "next/link";
 
 interface FooterProps {
@@ -15,7 +15,7 @@ export default function Footer({ className = "" }: FooterProps) {
           <div>
             <Link href="/" className="flex items-center gap-2 mb-4">
               <MessageCircle className="w-6 h-6 text-primary" />
-              <span className="text-lg font-bold">OpenChat</span>
+              <span className="text-lg font-bold">chat-app</span>
             </Link>
             <p className="text-sm text-muted-foreground">
               Open source WhatsApp-like chat system for developers and communities.
@@ -42,20 +42,20 @@ export default function Footer({ className = "" }: FooterProps) {
           <div>
             <h4 className="font-semibold mb-4 text-primary">Connect</h4>
             <div className="flex gap-4">
-              <Link href="https://github.com/openchat/openchat" className="text-muted-foreground hover:text-primary transition-colors">
+              <Link href="https://github.com/mani254/chat-app.git" className="text-muted-foreground hover:text-primary transition-colors">
                 <Github className="w-5 h-5" />
               </Link>
-              <Link href="https://twitter.com/openchat" className="text-muted-foreground hover:text-primary transition-colors">
+              {/* <Link href="https://twitter.com/chat-app" className="text-muted-foreground hover:text-primary transition-colors">
                 <Twitter className="w-5 h-5" />
-              </Link>
-              <Link href="https://linkedin.com/company/openchat" className="text-muted-foreground hover:text-primary transition-colors">
+              </Link> */}
+              <Link href="https://linkedin.com/in/sai0421" className="text-muted-foreground hover:text-primary transition-colors">
                 <Linkedin className="w-5 h-5" />
               </Link>
             </div>
           </div>
         </div>
         <div className="border-t border-border pt-8 text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} OpenChat Contributors • Released under the MIT License</p>
+          <p>© {new Date().getFullYear()} chat-app Contributors • Released under the MIT License</p>
         </div>
       </div>
     </footer>

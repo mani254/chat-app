@@ -10,7 +10,7 @@
     "react",
     "nextjs",
     "tailwind",
-    "openchat"
+    "chat-app"
   ],
   "exports": {
     "./globals.css": "./src/styles/globals.css",

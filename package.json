@@ -1,13 +1,13 @@
 {
-  "name": "openchat",
+  "name": "chat-app",
   "version": "0.0.1",
   "private": true,
-  "description": "OpenChat — Open Source WhatsApp for Developers",
+  "description": "chat-app — Open Source WhatsApp for Developers",
   "author": "mani254",
   "license": "MIT",
   "keywords": [
     "chat",
-    "openchat",
+    "chat-app",
     "whatsapp-like",
     "nextjs",
     "express",

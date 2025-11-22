@@ -9,19 +9,19 @@ interface SEOProps {
 }
 
 export function generateSEOMetadata({
-  title = "OpenChat - Open Source WhatsApp for Developers",
+  title = "chat-app - Open Source WhatsApp for Developers",
   description = "Build, customize, and deploy your own secure messaging platform with modern web technologies. Open source WhatsApp alternative for developers and communities.",
   keywords = ["open source", "chat application", "WhatsApp alternative", "messaging platform", "developers", "real-time messaging", "WebSocket", "TypeScript", "Next.js"],
   ogImage = "/og-image.png",
-  canonicalUrl = "https://openchat.dev"
+  canonicalUrl = "https://chat-app.dev"
 }: SEOProps = {}): Metadata {
   return {
     title,
     description,
     keywords: keywords.join(", "),
-    authors: [{ name: "OpenChat Contributors" }],
-    creator: "OpenChat Team",
-    publisher: "OpenChat",
+    authors: [{ name: "chat-app Contributors" }],
+    creator: "chat-app Team",
+    publisher: "chat-app",
     formatDetection: {
       email: false,
       address: false,
@@ -35,13 +35,13 @@ export function generateSEOMetadata({
       title,
       description,
       url: canonicalUrl,
-      siteName: "OpenChat",
+      siteName: "chat-app",
       images: [
         {
           url: ogImage,
           width: 1200,
           height: 630,
-          alt: "OpenChat - Open Source Messaging Platform",
+          alt: "chat-app - Open Source Messaging Platform",
         },
       ],
       locale: "en_US",
@@ -71,9 +71,9 @@ export function generateStructuredData() {
   return {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    "name": "OpenChat",
+    "name": "chat-app",
     "description": "Open source WhatsApp-like chat system for developers and communities",
-    "url": "https://openchat.dev",
+    "url": "https://chat-app.dev",
     "applicationCategory": "CommunicationApplication",
     "operatingSystem": "Web, Windows, macOS, Linux, iOS, Android",
     "offers": {
@@ -83,14 +83,14 @@ export function generateStructuredData() {
     },
     "author": {
       "@type": "Organization",
-      "name": "OpenChat Contributors",
-      "url": "https://github.com/openchat/openchat",
+      "name": "chat-app Contributors",
+      "url": "https://github.com/mani254",
     },
     "mainEntity": {
       "@type": "WebSite",
-      "@id": "https://openchat.dev/#website",
-      "url": "https://openchat.dev",
-      "name": "OpenChat",
+      "@id": "https://chat-app.dev/#website",
+      "url": "https://chat-app.dev",
+      "name": "chat-app",
       "description": "Open source WhatsApp-like chat system for developers and communities",
     },
   };

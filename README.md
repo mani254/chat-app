@@ -1,25 +1,29 @@
-# OpenChat — Open Source WhatsApp for Developers
+# chat-app — Open Source WhatsApp for Developers
 
 Build, customize, and deploy your own secure messaging platform with modern web technologies. Open source WhatsApp alternative for developers and communities.
 
 ## 1) Project Explanation
-- OpenChat is a complete, production-ready chat application that includes authentication, real-time messaging, typing indicators, media uploads, and a clean, extensible architecture.
+
+- chat-app is a complete, production-ready chat application that includes authentication, real-time messaging, typing indicators, media uploads, and a clean, extensible architecture.
 - The project is organized as a Turborepo monorepo with an isolated Next.js web app and an Express/Socket.IO backend, plus shared database schemas.
 - It’s designed to be easy to adopt and extend—use it as-is, or tailor the database and UI to fit your product.
 
 ## 2) Why This Repository Helps
+
 - Clear separation of concerns: web client, server API, sockets, and database schemas are modular and decoupled.
 - Proven patterns: cookie-based JWT auth with refresh flow, robust validation, and clean service/controller layers.
 - Extensibility: you can add features (reactions, read receipts, voice notes, etc.) without rewriting core modules.
 - Purpose: serve as a ready-to-run reference implementation and a foundation you can integrate into new or existing apps.
 
 Good things about this structure:
+
 - Monorepo with shared tooling and consistent TypeScript standards.
 - Isolated chat app that can run on its own subdomain or be embedded.
 - Reusable database layer using Mongoose—extend schemas to match your needs.
 - Socket-first design for real-time messaging and presence events.
 
 ## 3) Project Setup and Usage (Structure, not folders)
+
 You can include this “chat-block” into your product with minimal changes. Two common strategies:
 
 - Strategy A: Isolated app on a subdomain
@@ -33,7 +37,9 @@ You can include this “chat-block” into your product with minimal changes. Tw
   - Focus your effort on chat UI/UX and additional features rather than rebuilding auth and messaging from scratch.
 
 ## 4) Contributions
+
 I’m making this open source to help developers quickly ship reliable messaging features and to learn from real-world patterns. If this saves you time, consider contributing:
+
 - Improve features, docs, tests, or accessibility.
 - Follow the same folder structure and reuse existing code patterns to stay in sync.
 - Open issues with clear steps; submit PRs with concise descriptions and screenshots for UI changes.
@@ -41,18 +47,21 @@ I’m making this open source to help developers quickly ship reliable messaging
 ## 5) Run Locally and Environment Variables
 
 ### Requirements
+
 - Node.js `>=22`
 - pnpm `@10.x`
 - MongoDB (local or Atlas)
 - Optional: Cloudflare R2 for media uploads, Brevo SMTP for OTP emails, Google OAuth for social login
 
 ### Install & Start (Workspace)
+
 ```bash
 pnpm install
 pnpm dev
 ```
 
 ### Run Individually
+
 ```bash
 # Backend (Express + Socket.IO)
 pnpm --filter server dev
@@ -64,10 +73,11 @@ pnpm --filter web dev
 ### Environment Variables
 
 Create `packages/server/.env`:
+
 ```env
 NODE_ENV=development
 PORT=5000
-MONGO_URI=mongodb://localhost:27017/openchat
+MONGO_URI=mongodb://localhost:27017/chat-app
 FRONTEND_URL=http://localhost:3000
 
 # JWT secrets
@@ -78,7 +88,7 @@ JWT_REFRESH_SECRET=replace-with-strong-secret
 R2_ENDPOINT=https://<account-id>.r2.cloudflarestorage.com
 R2_ACCESS_KEY_ID=...
 R2_SECRET_ACCESS_KEY=...
-R2_BUCKET_NAME=openchat
+R2_BUCKET_NAME=chat-app
 
 # SMTP via Brevo (for OTP emails)
 SMTP_USER=your-brevo-username
@@ -91,15 +101,17 @@ GOOGLE_REDIRECT_URI=http://localhost:5000/api/auth/google/callback
 ```
 
 Create `apps/web/.env.local`:
+
 ```env
 NEXT_PUBLIC_API_BACKEND_URL=http://localhost:5000
 ```
 
 ### Notes
+
 - Cookies are HttpOnly and use `sameSite: 'lax'` locally; set `secure: true` and `sameSite: 'none'` in production behind HTTPS.
 - CORS must include your frontend origin (e.g., `FRONTEND_URL=http://localhost:3000`).
 - If socket connect errors with `Unauthorized`, the client auto-attempts a token refresh—verify your JWT secrets and cookie policies.
 
 ---
 
-If you adopt this project, share what you built! Feedback and contributions help make OpenChat better for everyone.
+If you adopt this project, share what you built! Feedback and contributions help make chat-app better for everyone.

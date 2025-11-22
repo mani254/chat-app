@@ -88,7 +88,7 @@ export default function DocsOpenSource() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-primary">Contribute to OpenChat</h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-primary">Contribute to chat-app</h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Join our growing community of contributors and help shape the future of messaging
             </p>
@@ -113,7 +113,7 @@ export default function DocsOpenSource() {
                 </div>
                 <p className="text-muted-foreground text-sm mb-4">{area.description}</p>
                 <Link
-                  href="https://github.com/openchat/openchat/issues"
+                  href="https://github.com/mani254/chat-app.git/issues"
                   className="text-primary hover:underline text-sm font-medium"
                 >
                   View Issues →
@@ -130,7 +130,7 @@ export default function DocsOpenSource() {
             className="text-center"
           >
             <Link
-              href="https://github.com/openchat/openchat"
+              href="https://github.com/mani254/chat-app.git"
               className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-primary text-primary-invert hover:bg-primary/90 transition-colors text-lg font-semibold"
             >
               <Github className="w-5 h-5" />

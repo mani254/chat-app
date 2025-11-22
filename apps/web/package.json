@@ -3,10 +3,10 @@
   "version": "0.0.1",
   "type": "module",
   "private": true,
-  "description": "OpenChat web application (Next.js)",
+  "description": "chat-app web application (Next.js)",
   "author": "mani254",
   "keywords": [
-    "openchat",
+    "chat-app",
     "chat",
     "nextjs",
     "react",

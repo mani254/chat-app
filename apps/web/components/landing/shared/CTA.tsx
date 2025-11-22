@@ -15,7 +15,7 @@ export default function CTA({
   className = "",
   variant = "primary",
   title = "Ready to Build Something Amazing?",
-  description = "Join thousands of developers who've already started building with OpenChat"
+  description = "Join thousands of developers who've already started building with chat-app"
 }: CTAProps) {
   const isPrimary = variant === "primary";
 
@@ -49,7 +49,7 @@ export default function CTA({
               <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
-              href="https://github.com/openchat/openchat"
+              href="https://github.com/mani254/chat-app.git"
               className={`inline-flex items-center gap-2 px-8 py-4 rounded-xl border-2 transition-colors text-lg font-semibold ${isPrimary
                 ? 'border-background text-background hover:bg-background hover:text-foreground'
                 : 'border-border text-foreground hover:bg-muted'

@@ -30,7 +30,7 @@ export default function Header({ className = "" }: HeaderProps) {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             <MessageCircle className="w-8 h-8 text-primary-invert" />
-            <span className="text-xl font-bold ">OpenChat</span>
+            <span className="text-xl font-bold ">chat-app</span>
           </Link>
 
           {/* Desktop Navigation */}

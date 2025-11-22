@@ -11,7 +11,7 @@ import { BookOpen, Code, GitBranch, Heart, Shield, Users } from "lucide-react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = generateSEOMetadata({
-  title: "OpenChat - Open Source WhatsApp for Developers",
+  title: "chat-app - Open Source WhatsApp for Developers",
   description: "Build, customize, and deploy your own secure messaging platform with modern web technologies. Open source WhatsApp alternative for developers and communities.",
 });
 
@@ -51,7 +51,7 @@ export default function Home() {
           {/* Final CTA Section */}
           <CTA
             title="Ready to Build Something Amazing?"
-            description="Join thousands of developers who've already started building with OpenChat"
+            description="Join thousands of developers who've already started building with chat-app"
             variant="primary"
           />
         </main>

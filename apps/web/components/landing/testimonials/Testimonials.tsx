@@ -8,7 +8,7 @@ const TESTIMONIALS = [
   {
     name: "Sarah Chen",
     role: "Full-stack Developer",
-    content: "OpenChat's codebase is incredibly clean. I contributed my first PR within hours!",
+    content: "chat-app's codebase is incredibly clean. I contributed my first PR within hours!",
     avatar: "SC",
   },
   {
@@ -45,7 +45,7 @@ export default function Testimonials({ className = "" }: TestimonialsProps) {
             <h2 className="text-4xl md:text-5xl font-bold text-primary">What Our Community Says</h2>
           </div>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Hear from developers who've built amazing things with OpenChat
+            Hear from developers who've built amazing things with chat-app
           </p>
         </motion.div>
 
