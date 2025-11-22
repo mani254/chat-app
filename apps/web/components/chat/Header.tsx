@@ -82,9 +82,10 @@ const Header = () => {
             {/* Logout */}
             <DropdownMenuItem
               onClick={handleSignOut}
-              className="group flex items-center gap-2 px-4 py-2.5 text-sm text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-colors rounded-md mx-1 cursor-pointer"
+              className="group flex items-center gap-2 px-4 py-2.5 text-sm transition-colors rounded-md mx-1 cursor-pointer text-error hover:text-error/80"
+              
             >
-              <LogOut className="w-4 h-4 group-hover:text-red-400 transition-colors" />
+              <LogOut className="w-4 h-4 transition-colors text-error"/>
               Sign Out
             </DropdownMenuItem>
 

@@ -42,7 +42,7 @@ const GroupAvatarDiv = ({
       )}
 
       {showActiveDot && (
-        <span className="absolute bottom-0 right-0 w-[10px] h-[10px] rounded-full bg-green-400 ring-2 ring-background" />
+        <span className="absolute bottom-0 right-0 w-[10px] h-[10px] rounded-full ring-2 ring-background bg-status-online" />
       )}
     </div>
   );

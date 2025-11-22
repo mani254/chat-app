@@ -41,7 +41,7 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
             type={showPassword ? "text" : "password"}
             className={clsx(
               getInputVariantStyles(variant),
-              error && "border-red-500 focus:border-red-500 focus:ring-red-500",
+              error && "border-error focus:border-error focus:ring-error",
               inputClass
             )}
             {...props}
@@ -51,13 +51,13 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
             onClick={() => setShowPassword(!showPassword)}
           >
             {showPassword ? (
-              <EyeOff className="text-gray-700 h-5 w-5" />
+              <EyeOff className="h-5 w-5 text-foreground-accent" />
             ) : (
-              <Eye className="text-gray-700 h-5 w-5" />
+              <Eye className="h-5 w-5 text-foreground-accent" />
             )}
           </span>
         </div>
-        {error && <p className="text-xs mt-1 text-red-500">{error}</p>}
+        {error && <p className="text-xs text-error mt-1" >{error}</p>}
       </div>
     );
   }

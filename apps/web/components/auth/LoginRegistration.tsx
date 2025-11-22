@@ -13,7 +13,7 @@ interface LoginRegistrationProps {
 const LoginRegistration = ({ children, onGoogleLogin }: LoginRegistrationProps) => {
 
   return (
-    <section className="w-full h-screen flex justify-end bg-zinc-500">
+    <section className="w-full h-screen flex justify-end bg-background-invert">
       <div className="relative sm:w-full">
         <Image
           className="absolute w-full h-full object-cover object-center"
@@ -36,14 +36,14 @@ const LoginRegistration = ({ children, onGoogleLogin }: LoginRegistrationProps) 
           {children}
 
           <div className="flex items-center mt-6">
-            <div className="h-[1px] bg-gray-400 w-full"></div>
-            <p className="whitespace-nowrap px-4"> Or continue with</p>
-            <div className="h-[1px] bg-gray-400 w-full"></div>
+            <div className="h-px w-full border border-border"></div>
+            <p className="text-xs text-foreground-accent px-2">OR</p>
+            <div className="h-px w-full bg-border"></div>
           </div>
 
           <div className="flex justify-around mt-6 gap-4">
             <div
-              className="flex items-center justify-center border border-gray-300 px-3 py-1 rounded-md bg-white shadow-sm cursor-pointer w-full hover:bg-gray-50 transition-colors"
+              className="flex items-center justify-center border px-3 py-1 rounded-md shadow-sm cursor-pointer w-full transition-colors border-border bg-background hover:bg-background-accent"
               onClick={onGoogleLogin}
             >
               <Image

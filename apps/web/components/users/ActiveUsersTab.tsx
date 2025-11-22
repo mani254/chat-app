@@ -25,7 +25,7 @@ const ActiveUsersTab = ({ search }: { search?: string }) => {
               <span className="text-xs text-foreground-accent">{user.status}</span>
             </div>
             <div className="ml-auto">
-              <span className="w-2.5 h-2.5 rounded-full bg-green-500 inline-block" />
+              <span className="w-2.5 h-2.5 rounded-full inline-block bg-status-online"/>
             </div>
           </div>
         ))

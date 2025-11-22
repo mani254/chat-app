@@ -29,11 +29,11 @@ const ArchiveNote: React.FC<{ data: MediaItem }> = ({ data }) => {
   const ext = getFileExtension(data.url).toUpperCase();
 
   return (
-    <div className="flex items-center bg-gray-100 rounded-lg px-4 py-3 border w-full h-full text-foreground">
+    <div className="flex items-center rounded-lg px-4 py-3 border w-full h-full text-foreground bg-background-accent">
       <FileArchive className="text-primary mr-4" size={32} />
       <div className="flex-1 min-w-0">
         <div className="truncate font-medium">{displayName}</div>
-        <div className="text-xs text-gray-500 truncate">
+        <div className="text-xs truncate text-foreground-accent">
           {ext || 'Archive'} {data.sizeBytes ? '· ' + formatBytes(data.sizeBytes) : ''}
         </div>
       </div>

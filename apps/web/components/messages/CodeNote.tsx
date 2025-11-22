@@ -28,14 +28,14 @@ const CodeNote: React.FC<{ data: MediaItem }> = ({ data }) => {
   const ext = getFileExtension(data.url).toUpperCase() || 'Code';
 
   return (
-    <div className="flex items-center bg-gray-100 rounded-lg px-4 py-3 border w-full h-full text-foreground">
-      <FileCode className="text-primary mr-4" size={32} />
-      <div className="flex-1 min-w-0">
-        <div className="truncate font-medium">{displayName}</div>
-        <div className="text-xs text-gray-500 truncate">
-          {ext} {data.sizeBytes ? '· ' + formatBytes(data.sizeBytes) : ''}
+    <div className="flex items-center rounded-lg px-4 py-3 border w-full h-full text-foreground bg-background-accent">
+        <FileCode className="mr-4 text-foreground-accent" size={32} />
+        <div className="flex-1 min-w-0">
+          <div className="truncate font-medium">{displayName}</div>
+          <div className="text-xs truncate text-foreground-accent">
+            {ext} {data.sizeBytes ? '· ' + formatBytes(data.sizeBytes) : ''}
+          </div>
         </div>
-      </div>
       <div onClick={e => e.stopPropagation()} className="ml-2 hover:scale-[1.1]">
         <a href={data.url} target="_blank" rel="noopener noreferrer" download>
           <Download size={20} className="text-foreground" />

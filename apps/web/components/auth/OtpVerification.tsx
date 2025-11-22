@@ -91,8 +91,8 @@ const OtpVerification = ({ email, onSuccess, onResend, type = 'registration' }: 
     <div className="w-full max-w-md mx-auto">
       {/* Header */}
       <div className="text-center mb-8">
-        <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 bg-primary-accent">
+          <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -101,11 +101,11 @@ const OtpVerification = ({ email, onSuccess, onResend, type = 'registration' }: 
             />
           </svg>
         </div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">
+        <h2 className="text-xl font-semibold mb-2 text-foreground">
           {type === 'registration' ? 'Verify Your Email' : 'Email Verification Required'}
         </h2>
-        <p className="text-gray-600">We've sent a 6-digit verification code to</p>
-        <p className="font-medium text-gray-900">{email}</p>
+        <p className="text-foreground-accent">We've sent a 6-digit verification code to</p>
+        <p className="font-medium text-foreground">{email}</p>
       </div>
 
       {/* OTP Inputs */}
@@ -125,7 +125,7 @@ const OtpVerification = ({ email, onSuccess, onResend, type = 'registration' }: 
               onChange={(e) => handleOtpChange(index, e.target.value)}
               onKeyDown={(e) => handleKeyDown(index, e)}
               onPaste={handlePaste}
-              className="w-12 h-12 text-center text-xl font-bold border focus:ring-1 focus:ring-primary border-gray-300 rounded-lg outline-none transition-colors"
+              className="w-12 h-12 text-center text-xl font-bold border focus:ring-1  rounded-lg outline-none transition-colors"
               disabled={isVerifying}
             />
           ))}
@@ -141,7 +141,7 @@ const OtpVerification = ({ email, onSuccess, onResend, type = 'registration' }: 
         >
           {isVerifying ? (
             <div className="flex items-center justify-center">
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 mr-2 border-primary-invert"></div>
               Verifying...
             </div>
           ) : (
@@ -157,7 +157,7 @@ const OtpVerification = ({ email, onSuccess, onResend, type = 'registration' }: 
         >
           {isResending ? (
             <div className="flex items-center justify-center">
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-600 mr-2"></div>
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 mr-2 border-foreground-accent"></div>
               Sending...
             </div>
           ) : resendCooldown > 0 ? (
@@ -170,12 +170,12 @@ const OtpVerification = ({ email, onSuccess, onResend, type = 'registration' }: 
 
       {/* Footer */}
       <div className="mt-6 text-center">
-        <p className="text-xs text-gray-500">
+        <p className="text-xs text-foreground-accent">
           Didn’t receive the code? Check your spam folder or{' '}
           <button
             onClick={handleResend}
             disabled={isResending || resendCooldown > 0}
-            className="text-blue-600 hover:text-blue-500 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="font-medium disabled:opacity-50 disabled:cursor-not-allowed text-primary hover:text-primary/80"
           >
             {resendCooldown > 0 ? `try again in ${resendCooldown}s` : 'try again'}
           </button>

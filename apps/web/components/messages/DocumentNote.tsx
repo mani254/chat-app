@@ -79,14 +79,14 @@ const DocumentNote: React.FC<{ data: MediaItem }> = ({ data }) => {
   const displayName = getFileName(data.url, data.name);
 
   return (
-    <div className="flex items-center bg-gray-100 rounded-lg px-4 py-3 border w-full h-full text-foreground">
-      <Icon className="text-primary mr-4" size={32} />
-      <div className="flex-1 min-w-0">
-        <div className="truncate font-medium">{displayName}</div>
-        <div className="text-xs text-gray-500 truncate">
-          {label} {data.sizeBytes ? '· ' + formatBytes(data.sizeBytes) : ''}
+    <div className="flex items-center rounded-lg px-4 py-3 border w-full h-full text-foreground bg-background-accent">
+        <Icon className="mr-3 text-foreground-accent" size={20} />
+        <div className="flex-1 min-w-0">
+          <div className="text-sm font-medium truncate">{displayName}</div>
+          <div className="text-xs truncate text-foreground-accent">
+            {label} {data.sizeBytes ? '· ' + formatBytes(data.sizeBytes) : ''}
+          </div>
         </div>
-      </div>
       <div onClick={(e) => { e.stopPropagation() }} className="ml-2 hover:scale-[1.1]">
         <a href={data.url} target="_blank" rel="noopener noreferrer" download>
           <Download size={20} className='text-foreground' />

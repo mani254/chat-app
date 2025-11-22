@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, MessageCircle } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 interface HeroProps {
   className?: string;
@@ -25,7 +25,7 @@ export default function Hero({ className = "" }: HeroProps) {
   }, []);
 
   return (
-    <section className={`relative overflow-hidden bg-gradient-to-b from-background to-background-accent/50 ${className}`}>
+    <section className={`relative overflow-hidden bg-linear-to-b from-background to-background-accent/50 ${className}`}>
       <div className="container mx-auto px-4 py-20 md:py-32">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -33,7 +33,7 @@ export default function Hero({ className = "" }: HeroProps) {
           transition={{ duration: 0.6 }}
           className="text-center max-w-4xl mx-auto"
         >
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-linear-to-r from-primary to-primary/60 bg-clip-text text-transparent">
             Open Source WhatsApp
             <br />
             <span className="text-foreground">for Developers</span>
@@ -44,7 +44,7 @@ export default function Hero({ className = "" }: HeroProps) {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/chat"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-lg font-semibold"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-primary-accent hover:bg-primary/90 transition-colors text-lg font-semibold"
             >
               Start Chatting
               <ArrowRight className="w-5 h-5" />

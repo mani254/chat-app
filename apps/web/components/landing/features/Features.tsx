@@ -1,8 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Code, Shield, Users, Rocket } from "lucide-react";
+import { ArrowRight, Code, Rocket, Shield, Users } from "lucide-react";
 
 const FEATURES = [
   {
@@ -46,7 +45,7 @@ export default function Features({ className = "" }: FeaturesProps) {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-primary-accent">Built for Modern Teams</h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-primary">Built for Modern Teams</h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Everything you need to build a secure, scalable messaging platform
           </p>
@@ -65,12 +64,12 @@ export default function Features({ className = "" }: FeaturesProps) {
             >
               <div className="flex items-start gap-4">
                 <div className="p-3 rounded-xl bg-primary-accent/10 group-hover:bg-primary-accent/20 transition-colors">
-                  <feature.icon className="w-6 h-6 text-primary-accent" />
+                  <feature.icon className="w-6 h-6 text-primary" />
                 </div>
                 <div className="flex-1">
                   <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
                   <p className="text-muted-foreground mb-3">{feature.description}</p>
-                  <div className="flex items-center gap-2 text-sm text-primary-accent">
+                  <div className="flex items-center gap-2 text-sm text-primary">
                     <span>{feature.demo}</span>
                     <ArrowRight className="w-4 h-4" />
                   </div>

@@ -50,7 +50,7 @@ const NewChatModal = ({ open, onOpenChange }: NewChatModalProps) => {
             style={{ minHeight: 38 }}
             inputClass="pl-8"
           />
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground-accent">
             <Search className="w-4 h-4" />
           </span>
         </div>

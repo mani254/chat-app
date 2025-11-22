@@ -29,11 +29,11 @@ const UnknownNote: React.FC<{ data: MediaItem }> = ({ data }) => {
   const ext = getFileExtension(data.url).toUpperCase() || 'File';
 
   return (
-    <div className="flex items-center bg-gray-100 rounded-lg px-4 py-3 border w-full h-full text-foreground">
-      <File className="text-primary mr-4" size={32} />
+    <div className="flex items-center rounded-lg px-4 py-3 border w-full h-full text-foreground bg-background-accent">
+      <File className="text-foreground-accent mr-3" size={20} />
       <div className="flex-1 min-w-0">
-        <div className="truncate font-medium">{displayName}</div>
-        <div className="text-xs text-gray-500 truncate">
+        <div className="text-sm font-medium truncate">{displayName}</div>
+        <div className="text-xs truncate text-foreground-accent">
           {ext} {data.sizeBytes ? '· ' + formatBytes(data.sizeBytes) : ''}
         </div>
       </div>

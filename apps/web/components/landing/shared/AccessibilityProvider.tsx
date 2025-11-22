@@ -49,7 +49,7 @@ export function AccessibilityProvider({ children }: AccessibilityProviderProps) 
     const style = document.createElement("style");
     style.textContent = `
       .keyboard-navigation *:focus {
-        outline: 2px solid #3b82f6 !important;
+        outline: 2px solid hsl(var(--focus-ring)) !important;
         outline-offset: 2px !important;
       }
       

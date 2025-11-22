@@ -41,7 +41,7 @@ const UsersList = ({
           ))}
         </div>
       ) : users.length === 0 ? (
-        <div className="text-gray-400 text-center py-6 text-sm">No users found.</div>
+        <div className="text-center py-6 text-sm text-foreground-accent">No users found.</div>
       ) : (
         users.map((user) => {
           const isSelected = selectedUserIds.includes(user._id.toString());
@@ -65,7 +65,7 @@ const UsersList = ({
 
               {!highlightSelected && user.isOnline && (
                 <div className="ml-auto">
-                  <span className="w-2.5 h-2.5 rounded-full bg-green-500 inline-block" />
+                  <span className="w-2.5 h-2.5 rounded-full inline-block bg-status-online" />
                 </div>
               )}
             </button>

@@ -1,7 +1,7 @@
 "use client";
 
+import { Github, Linkedin, MessageCircle, Twitter } from "lucide-react";
 import Link from "next/link";
-import { Github, Twitter, Linkedin, MessageCircle } from "lucide-react";
 
 interface FooterProps {
   className?: string;
@@ -14,7 +14,7 @@ export default function Footer({ className = "" }: FooterProps) {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div>
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <MessageCircle className="w-6 h-6 text-primary-accent" />
+              <MessageCircle className="w-6 h-6 text-primary" />
               <span className="text-lg font-bold">OpenChat</span>
             </Link>
             <p className="text-sm text-muted-foreground">
@@ -22,33 +22,33 @@ export default function Footer({ className = "" }: FooterProps) {
             </p>
           </div>
           <div>
-            <h4 className="font-semibold mb-4 text-primary-accent">Product</h4>
+            <h4 className="font-semibold mb-4 text-primary">Product</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/chat" className="text-muted-foreground hover:text-primary-accent transition-colors">Chat</Link></li>
-              <li><Link href="/docs" className="text-muted-foreground hover:text-primary-accent transition-colors">Documentation</Link></li>
-              <li><Link href="/features" className="text-muted-foreground hover:text-primary-accent transition-colors">Features</Link></li>
-              <li><Link href="/pricing" className="text-muted-foreground hover:text-primary-accent transition-colors">Pricing</Link></li>
+              <li><Link href="/chat" className="text-muted-foreground hover:text-primary transition-colors">Chat</Link></li>
+              <li><Link href="/docs" className="text-muted-foreground hover:text-primary transition-colors">Documentation</Link></li>
+              <li><Link href="/features" className="text-muted-foreground hover:text-primary transition-colors">Features</Link></li>
+              <li><Link href="/pricing" className="text-muted-foreground hover:text-primary transition-colors">Pricing</Link></li>
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold mb-4 text-primary-accent">Community</h4>
+            <h4 className="font-semibold mb-4 text-primary">Community</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/contributors" className="text-muted-foreground hover:text-primary-accent transition-colors">Contributors</Link></li>
-              <li><Link href="/blog" className="text-muted-foreground hover:text-primary-accent transition-colors">Blog</Link></li>
-              <li><Link href="/events" className="text-muted-foreground hover:text-primary-accent transition-colors">Events</Link></li>
-              <li><Link href="/support" className="text-muted-foreground hover:text-primary-accent transition-colors">Support</Link></li>
+              <li><Link href="/contributors" className="text-muted-foreground hover:text-primary transition-colors">Contributors</Link></li>
+              <li><Link href="/blog" className="text-muted-foreground hover:text-primary transition-colors">Blog</Link></li>
+              <li><Link href="/events" className="text-muted-foreground hover:text-primary transition-colors">Events</Link></li>
+              <li><Link href="/support" className="text-muted-foreground hover:text-primary transition-colors">Support</Link></li>
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold mb-4 text-primary-accent">Connect</h4>
+            <h4 className="font-semibold mb-4 text-primary">Connect</h4>
             <div className="flex gap-4">
-              <Link href="https://github.com/openchat/openchat" className="text-muted-foreground hover:text-primary-accent transition-colors">
+              <Link href="https://github.com/openchat/openchat" className="text-muted-foreground hover:text-primary transition-colors">
                 <Github className="w-5 h-5" />
               </Link>
-              <Link href="https://twitter.com/openchat" className="text-muted-foreground hover:text-primary-accent transition-colors">
+              <Link href="https://twitter.com/openchat" className="text-muted-foreground hover:text-primary transition-colors">
                 <Twitter className="w-5 h-5" />
               </Link>
-              <Link href="https://linkedin.com/company/openchat" className="text-muted-foreground hover:text-primary-accent transition-colors">
+              <Link href="https://linkedin.com/company/openchat" className="text-muted-foreground hover:text-primary transition-colors">
                 <Linkedin className="w-5 h-5" />
               </Link>
             </div>

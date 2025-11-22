@@ -39,7 +39,7 @@ export function RenderMessageContent({
             className={cn(
               "absolute bottom-0 right-1 text-[10px] select-none",
               isOwnMessage
-                ? "text-primary-accent/85"
+                ? "text-primary/85"
                 : "text-foreground-accent/85"
             )}
           >

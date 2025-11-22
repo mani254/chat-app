@@ -13,59 +13,59 @@ export function getFileIconByType(
 
   // Images
   if (isImageType(url, type)) {
-    return <ImageIcon className="text-blue-500" size={size || 20} />;
+    return <ImageIcon style={{ color: 'hsl(var(--file-image))' }} size={size || 20} />;
   }
 
   // Videos
   if (isVideoType(url, type)) {
-    return <VideoIcon className="text-purple-500" size={size || 20} />;
+    return <VideoIcon style={{ color: 'hsl(var(--file-video))' }} size={size || 20} />;
   }
 
   // Audio
   if (isAudioType(url, type)) {
-    return <AudioLines className="text-amber-600" size={size || 20} />;
+    return <AudioLines style={{ color: 'hsl(var(--file-audio))' }} size={size || 20} />;
   }
 
   // Documents: PDF
   if (isDocumentType(url, type)) {
     if (lower.endsWith('.pdf')) {
-      return <FileTextIcon className="text-red-500" size={size || 20} />;
+      return <FileTextIcon style={{ color: 'hsl(var(--file-document))' }} size={size || 20} />;
     }
     // Word documents
     if (lower.endsWith('.doc') || lower.endsWith('.docx')) {
-      return <FileTextIcon className="text-blue-600" size={size || 20} />;
+      return <FileTextIcon style={{ color: 'hsl(var(--primary-color))' }} size={size || 20} />;
     }
     // Text documents
     if (lower.endsWith('.txt') || lower.endsWith('.rtf') || lower.endsWith('.odt')) {
-      return <FileTextIcon className="text-gray-600" size={size || 20} />;
+      return <FileTextIcon style={{ color: 'hsl(var(--foreground-accent))' }} size={size || 20} />;
     }
     // Spreadsheets
     if (lower.endsWith('.xls') || lower.endsWith('.xlsx') || lower.endsWith('.ods')) {
-      return <FileSpreadsheetIcon className="text-green-500" size={size || 20} />;
+      return <FileSpreadsheetIcon style={{ color: 'hsl(var(--file-email))' }} size={size || 20} />;
     }
     // Presentations
     if (lower.endsWith('.ppt') || lower.endsWith('.pptx') || lower.endsWith('.odp')) {
-      return <PresentationIcon className="text-orange-500" size={size || 20} />;
+      return <PresentationIcon style={{ color: 'hsl(var(--file-archive))' }} size={size || 20} />;
     }
     // Fallback document
-    return <FileTextIcon className="text-gray-600" size={size || 20} />;
+    return <FileTextIcon style={{ color: 'hsl(var(--foreground-accent))' }} size={size || 20} />;
   }
 
   // Archives
   if (isArchiveType(url, type)) {
-    return <ArchiveIcon className="text-yellow-600" size={size || 20} />;
+    return <ArchiveIcon style={{ color: 'hsl(var(--file-archive))' }} size={size || 20} />;
   }
 
   // Code files
   if (isCodeFileType(url, type)) {
-    return <CodeIcon className="text-indigo-500" size={size || 20} />;
+    return <CodeIcon style={{ color: 'hsl(var(--file-code))' }} size={size || 20} />;
   }
 
   // Email
   if (lower.endsWith(".eml")) {
-    return <MailIcon className="text-green-500" size={size || 20} />;
+    return <MailIcon style={{ color: 'hsl(var(--file-email))' }} size={size || 20} />;
   }
 
   // Default - generic file
-  return <FileIcon className="text-gray-500" size={size || 20} />;
+  return <FileIcon style={{ color: 'hsl(var(--file-default))' }} size={size || 20} />;
 }

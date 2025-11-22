@@ -29,10 +29,10 @@ export const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
         <textarea
           ref={ref}
           id={inputId}
-          className={clsx(getInputVariantStyles(variant), error && "border-red-200 focus:border-red-200 focus:ring-red-200", textareaClass)}
+          className={clsx(getInputVariantStyles(variant), error && "border-error focus:border-error focus:ring-error", textareaClass)}
           {...props}
         />
-        {error && <p className="text-xs mt-1 text-red-500">{error}</p>}
+        {error && <p className="text-xs mt-1 text-error">{error}</p>}
       </div>
     );
   },

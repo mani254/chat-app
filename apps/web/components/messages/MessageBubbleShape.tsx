@@ -14,7 +14,7 @@ export default function MessageBubbleShape({
       className={cn(
         "relative px-3 py-[6px] rounded-xl border shadow-sm max-w-[350px]",
         type === "left" && "bg-white border-border text-foreground",
-        type === "right" && "bg-primary/90 border-primary/40 text-primary-accent ml-auto",
+        type === "right" && "bg-primary/90 border-primary/40 text-primary ml-auto",
         media && "px-1 py-1",
         type === 'right' && media && "bg-primary/10"
       )}

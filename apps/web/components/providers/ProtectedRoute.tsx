@@ -28,7 +28,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   if (checkingAuth) {
     return (
-      <div className="h-screen w-full flex items-center justify-center text-sm text-gray-500">
+      <div className="h-screen w-full flex items-center justify-center text-sm text-foreground-accent" >
         Loading...
       </div>
     );

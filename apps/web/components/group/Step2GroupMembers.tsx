@@ -34,7 +34,7 @@ const Step2GroupMembers = ({ search, setSearch, selectedMembers, onToggleMember,
 
         <div className="relative top-0 z-10 bg-background pb-2">
           <TextInput placeholder="Search users..." value={search} onChange={(e) => setSearch(e.target.value)} style={{ minHeight: 38 }} inputClass="pl-8" />
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground-accent">
             <Search className="w-4 h-4" />
           </span>
         </div>

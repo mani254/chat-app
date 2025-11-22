@@ -70,7 +70,7 @@ const MessageHeader = ({ chat }: { chat: PopulatedChatDocument }) => {
   /** STATUS COLOR */
   const statusColor =
     !isGroupChat && partner.isOnline
-      ? "text-green-500"
+      ? "text-status-online"
       : "text-muted-foreground";
 
   const handleBack = () => router.push("/");
@@ -117,7 +117,7 @@ const MessageHeader = ({ chat }: { chat: PopulatedChatDocument }) => {
               className={`text-xs flex items-center gap-1 ${statusColor}`}
             >
               {!isGroupChat && partner.isOnline && (
-                <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                <span className="w-2 h-2 rounded-full bg-status-online"></span>
               )}
               {statusText}
             </span>

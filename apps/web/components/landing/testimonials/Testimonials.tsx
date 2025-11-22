@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { Star, Users } from "lucide-react";
+import Link from "next/link";
 
 const TESTIMONIALS = [
   {
@@ -41,8 +41,8 @@ export default function Testimonials({ className = "" }: TestimonialsProps) {
           className="text-center mb-16"
         >
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Users className="w-8 h-8 text-primary-accent" />
-            <h2 className="text-4xl md:text-5xl font-bold text-primary-accent">What Our Community Says</h2>
+            <Users className="w-8 h-8 text-primary" />
+            <h2 className="text-4xl md:text-5xl font-bold text-primary">What Our Community Says</h2>
           </div>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Hear from developers who've built amazing things with OpenChat
@@ -62,7 +62,7 @@ export default function Testimonials({ className = "" }: TestimonialsProps) {
             >
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-12 h-12 rounded-full bg-primary-accent/10 flex items-center justify-center">
-                  <span className="text-sm font-semibold text-primary-accent">{testimonial.avatar}</span>
+                  <span className="text-sm font-semibold text-primary">{testimonial.avatar}</span>
                 </div>
                 <div>
                   <h4 className="font-semibold">{testimonial.name}</h4>
@@ -72,7 +72,7 @@ export default function Testimonials({ className = "" }: TestimonialsProps) {
               <p className="text-muted-foreground italic">"{testimonial.content}"</p>
               <div className="flex mt-4">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-primary-accent text-primary-accent" />
+                  <Star key={i} className="w-4 h-4 fill-primary-accent text-primary" />
                 ))}
               </div>
             </motion.div>
