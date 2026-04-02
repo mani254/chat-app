@@ -1,117 +1,107 @@
-# chat-app — Open Source WhatsApp for Developers
+# New Nx Repository
 
-Build, customize, and deploy your own secure messaging platform with modern web technologies. Open source WhatsApp alternative for developers and communities.
+<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
 
-## 1) Project Explanation
+✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
 
-- chat-app is a complete, production-ready chat application that includes authentication, real-time messaging, typing indicators, media uploads, and a clean, extensible architecture.
-- The project is organized as a Turborepo monorepo with an isolated Next.js web app and an Express/Socket.IO backend, plus shared database schemas.
-- It’s designed to be easy to adopt and extend—use it as-is, or tailor the database and UI to fit your product.
+[Learn more about this workspace setup and its capabilities](https://nx.dev/docs/technologies/typescript/introduction?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+🚀 If you haven't connected to Nx Cloud yet, [complete your setup here](https://cloud.nx.app/get-started). Get faster builds with remote caching, distributed task execution, and self-healing CI. [See how your workspace can benefit](#nx-cloud).
+## Generate a library
 
-## 2) Why This Repository Helps
-
-- Clear separation of concerns: web client, server API, sockets, and database schemas are modular and decoupled.
-- Proven patterns: cookie-based JWT auth with refresh flow, robust validation, and clean service/controller layers.
-- Extensibility: you can add features (reactions, read receipts, voice notes, etc.) without rewriting core modules.
-- Purpose: serve as a ready-to-run reference implementation and a foundation you can integrate into new or existing apps.
-
-Good things about this structure:
-
-- Monorepo with shared tooling and consistent TypeScript standards.
-- Isolated chat app that can run on its own subdomain or be embedded.
-- Reusable database layer using Mongoose—extend schemas to match your needs.
-- Socket-first design for real-time messaging and presence events.
-
-## 3) Project Setup and Usage (Structure, not folders)
-
-You can include this “chat-block” into your product with minimal changes. Two common strategies:
-
-- Strategy A: Isolated app on a subdomain
-  - Because this is a Turborepo and the chat app is isolated, you can deploy it as a separate application (e.g., `chat.yourdomain.com`).
-  - Keep it independent, integrate with your main app via SSO/JWT or shared auth cookies.
-  - This lets you maintain the chat feature as its own lifecycle and team, while sharing the same database if desired.
-
-- Strategy B: Modify `web` and extend the database
-  - You can directly customize the Next.js web app and extend the MongoDB schemas to fit your domain.
-  - Authentication (credentials + Google OAuth), OTP verification, and refresh token handling are already implemented—most heavy lifting is done.
-  - Focus your effort on chat UI/UX and additional features rather than rebuilding auth and messaging from scratch.
-
-## 4) Contributions
-
-I’m making this open source to help developers quickly ship reliable messaging features and to learn from real-world patterns. If this saves you time, consider contributing:
-
-- Improve features, docs, tests, or accessibility.
-- Follow the same folder structure and reuse existing code patterns to stay in sync.
-- Open issues with clear steps; submit PRs with concise descriptions and screenshots for UI changes.
-
-## 5) Run Locally and Environment Variables
-
-### Requirements
-
-- Node.js `>=22`
-- pnpm `@10.x`
-- MongoDB (local or Atlas)
-- Optional: Cloudflare R2 for media uploads, Brevo SMTP for OTP emails, Google OAuth for social login
-
-### Install & Start (Workspace)
-
-```bash
-pnpm install
-pnpm dev
+```sh
+npx nx g @nx/js:lib packages/pkg1 --publishable --importPath=@my-org/pkg1
 ```
 
-### Run Individually
+## Run tasks
 
-```bash
-# Backend (Express + Socket.IO)
-pnpm --filter server dev
+To build the library use:
 
-# Frontend (Next.js)
-pnpm --filter web dev
+```sh
+npx nx run pkg1:build
 ```
 
-### Environment Variables
+To run any task with Nx use:
 
-Create `packages/server/.env`:
-
-```env
-NODE_ENV=development
-PORT=5000
-MONGO_URI=mongodb://localhost:27017/chat-app
-FRONTEND_URL=http://localhost:3000
-
-# JWT secrets
-JWT_ACCESS_SECRET=replace-with-strong-secret
-JWT_REFRESH_SECRET=replace-with-strong-secret
-
-# Cloudflare R2 (optional, for uploads)
-R2_ENDPOINT=https://<account-id>.r2.cloudflarestorage.com
-R2_ACCESS_KEY_ID=...
-R2_SECRET_ACCESS_KEY=...
-R2_BUCKET_NAME=chat-app
-
-# SMTP via Brevo (for OTP emails)
-SMTP_USER=your-brevo-username
-SIB_API_KEY=your-brevo-api-key
-
-# Google OAuth (optional)
-GOOGLE_CLIENT_ID=...
-GOOGLE_CLIENT_SECRET=...
-GOOGLE_REDIRECT_URI=http://localhost:5000/api/auth/google/callback
+```sh
+npx nx run <project-name>:<target>
 ```
 
-Create `apps/web/.env.local`:
+These targets are either [inferred automatically](https://nx.dev/docs/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
 
-```env
-NEXT_PUBLIC_API_BACKEND_URL=http://localhost:5000
+[More about running tasks in the docs &raquo;](https://nx.dev/docs/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+
+## Versioning and releasing
+
+To version and release the library use
+
+```
+npx nx release
 ```
 
-### Notes
+Pass `--dry-run` to see what would happen without actually releasing the library.
 
-- Cookies are HttpOnly and use `sameSite: 'lax'` locally; set `secure: true` and `sameSite: 'none'` in production behind HTTPS.
-- CORS must include your frontend origin (e.g., `FRONTEND_URL=http://localhost:3000`).
-- If socket connect errors with `Unauthorized`, the client auto-attempts a token refresh—verify your JWT secrets and cookie policies.
+[Learn more about Nx release &raquo;](https://nx.dev/docs/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
 
----
+## Keep TypeScript project references up to date
 
-If you adopt this project, share what you built! Feedback and contributions help make chat-app better for everyone.
+Nx automatically updates TypeScript [project references](https://www.typescriptlang.org/docs/handbook/project-references.html) in `tsconfig.json` files to ensure they remain accurate based on your project dependencies (`import` or `require` statements). This sync is automatically done when running tasks such as `build` or `typecheck`, which require updated references to function correctly.
+
+To manually trigger the process to sync the project graph dependencies information to the TypeScript project references, run the following command:
+
+```sh
+npx nx sync
+```
+
+You can enforce that the TypeScript project references are always in the correct state when running in CI by adding a step to your CI job configuration that runs the following command:
+
+```sh
+npx nx sync:check
+```
+
+[Learn more about nx sync](https://nx.dev/reference/nx-commands#sync)
+
+## Nx Cloud
+
+Nx Cloud ensures a [fast and scalable CI](https://nx.dev/nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
+
+- [Remote caching](https://nx.dev/docs/features/ci-features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- [Task distribution across multiple machines](https://nx.dev/docs/features/ci-features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- [Automated e2e test splitting](https://nx.dev/docs/features/ci-features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- [Task flakiness detection and rerunning](https://nx.dev/docs/features/ci-features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+
+### Set up CI (non-Github Actions CI)
+
+**Note:** This is only required if your CI provider is not GitHub Actions.
+
+Use the following command to configure a CI workflow for your workspace:
+
+```sh
+npx nx g ci-workflow
+```
+
+[Learn more about Nx on CI](https://nx.dev/docs/features/ci-features?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+
+## Install Nx Console
+
+Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+
+[Install Nx Console &raquo;](https://nx.dev/docs/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+
+## 🔗 Learn More
+
+- [Nx Documentation](https://nx.dev/docs)
+- [Crafting Your Workspace Tutorial](https://nx.dev/docs/getting-started/tutorials/crafting-your-workspace)
+- [Module Boundaries](https://nx.dev/docs/features/enforce-module-boundaries)
+- [Releasing Packages](https://nx.dev/docs/features/manage-releases)
+- [Nx Plugins](https://nx.dev/docs/concepts/nx-plugins)
+- [Nx Cloud](https://nx.dev/nx-cloud)
+
+## 💬 Community
+
+Join the Nx community:
+
+- [Discord](https://go.nx.dev/community)
+- [X (Twitter)](https://twitter.com/nxdevtools)
+- [LinkedIn](https://www.linkedin.com/company/nrwl)
+- [YouTube](https://www.youtube.com/@nxdevtools)
+- [Blog](https://nx.dev/blog)

@@ -45,7 +45,7 @@ const AvatarDiv = ({
       )}
 
       {showActiveDot && isOnline && (
-        <span className="absolute bottom-0 right-0 w-[10px] h-[10px] rounded-full ring-2 ring-background bg-status-online"  />
+        <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full ring-2 ring-background bg-status-online"  />
       )}
     </div>
   );
