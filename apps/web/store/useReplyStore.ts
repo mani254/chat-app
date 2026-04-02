@@ -1,5 +1,6 @@
 import { MessageWithSender } from '@workspace/database';
 import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 
 interface ReplyState {
   replyTo: MessageWithSender | undefined;
@@ -7,8 +8,13 @@ interface ReplyState {
   clearReplyTo: () => void;
 }
 
-export const useReplyStore = create<ReplyState>((set) => ({
-  replyTo: undefined,
-  setReplyTo: (message) => set({ replyTo: message }),
-  clearReplyTo: () => set({ replyTo: undefined }),
-}));
+export const useReplyStore = create<ReplyState>()(
+  devtools(
+    (set) => ({
+      replyTo: undefined,
+      setReplyTo: (message) => set({ replyTo: message }),
+      clearReplyTo: () => set({ replyTo: undefined }),
+    }),
+    { name: 'reply-store' },
+  ),
+);

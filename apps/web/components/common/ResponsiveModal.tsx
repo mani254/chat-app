@@ -46,14 +46,6 @@ export const ResponsiveModal = ({
         <DialogContent
           className="bg-background rounded-3xl border border-border p-0 shadow-xl focus:outline-none focus:ring-0 max-h-dvh"
         >
-          {/* Close Button */}
-          {/* <button
-            onClick={() => onOpenChange(false)}
-            className="absolute top-3 right-3 p-2 rounded-full hover:bg-muted/60 transition"
-          >
-            <X className="w-4 h-4" />
-          </button> */}
-
           {title && (
             <DialogHeader className="p-4 pb-2 border-b border-border">
               <DialogTitle>{title}</DialogTitle>
@@ -81,14 +73,6 @@ export const ResponsiveModal = ({
         <div className="w-full flex justify-center py-2">
           <div className="h-1.5 w-12 rounded-full bg-foreground/30" />
         </div>
-
-        {/* Close Icon */}
-        {/* <button
-          onClick={() => onOpenChange(false)}
-          className="absolute top-3 right-4 p-2 rounded-full hover:bg-muted/70 transition"
-        >
-          <X className="w-5 h-5" />
-        </button> */}
 
         {title && (
           <DrawerHeader className="px-4 pt-1 pb-2 border-b border-border">
