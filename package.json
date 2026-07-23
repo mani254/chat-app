@@ -1,37 +1,22 @@
 {
-  "name": "chat-app",
-  "version": "0.0.1",
-  "private": true,
-  "description": "chat-app — Open Source WhatsApp for Developers",
-  "author": "mani254",
+  "name": "@org/source",
+  "version": "0.0.0",
   "license": "MIT",
-  "keywords": [
-    "chat",
-    "chat-app",
-    "whatsapp-like",
-    "nextjs",
-    "express",
-    "socket.io",
-    "mongodb",
-    "mongoose",
-    "tailwind",
-    "typescript"
-  ],
-  "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
-    "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
-  },
+  "scripts": {},
+  "private": true,
+  "dependencies": {},
   "devDependencies": {
-    "@workspace/eslint-config": "workspace:*",
-    "@workspace/typescript-config": "workspace:*",
-    "prettier": "^3.6.2",
-    "turbo": "^2.5.8",
-    "typescript": "^5.9.2"
+    "@nx/js": "23.1.0",
+    "@swc-node/register": "1.11.1",
+    "@swc/core": "1.15.8",
+    "@swc/helpers": "0.5.18",
+    "@types/node": "^24.0.0",
+    "nx": "23.1.0",
+    "prettier": "^3.8.1",
+    "tslib": "^2.3.0",
+    "typescript": "~6.0.3"
   },
-  "packageManager": "pnpm@10.17.1",
-  "engines": {
-    "node": ">=22"
-  }
+  "workspaces": [
+    "packages/*"
+  ]
 }

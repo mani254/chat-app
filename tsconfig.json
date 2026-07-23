@@ -1,4 +1,7 @@
 {
-  "extends": "@workspace/typescript-config/base.json"
+  "extends": "./tsconfig.base.json",
+  "compileOnSave": false,
+  "files": [],
+  "references": [],
+  "compilerOptions": {}
 }
-
