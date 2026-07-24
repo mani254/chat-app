@@ -17,6 +17,7 @@
     "strict": true,
     "target": "es2022",
     "customConditions": ["@org/source"],
-    "types": ["node"]
+    "types": ["node"],
+    "forceConsistentCasingInFileNames": true
   }
 }

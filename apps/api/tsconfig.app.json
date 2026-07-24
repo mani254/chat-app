@@ -7,17 +7,8 @@
     "tsBuildInfoFile": "dist/tsconfig.app.tsbuildinfo",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "target": "es2022",
-    "strictNullChecks": true,
-    "noImplicitAny": true,
-    "strictBindCallApply": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": false,
-    "noImplicitReturns": false
   },
   "include": ["src/**/*.ts"],
-  "exclude": [],
   "references": [
     { "path": "../../packages/dal/tsconfig.lib.json" },
     { "path": "../../packages/shared/tsconfig.lib.json" }
