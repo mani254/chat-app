@@ -19,7 +19,7 @@
     "name": "dal"
   },
   "dependencies": {
-    "@org/shared": "*",
+    "@org/shared": "workspace:*",
     "bcryptjs": "*",
     "mongoose": "*",
     "tslib": "^2.3.0"
