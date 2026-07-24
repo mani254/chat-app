@@ -55,16 +55,12 @@
         "executor": "nx:noop"
       },
       "serve": {
-        "continuous": true,
         "executor": "@nx/js:node",
         "defaultConfiguration": "development",
-        "dependsOn": [
-          "build"
-        ],
         "options": {
           "buildTarget": "api:build",
-          "runBuildTargetDependencies": false,
-          "inspect": false
+          "inspect": false,
+          "watch": true
         },
         "configurations": {
           "development": {
@@ -78,6 +74,7 @@
     }
   },
   "dependencies": {
+    "@fastify/static": "^10.1.2",
     "@nestjs/common": "^11.0.0",
     "@nestjs/config": "^3.0.0",
     "@nestjs/core": "^11.0.0",

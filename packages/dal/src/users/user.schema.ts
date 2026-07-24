@@ -75,7 +75,6 @@ const userSchema = new Schema(
 
 // ─── Indexes ──────────────────────────────────────────────────────────────────
 
-userSchema.index({ email: 1 }, { unique: true });
 userSchema.index(
   { provider: 1, providerId: 1 },
   { unique: true, sparse: true },
