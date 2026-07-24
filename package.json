@@ -4,7 +4,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "check:db": "nx check-db",
+    "check:db": "nx run api:check-db",
     "dev": "nx run-many -t serve --parallel",
     "build": "nx run-many -t build",
     "typecheck": "nx run-many -t typecheck",

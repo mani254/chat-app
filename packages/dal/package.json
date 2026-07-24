@@ -20,8 +20,8 @@
   },
   "dependencies": {
     "@org/shared": "workspace:*",
-    "bcryptjs": "*",
-    "mongoose": "*",
+    "bcryptjs": "^2.4.3",
+    "mongoose": "^9.8.0",
     "tslib": "^2.3.0"
   }
 }

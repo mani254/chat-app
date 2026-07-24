@@ -54,6 +54,10 @@
         ],
         "executor": "nx:noop"
       },
+      "check-db": {
+        "command": "node scripts/check-db.js",
+        "cache": false
+      },
       "serve": {
         "executor": "@nx/js:node",
         "defaultConfiguration": "development",

@@ -23,7 +23,7 @@
   ],
   "targetDefaults": {
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["check-db", "^build"],
       "inputs": ["production", "^production"],
       "cache": true
     },
