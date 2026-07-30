@@ -1,9 +1,10 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { AuthResponse } from '@org/shared';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { authApi } from '../api/auth.api';
 import { useAuth } from './use-auth';
 
 export function useGoogleLogin() {
+
   const { setToken } = useAuth();
   const queryClient = useQueryClient();
 
