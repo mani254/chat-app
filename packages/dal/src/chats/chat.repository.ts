@@ -1,4 +1,5 @@
 import type { UpdateQuery } from 'mongoose';
+import mongoose from 'mongoose';
 
 import type { CreateChatInput, UpdateChatInput } from '@org/shared';
 import type { ChatEntity } from './chat.entity.js';
@@ -50,6 +51,46 @@ export class ChatRepository {
   }
 
   /**
+   * Cursor-based paginated chat list for a user.
+   * Cursor = updatedAt ISO string of the last item fetched.
+   * Returns chats sorted by updatedAt descending (most recently active first).
+   */
+  async findByUserIdWithCursor(
+    userId: string,
+    options: {
+      cursor?: string;
+      limit?: number;
+      type?: 'all' | 'group' | 'direct';
+    } = {},
+  ): Promise<{ items: ChatEntity[]; nextCursor?: string; hasMore: boolean }> {
+    const limit = Math.min(50, Math.max(1, options.limit ?? 20));
+
+    const filter: Record<string, unknown> = { _users: userId };
+
+    if (options.type === 'group') filter['isGroupChat'] = true;
+    if (options.type === 'direct') filter['isGroupChat'] = false;
+
+    if (options.cursor) {
+      filter['updatedAt'] = { $lt: new Date(options.cursor) };
+    }
+
+    // Fetch limit + 1 to determine hasMore
+    const docs = await ChatModel.find(filter)
+      .sort({ updatedAt: -1 })
+      .limit(limit + 1)
+      .lean<RawChatDocument[]>()
+      .exec();
+
+    const hasMore = docs.length > limit;
+    const items = hasMore ? docs.slice(0, limit) : docs;
+    const lastItem = items[items.length - 1];
+    const nextCursor =
+      hasMore && lastItem ? (lastItem.updatedAt as Date).toISOString() : undefined;
+
+    return { items: items.map(toEntity), nextCursor, hasMore };
+  }
+
+  /**
    * Finds a 1-on-1 (non-group) chat between exactly two users.
    * Used to prevent duplicate DM chats being created.
    */
@@ -72,6 +113,17 @@ export class ChatRepository {
       .lean<RawChatDocument[]>()
       .exec();
     return docs.map(toEntity);
+  }
+
+  /**
+   * Checks whether a user is a member of a given chat.
+   */
+  async isMember(chatId: string, userId: string): Promise<boolean> {
+    const count = await ChatModel.countDocuments({
+      _id: new mongoose.Types.ObjectId(chatId),
+      _users: new mongoose.Types.ObjectId(userId),
+    }).exec();
+    return count > 0;
   }
 
   // ─── Write ─────────────────────────────────────────────────────────────────

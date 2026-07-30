@@ -1,4 +1,3 @@
-import bcrypt from 'bcryptjs';
 import mongoose, { InferSchemaType, Schema, model } from 'mongoose';
 
 import { DB_COLLECTIONS } from '../connection/database.constants.js';
@@ -77,7 +76,10 @@ const userSchema = new Schema(
 
 userSchema.index(
   { provider: 1, providerId: 1 },
-  { unique: true, sparse: true },
+  {
+    unique: true,
+    partialFilterExpression: { providerId: { $type: 'string' } },
+  },
 );
 userSchema.index({ isOnline: 1 });
 userSchema.index({ name: 1 });
@@ -122,7 +124,7 @@ function contrastRatioWithWhite(r: number, g: number, b: number): number {
   return (L1 + 0.05) / (L2 + 0.05);
 }
 
-function generateAccessibleColor(): string {
+export function generateAccessibleColor(): string {
   const MIN_CONTRAST = 4.5;
   for (let i = 0; i < 10; i++) {
     const h = Math.floor(Math.random() * 360);
@@ -148,11 +150,6 @@ userSchema.pre('save', async function () {
   ) {
     this.color = generateAccessibleColor();
   }
-
-  // Hash password when present and modified
-  if (!this.isModified('password') || !this.password) return;
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
 });
 
 // ─── Internal Types ───────────────────────────────────────────────────────────

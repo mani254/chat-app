@@ -8,6 +8,7 @@ export const DB_COLLECTIONS = {
   USERS: 'users',
   CHATS: 'chats',
   MESSAGES: 'messages',
+  OTPS: 'otps',
 } as const;
 
 export type DbCollection = (typeof DB_COLLECTIONS)[keyof typeof DB_COLLECTIONS];

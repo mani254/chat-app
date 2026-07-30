@@ -3,18 +3,9 @@
 // This is the ONLY import path for database operations.
 //
 // What is exported:
-//   - Repositories  (UserRepository, ChatRepository, MessageRepository)
-//   - Entities      (UserEntity, ChatEntity, MessageEntity)
+//   - Repositories  (UserRepository, ChatRepository, MessageRepository, OtpRepository)
+//   - Entities      (UserEntity, ChatEntity, MessageEntity, OtpEntity)
 //   - Connection    (connectDatabase, disconnectDatabase)
-//
-// What is NOT exported:
-//   - Mongoose Models, schemas, or raw document types
-//   - DB input/output types  → import from '@org/shared' instead
-//   - Internal helpers
-//
-// Correct usage:
-//   import { UserRepository, UserEntity } from '@org/dal';
-//   import { CreateUserInput }            from '@org/shared';
 
 // ─── Connection ───────────────────────────────────────────────────────────────
 export {
@@ -25,7 +16,12 @@ export {
 export type { DbCollection } from './connection/index.js';
 
 // ─── Users ────────────────────────────────────────────────────────────────────
-export { UserEntity, UserRepository } from './users/index.js';
+export type { UserEntity } from './users/index.js';
+export { UserRepository, toUserEntity, generateAccessibleColor } from './users/index.js';
+
+// ─── OTP ──────────────────────────────────────────────────────────────────────
+export type { OtpEntity } from './otp/index.js';
+export { OtpRepository, toOtpEntity, isOtpExpired } from './otp/index.js';
 
 // ─── Chats ────────────────────────────────────────────────────────────────────
 export type { ChatEntity } from './chats/index.js';

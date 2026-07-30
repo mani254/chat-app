@@ -1,10 +1,12 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, VERSION_NEUTRAL } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { HealthCheck, HealthCheckService } from '@nestjs/terminus';
 import { DatabaseHealthIndicator } from './indicators/database-health.indicator';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('health')
-@Controller('health')
+@Public()
+@Controller({ path: 'health', version: [VERSION_NEUTRAL, '1'] })
 export class HealthController {
   constructor(
     private readonly health: HealthCheckService,
@@ -12,9 +14,9 @@ export class HealthController {
   ) {}
 
   /**
-   * GET /api/v1/health
+   * GET /api/v1/health & GET /api/health
    *
-   * Returns API status and MongoDB connection state.
+   * Returns API status and MongoDB connection state without requiring authentication.
    */
   @Get()
   @HealthCheck()

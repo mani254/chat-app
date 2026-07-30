@@ -12,6 +12,8 @@ import { AuthModule } from './auth/auth.module';
 import { AuthGuard } from './auth/guards/auth.guard';
 import { RedisModule } from './redis/redis.module';
 import { WebSocketModule } from './websocket/websocket.module';
+import { ChatModule } from './chat/chat.module';
+import { MessageModule } from './message/message.module';
 
 /**
  * AppModule — Root NestJS Module
@@ -46,6 +48,8 @@ import { WebSocketModule } from './websocket/websocket.module';
     AuthModule,
     RedisModule,
     WebSocketModule,
+    ChatModule,
+    MessageModule,
   ],
   providers: [
     // Global exception filter — formats all errors to ApiErrorResponse

@@ -1,0 +1,46 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Dev: Web",
+      "type": "shell",
+      "command": "pnpm nx run web:dev",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "label": "Web",
+        "panel": "new",
+        "group": "dev",
+        "reveal": "always",
+        "focus": false
+      }
+    },
+    {
+      "label": "Dev: API",
+      "type": "shell",
+      "command": "pnpm nx run api:dev",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "label": "API",
+        "panel": "new",
+        "group": "dev",
+        "reveal": "always",
+        "focus": false
+      }
+    },
+    {
+      "label": "Dev",
+      "dependsOn": ["Dev: Web", "Dev: API"],
+      "dependsOrder": "parallel",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "silent"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

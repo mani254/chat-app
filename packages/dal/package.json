@@ -15,13 +15,20 @@
       "default": "./dist/index.js"
     }
   },
-  "nx": {
-    "name": "dal"
+  "scripts": {
+    "build": "tsc --build tsconfig.lib.json",
+    "clean": "node -e \"['dist','node_modules'].forEach(d=>{try{require('fs').rmSync(d,{recursive:true,force:true})}catch(e){}})\"",
+    "typecheck": "tsc --noEmit -p tsconfig.lib.json"
   },
   "dependencies": {
     "@org/shared": "workspace:*",
-    "bcryptjs": "^2.4.3",
-    "mongoose": "^9.8.0",
-    "tslib": "^2.3.0"
+    "bcryptjs": "^3.0.3",
+    "mongoose": "^9.8.1",
+    "tslib": "^2.8.1"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^24.13.3",
+    "typescript": "~5.7.3"
   }
 }

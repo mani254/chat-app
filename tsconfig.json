@@ -3,15 +3,10 @@
   "compileOnSave": false,
   "files": [],
   "references": [
-    {
-      "path": "./packages/dal"
-    },
-    {
-      "path": "./packages/shared"
-    },
-    {
-      "path": "./apps/api"
-    }
+    { "path": "./packages/shared" },
+    { "path": "./packages/dal" },
+    { "path": "./apps/api" },
+    { "path": "./apps/web" }
   ],
   "compilerOptions": {}
 }

@@ -1,4 +1,4 @@
-import type { UpdateQuery } from 'mongoose';
+import mongoose, { type UpdateQuery } from 'mongoose';
 
 import type {
   CreateMessageInput,
@@ -75,6 +75,44 @@ export class MessageRepository {
     };
   }
 
+  /**
+   * Cursor-based paginated message fetch for a chat.
+   * Cursor = `_id` of the oldest message from the previous page.
+   * Returns messages sorted newest-first (most recent at index 0).
+   *
+   * Usage:
+   *  - Initial load: no cursor
+   *  - Next page: cursor = items[items.length - 1]._id
+   */
+  async findByChatIdWithCursor(
+    chatId: string,
+    options: { cursor?: string; limit?: number } = {},
+  ): Promise<{ items: MessageEntity[]; nextCursor?: string; hasMore: boolean; total: number }> {
+    const limit = Math.min(100, Math.max(1, options.limit ?? 50));
+
+    const filter: Record<string, unknown> = { _chat: chatId };
+
+    if (options.cursor) {
+      filter['_id'] = { $lt: new mongoose.Types.ObjectId(options.cursor) };
+    }
+
+    const [docs, total] = await Promise.all([
+      MessageModel.find(filter)
+        .sort({ _id: -1 })
+        .limit(limit + 1)
+        .lean<RawMessageDocument[]>()
+        .exec(),
+      MessageModel.countDocuments({ _chat: chatId }).exec(),
+    ]);
+
+    const hasMore = docs.length > limit;
+    const items = hasMore ? docs.slice(0, limit) : docs;
+    const lastItem = items[items.length - 1];
+    const nextCursor = hasMore && lastItem ? lastItem._id.toString() : undefined;
+
+    return { items: items.map(toEntity), nextCursor, hasMore, total };
+  }
+
   async findLatestByChatId(
     chatId: string,
     count = 1,
@@ -105,6 +143,7 @@ export class MessageRepository {
       messageType: data.messageType ?? 'text',
       mediaLinks: data.mediaLinks ?? [],
       _replyTo: data.replyToId,
+      _readBy: [data.senderId], // sender auto-reads their own message
     });
     return toEntity(doc.toObject() as RawMessageDocument);
   }

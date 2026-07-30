@@ -1,67 +1,71 @@
-# `@org/dal` — Data Access Layer
+# `@org/dal` — Developer Guide (MongoDB Data Access Layer)
 
-The `@org/dal` library is the **single source of truth for all database operations** in this Nx workspace. It encapsulates MongoDB access behind clean, reusable Repositories and Entities.
-
----
-
-## 📌 Purpose & Responsibilities
-
-- **Hide Database Implementation**: Applications, controllers, and services must never directly access Mongoose Models, Schemas, Collections, or Connections.
-- **Provide Clean Public API**: Features interact exclusively through Repositories (for CRUD/Queries) and Entities (for data representation).
-- **Enforce Consistent Data Flow**:
-  $$\text{Application} \longrightarrow \text{DAL Repository} \longrightarrow \text{Mongoose Schema/Model} \longrightarrow \text{MongoDB}$$
+This package is the **single source of truth for all database operations** in your monorepo. It isolates MongoDB and Mongoose implementation details from your application server.
 
 ---
 
-## 🔑 Key Aspects & Guidelines
+## 📌 What is this package?
 
-### 1. Public API & Export Rules
-
-- Always import from `@org/dal`. Never perform deep imports into internal subfolders.
-- **Exported**: Repositories (`UserRepository`, `ChatRepository`, `MessageRepository`), Entities (`UserEntity`, `ChatEntity`, `MessageEntity`), and Connection helpers (`connectDatabase`, `disconnectDatabase`).
-- **Private (Never Exported)**: Mongoose Models (`UserModel`, `ChatModel`, `MessageModel`), Schema definitions, and internal helper functions.
-
-### 2. Entity Strategy
-
-- Entities represent the canonical application data shape.
-- Defined as pure TypeScript type aliases mapped directly from schema types (`InferSchemaType`).
-- All `ObjectId` instances (primary `_id` and reference fields) are typed as `string` in entities.
-
-### 3. MongoDB Naming Convention
-
-- Every MongoDB reference field must start with an underscore (`_`).
-- Examples: `_id`, `_users`, `_groupAdmin`, `_latestMessage`, `_chat`, `_sender`, `_readBy`, `_replyTo`.
-- Never use suffixes like `createdById` or `roomId`.
-
-### 4. Connection Management
-
-- The application bootstrap layer calls `connectDatabase()` once at startup.
-- The DAL library itself does not auto-connect to the database.
+`@org/dal` is a specialized database abstraction layer. It manages database connections, Mongoose schemas, indexes, and queries. It exposes a clean **Repository pattern** and **Entity types** to the backend API (`@org/api`).
 
 ---
 
-## 📂 Folder Structure
+## 🎯 What is its exact use?
+
+Use `@org/dal` to prevent database implementation details from leaking into your business logic:
+
+1. **Repository Pattern**: Whenever your backend service needs to create, read, update, or delete records from MongoDB, it calls an injected Repository method (e.g., `userRepository.findById(id)`).
+2. **Entity Types**: Returns pure TypeScript `Entity` objects representing stored documents, ensuring backend services never manipulate raw Mongoose document wrappers.
+3. **Connection Lifecycle**: Centralizes connection pooling, database diagnostics (`check-db`), and graceful shutdowns.
+
+---
+
+## ✍️ What should you write here?
+
+When adding a new database collection or entity to your boilerplate, add the following files to `src/<feature>/`:
+
+- **`*.schema.ts`** *(Private)*: Define your Mongoose Schema, hooks, indexes, and Mongoose Model. **Do not export this file from `index.ts`**.
+- **`*.entity.ts`** *(Public)*: Define the canonical TypeScript type for the entity (typically using `InferSchemaType`). Ensure `_id` and all references are typed as `string`.
+- **`*.repository.ts`** *(Public)*: Define a Repository class encapsulating all Mongoose `.find()`, `.create()`, `.updateOne()`, and `.aggregate()` queries.
+
+### What should you NEVER write here?
+- **No HTTP Controllers or Services**: Do not import NestJS Controllers, Fastify request objects, or HTTP error handlers here.
+- **No Direct Schema Exports**: Never export Mongoose Models or Schemas from `@org/dal`. Only export Repositories and Entities.
+
+---
+
+## 🚨 Mandatory Architectural & Naming Rules
+
+> [!IMPORTANT]
+> **MongoDB Reference Naming**: Every MongoDB reference field **must start with an underscore (`_`)**.
+> - **Correct**: `_id`, `_users`, `_chat`, `_sender`, `_owner`
+> - **Incorrect**: `userId`, `chatId`, `ownerId`
+
+> [!NOTE]
+> **Entity ObjectIds**: Always type MongoDB ObjectIds as `string` in public Entities so consumers in `@org/api` never have to call `.toString()`.
+
+---
+
+## 🏗️ Structure You Should Follow
 
 ```
 packages/dal/src/
-├── connection/
-│   ├── database.constants.ts  # Collection name constants
-│   ├── mongodb.ts             # Connection lifecycle manager
-│   └── index.ts
-├── users/
-│   ├── user.schema.ts         # Mongoose schema, model & hooks (Private)
-│   ├── user.entity.ts         # UserEntity type definition
-│   ├── user.repository.ts     # UserRepository class
-│   └── index.ts
-├── chats/
-│   ├── chat.schema.ts
-│   ├── chat.entity.ts
-│   ├── chat.repository.ts
-│   └── index.ts
-├── messages/
-│   ├── message.schema.ts
-│   ├── message.entity.ts
-│   ├── message.repository.ts
-│   └── index.ts
-└── index.ts                   # Root public entry point
+├── connection/            # Database connection lifecycle and collection constants
+├── users/                 # Example domain collection
+├── <your-new-collection>/ # Add new MongoDB collections here
+│   ├── <feature>.schema.ts      # Private Mongoose schema & model
+│   ├── <feature>.entity.ts      # Public TypeScript entity type
+│   ├── <feature>.repository.ts  # Public repository query class
+│   └── index.ts                 # Export ONLY entity and repository
+└── index.ts               # Root public entry point
 ```
+
+---
+
+## 💡 Example Workflow: Adding a New Collection
+
+1. Create a folder: `src/project/`
+2. Define the schema in `src/project/project.schema.ts` with reference fields starting with an underscore (e.g., `_owner: { type: Schema.Types.ObjectId }`).
+3. Define `ProjectEntity` in `src/project/project.entity.ts`.
+4. Create `ProjectRepository` in `src/project/project.repository.ts` containing your DB query methods.
+5. Export `ProjectEntity` and `ProjectRepository` from `src/index.ts`.

@@ -1,2 +1,4 @@
-export { RedisModule } from './redis.module';
-export { REDIS_CLIENT } from './redis.constants';
+export * from './redis.constants';
+export * from './redis.provider';
+export * from './redis-presence.service';
+export * from './redis.module';

@@ -23,16 +23,16 @@
   ],
   "targetDefaults": {
     "build": {
-      "dependsOn": ["check-db", "^build"],
+      "dependsOn": ["^build"],
       "inputs": ["production", "^production"],
       "cache": true
     },
-    "serve": {
-      "dependsOn": ["check-db", "^build"]
+    "dev": {
+      "dependsOn": ["^build"]
     },
-    "check-db": {
-      "command": "node scripts/check-db.js",
-      "cache": false
+    "typecheck": {
+      "dependsOn": ["^typecheck"],
+      "cache": true
     }
   },
   "analytics": true

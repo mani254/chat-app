@@ -35,6 +35,21 @@ export async function connectDatabase(uri?: string): Promise<void> {
   isConnected = true;
   console.log('[DAL] MongoDB connected');
 
+  try {
+    const db = mongoose.connection.db;
+    if (db) {
+      const usersCollection = db.collection('users');
+      const indexes = await usersCollection.indexes();
+      const hasBadIndex = indexes.some((idx) => idx.name === 'provider_1_providerId_1');
+      if (hasBadIndex) {
+        await usersCollection.dropIndex('provider_1_providerId_1').catch(() => null);
+        console.log('[DAL] Dropped old provider_1_providerId_1 index');
+      }
+    }
+  } catch (err) {
+    // Ignore index cleanup errors
+  }
+
   mongoose.connection.on('disconnected', () => {
     isConnected = false;
     console.warn('[DAL] MongoDB disconnected');

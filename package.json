@@ -4,29 +4,27 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "check:db": "nx run api:check-db",
-    "dev": "nx run-many -t serve --parallel",
+    "dev": "nx run-many -t dev --parallel",
     "build": "nx run-many -t build",
+    "clean": "pnpm -r --parallel run clean && node -e \"['dist','.nx','node_modules'].forEach(d=>{try{require('fs').rmSync(d,{recursive:true,force:true})}catch(e){}})\"",
     "typecheck": "nx run-many -t typecheck",
     "format": "nx format:write",
-    "format:check": "nx format:check"
+    "format:check": "nx format:check",
+    "graph": "nx graph"
   },
   "private": true,
-  "dependencies": {
-    "mongoose": "^9.8.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@nx/js": "23.1.0",
-    "@nx/nest": "^23.1.0",
-    "@swc-node/register": "1.11.1",
+    "@nx/nest": "23.1.0",
+    "@swc-node/register": "^1.12.1",
     "@swc/cli": "^0.8.1",
-    "@swc/core": "1.15.8",
-    "@swc/helpers": "0.5.18",
-    "@types/bcryptjs": "^2.4.6",
-    "@types/node": "^24.0.0",
+    "@swc/core": "^1.15.47",
+    "@swc/helpers": "^0.5.23",
+    "@types/node": "^24.13.3",
     "nx": "23.1.0",
     "prettier": "^3.8.1",
-    "tslib": "^2.3.0",
-    "typescript": "~6.0.3"
+    "tslib": "^2.8.1",
+    "typescript": "~5.7.3"
   }
 }

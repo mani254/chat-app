@@ -5,6 +5,10 @@ dist
 tmp
 out-tsc
 
+# TypeScript build cache (auto-generated, never commit)
+**/*.tsbuildinfo
+**/.tsbuildinfo/
+
 # dependencies
 node_modules
 

@@ -1,3 +1,3 @@
 export * from './user-db.types.js';
-export * from './user-request-dto.js';
-export * from './user-response-dto.js';
+export * from './user.types.js';
+

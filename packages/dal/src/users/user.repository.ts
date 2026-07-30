@@ -1,36 +1,21 @@
 import type { UpdateQuery } from 'mongoose';
-
 import type { CreateUserInput, UpdateUserInput } from '@org/shared';
-import { UserEntity } from './user.entity.js';
+import { type UserEntity, toUserEntity } from './user.entity.js';
 import { type RawUserDocument, UserModel } from './user.schema.js';
 
-/**
- * UserRepository — the only way to interact with the User collection.
- *
- * Consumers MUST use this class. Direct access to UserModel, userSchema,
- * or the MongoDB users collection is strictly forbidden outside the DAL.
- *
- * All methods return UserEntity objects (or null / arrays of them).
- * Raw Mongoose documents never leave this class.
- */
 export class UserRepository {
-  // ─── Read ──────────────────────────────────────────────────────────────────
-
   async findById(id: string): Promise<UserEntity | null> {
     const doc = await UserModel.findById(id).lean<RawUserDocument>().exec();
-    return doc ? UserEntity.fromDocument(doc) : null;
+    return doc ? toUserEntity(doc) : null;
   }
 
   async findByEmail(email: string): Promise<UserEntity | null> {
     const doc = await UserModel.findOne({ email: email.toLowerCase() })
       .lean<RawUserDocument>()
       .exec();
-    return doc ? UserEntity.fromDocument(doc) : null;
+    return doc ? toUserEntity(doc) : null;
   }
 
-  /**
-   * Used for OAuth login flows — looks up by provider + providerId pair.
-   */
   async findByProvider(
     provider: string,
     providerId: string,
@@ -41,21 +26,21 @@ export class UserRepository {
     )
       .lean<RawUserDocument>()
       .exec();
-    return doc ? UserEntity.fromDocument(doc) : null;
+    return doc ? toUserEntity(doc) : null;
   }
 
   async findManyByIds(ids: string[]): Promise<UserEntity[]> {
     const docs = await UserModel.find({ _id: { $in: ids } })
       .lean<RawUserDocument[]>()
       .exec();
-    return docs.map((doc) => UserEntity.fromDocument(doc));
+    return docs.map(toUserEntity);
   }
 
   async findOnlineUsers(): Promise<UserEntity[]> {
     const docs = await UserModel.find({ isOnline: true })
       .lean<RawUserDocument[]>()
       .exec();
-    return docs.map((doc) => UserEntity.fromDocument(doc));
+    return docs.map(toUserEntity);
   }
 
   async exists(filter: Record<string, unknown>): Promise<boolean> {
@@ -64,12 +49,9 @@ export class UserRepository {
     return result !== null;
   }
 
-  // ─── Write ─────────────────────────────────────────────────────────────────
-
   async create(data: CreateUserInput): Promise<UserEntity> {
     const doc = await UserModel.create(data);
-    // .create() returns a full Mongoose document, cast to lean for consistency
-    return UserEntity.fromDocument(doc.toObject() as RawUserDocument);
+    return toUserEntity(doc.toObject() as RawUserDocument);
   }
 
   async updateById(
@@ -83,13 +65,9 @@ export class UserRepository {
     })
       .lean<RawUserDocument>()
       .exec();
-    return doc ? UserEntity.fromDocument(doc) : null;
+    return doc ? toUserEntity(doc) : null;
   }
 
-  /**
-   * Updates the password field (hashing is handled by the pre-save hook).
-   * Must use .save() so the pre-save hook fires — findByIdAndUpdate bypasses hooks.
-   */
   async updatePassword(id: string, newPassword: string): Promise<boolean> {
     const doc = await UserModel.findById(id).exec();
     if (!doc) return false;
@@ -113,16 +91,6 @@ export class UserRepository {
     return result !== null;
   }
 
-  // ─── Raw Password Access (DAL-internal use only) ───────────────────────────
-
-  /**
-   * Returns the hashed password for a given email.
-   * This is the ONLY method that exposes the password field,
-   * and it must only be called from within the DAL or an auth service
-   * that needs to compare passwords.
-   *
-   * The password is never included in UserEntity.
-   */
   async findHashedPasswordByEmail(email: string): Promise<string | null> {
     const doc = await UserModel.findOne({ email: email.toLowerCase() })
       .select('+password')

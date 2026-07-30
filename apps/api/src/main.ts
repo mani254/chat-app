@@ -7,11 +7,16 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
+import multipart from '@fastify/multipart';
+import fastifyStatic from '@fastify/static';
 import { Logger as PinoLogger } from 'nestjs-pino';
+import * as path from 'path';
+import * as fs from 'fs';
 
-import { AppModule } from './app/app.module';
-import { configureSwagger } from './swagger/swagger.setup';
 import { connectDatabase } from '@org/dal';
+import { AppModule } from './app/app.module';
+import { RedisIoAdapter } from './app/websocket/adapters/redis-io.adapter';
+import { configureSwagger } from './swagger/swagger.setup';
 
 async function bootstrap(): Promise<void> {
   // ── 1. Create the Fastify-powered NestJS application ──────────────────────
@@ -36,6 +41,19 @@ async function bootstrap(): Promise<void> {
   // ── 4. Connect to MongoDB via @org/dal (single connection for the app) ────
   await connectDatabase(dbUri);
 
+  // ── 4.1 Register @fastify/multipart for file uploads ─────────────────────
+  await app.register(multipart, {
+    limits: { fileSize: 50 * 1024 * 1024, files: 10 }, // 50MB per file, max 10 files
+  });
+
+  // ── 4.2 Serve /uploads directory as static files ──────────────────────────
+  const uploadsDir = path.join(process.cwd(), 'uploads');
+  if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+  await app.register(fastifyStatic, {
+    root: uploadsDir,
+    prefix: '/uploads/',
+  });
+
   // ── 5. CORS — origin from config, never hardcoded ─────────────────────────
   app.enableCors({
     origin: corsOrigin === '*' ? '*' : corsOrigin.split(','),
@@ -44,18 +62,22 @@ async function bootstrap(): Promise<void> {
     credentials: corsOrigin !== '*',
   });
 
-  // ── 6. URI-based versioning: /api/v1, /api/v2, ... ───────────────────────
+  // ── 5.1 Redis WebSocket Adapter (Pub/Sub multi-node scaling) ───────────────
+  const redisIoAdapter = new RedisIoAdapter(app, config);
+  await redisIoAdapter.connectToRedis();
+  app.useWebSocketAdapter(redisIoAdapter);
+
+  // ── 6. Global API Prefix ('api') ──────────────────────────────────────────
+  app.setGlobalPrefix('api');
+
+  // ── 7. URI-based versioning: /api/v1, /api/v2, ... ───────────────────────
   app.enableVersioning({
     type: VersioningType.URI,
     defaultVersion: config.get<string>('app.defaultVersion') ?? '1',
-    prefix: 'api/v',
+    prefix: 'v',
   });
 
-  // ── 7. Global validation pipe ─────────────────────────────────────────────
-  //   whitelist:          strips properties not in the DTO class
-  //   forbidNonWhitelisted: throws 400 if unknown props are sent
-  //   transform:          auto-converts plain objects to DTO class instances
-  //                       + coerces query/param strings to native TS types
+  // ── 8. Global validation pipe ─────────────────────────────────────────────
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -65,13 +87,13 @@ async function bootstrap(): Promise<void> {
     }),
   );
 
-  // ── 8. Swagger (non-production only) ─────────────────────────────────────
+  // ── 9. Swagger (non-production only) ─────────────────────────────────────
   configureSwagger(app);
 
-  // ── 9. Graceful shutdown hooks ────────────────────────────────────────────
+  // ── 10. Graceful shutdown hooks ───────────────────────────────────────────
   app.enableShutdownHooks();
 
-  // ── 10. Bind and listen ──────────────────────────────────────────────────
+  // ── 11. Bind and listen ──────────────────────────────────────────────────
   await app.listen(port, '0.0.0.0');
 
   const logger = new Logger('Bootstrap');
