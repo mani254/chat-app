@@ -1,5 +1,7 @@
 import 'reflect-metadata';
 
+import multipart from '@fastify/multipart';
+import fastifyStatic from '@fastify/static';
 import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
@@ -7,11 +9,9 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
-import multipart from '@fastify/multipart';
-import fastifyStatic from '@fastify/static';
+import * as fs from 'fs';
 import { Logger as PinoLogger } from 'nestjs-pino';
 import * as path from 'path';
-import * as fs from 'fs';
 
 import { connectDatabase } from '@org/dal';
 import { AppModule } from './app/app.module';

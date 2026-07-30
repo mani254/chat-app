@@ -1,7 +1,7 @@
 services:
   redis:
     image: redis:latest
-    container_name: redis-chat
+    container_name: chat-app
     ports:
-      - "6379:6379"
+      - '6379:6379'
     restart: always
