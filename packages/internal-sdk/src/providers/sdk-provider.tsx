@@ -1,10 +1,13 @@
-import * as React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import * as React from 'react';
 import { AuthProvider } from '../auth/context/auth-provider';
+import { SocketProvider } from '../socket/socket-context';
+import { getEnvConfig } from '../config/env.config';
 
 export interface SdkProviderProps {
   children: React.ReactNode;
   apiBaseUrl?: string;
+  socketUrl?: string;
   queryClient?: QueryClient;
 }
 
@@ -20,12 +23,19 @@ const defaultQueryClient = new QueryClient({
 
 export function SdkProvider({
   children,
-  apiBaseUrl = '/api/v1',
+  apiBaseUrl,
+  socketUrl,
   queryClient = defaultQueryClient,
 }: SdkProviderProps) {
+  const envConfig = getEnvConfig();
+  const targetApiBaseUrl = apiBaseUrl || envConfig.apiBaseUrl;
+  const targetSocketUrl = socketUrl || envConfig.socketUrl;
+
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider apiBaseUrl={apiBaseUrl}>{children}</AuthProvider>
+      <AuthProvider apiBaseUrl={targetApiBaseUrl}>
+        <SocketProvider url={targetSocketUrl}>{children}</SocketProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

@@ -43,6 +43,74 @@ export class UserRepository {
     return docs.map(toUserEntity);
   }
 
+  /**
+   * Search users by name or email, optionally excluding the requesting user.
+   */
+  async searchUsers(
+    search?: string,
+    excludeUserId?: string,
+    limit = 20,
+  ): Promise<UserEntity[]> {
+    const filter: Record<string, unknown> = {};
+
+    if (excludeUserId) {
+      filter['_id'] = { $ne: excludeUserId };
+    }
+
+    if (search && search.trim().length > 0) {
+      const regex = new RegExp(search.trim(), 'i');
+      filter['$or'] = [{ name: regex }, { email: regex }];
+    }
+
+    const docs = await UserModel.find(filter)
+      .limit(limit)
+      .lean<RawUserDocument[]>()
+      .exec();
+
+    return docs.map(toUserEntity);
+  }
+
+  /**
+   * Cursor-based paginated user search (default limit = 10).
+   */
+  async searchUsersWithCursor(
+    options: {
+      search?: string;
+      excludeUserId?: string;
+      cursor?: string;
+      limit?: number;
+    } = {},
+  ): Promise<{ items: UserEntity[]; nextCursor?: string; hasMore: boolean }> {
+    const limit = Math.min(50, Math.max(1, options.limit ?? 10));
+    const filter: Record<string, unknown> = {};
+
+    if (options.excludeUserId) {
+      filter['_id'] = { $ne: options.excludeUserId };
+    }
+
+    if (options.search && options.search.trim().length > 0) {
+      const regex = new RegExp(options.search.trim(), 'i');
+      filter['$or'] = [{ name: regex }, { email: regex }];
+    }
+
+    if (options.cursor) {
+      filter['_id'] = { ...((filter['_id'] as object) || {}), $gt: options.cursor };
+    }
+
+    const docs = await UserModel.find(filter)
+      .sort({ _id: 1 })
+      .limit(limit + 1)
+      .lean<RawUserDocument[]>()
+      .exec();
+
+    const hasMore = docs.length > limit;
+    const items = hasMore ? docs.slice(0, limit) : docs;
+    const lastItem = items[items.length - 1];
+    const nextCursor = hasMore && lastItem ? lastItem._id.toString() : undefined;
+
+    return { items: items.map(toUserEntity), nextCursor, hasMore };
+  }
+
   async exists(filter: Record<string, unknown>): Promise<boolean> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await UserModel.exists(filter as any).exec();

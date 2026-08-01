@@ -14,29 +14,8 @@ import { RedisModule } from './redis/redis.module';
 import { WebSocketModule } from './websocket/websocket.module';
 import { ChatModule } from './chat/chat.module';
 import { MessageModule } from './message/message.module';
+import { UserModule } from './user/user.module';
 
-/**
- * AppModule — Root NestJS Module
- *
- * Registers all global infrastructure:
- *   - ConfigModule   (isGlobal = true, env validation)
- *   - LoggerModule   (Pino, dev=pretty / prod=JSON)
- *   - APP_FILTER     → HttpExceptionFilter (unified error envelope)
- *   - APP_INTERCEPTOR→ LoggingInterceptor  (request duration)
- *   - APP_INTERCEPTOR→ TransformInterceptor (success envelope)
- *   - APP_GUARD      → AuthGuard (Better Auth foundation)
- *
- * Feature modules registered here:
- *   - HealthModule
- *   - AuthModule
- *   - RedisModule
- *   - WebSocketModule
- *
- * How to add a new domain feature:
- *   1. Create apps/api/src/app/[domain]/[domain].module.ts
- *   2. Import it below in the `imports` array
- *   3. Done — global pipes, filters, guards apply automatically
- */
 @Module({
   imports: [
     // Infrastructure (always first)
@@ -50,6 +29,7 @@ import { MessageModule } from './message/message.module';
     WebSocketModule,
     ChatModule,
     MessageModule,
+    UserModule,
   ],
   providers: [
     // Global exception filter — formats all errors to ApiErrorResponse

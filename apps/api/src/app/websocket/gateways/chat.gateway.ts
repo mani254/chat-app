@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, OnModuleInit } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
@@ -13,8 +13,10 @@ import { WS_EVENTS } from '@org/shared';
 import { Server, Socket } from 'socket.io';
 import { ChatService } from '../../chat/chat.service';
 import { MessageService } from '../../message/message.service';
+import { MessageResponseDto } from '../../message/dto';
 import { RedisPresenceService } from '../../redis/redis-presence.service';
 import { WsAuthGuard } from '../guards/ws-auth.guard';
+import { ChatEventsService } from '../chat-events.service';
 
 @WebSocketGateway({
   cors: {
@@ -23,7 +25,7 @@ import { WsAuthGuard } from '../guards/ws-auth.guard';
   },
   namespace: '/chat',
 })
-export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit {
   private readonly logger = new Logger(ChatGateway.name);
 
   @WebSocketServer()
@@ -34,7 +36,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private readonly wsAuthGuard: WsAuthGuard,
     private readonly chatService: ChatService,
     private readonly messageService: MessageService,
-  ) {}
+    private readonly chatEventsService: ChatEventsService,
+  ) { }
+
+  onModuleInit(): void {
+    this.chatEventsService.onMessageCreated((msg) => {
+      this.broadcastNewMessage(msg).catch((err: unknown) => {
+        this.logger.warn(`Failed to broadcast new message: ${err}`);
+      });
+    });
+  }
 
   // ─── Lifecycle: Connection ─────────────────────────────────────────────────
 
@@ -203,8 +214,20 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         user,
       );
 
-      // Broadcast full populated message to everyone in the room (including sender)
-      this.server.to(`room:${data.chatId}`).emit(WS_EVENTS.MESSAGE_NEW, messageResponse);
+      // Collect target rooms: active conversation room + all participant user rooms
+      const roomTargets: string[] = [`room:${data.chatId}`];
+      try {
+        const participantIds = await this.chatService.getChatParticipantIds(data.chatId);
+        for (const participantId of participantIds) {
+          roomTargets.push(`user:${participantId}`);
+        }
+      } catch (e) {
+        this.logger.warn(`Failed to resolve participant rooms for chat ${data.chatId}: ${e}`);
+      }
+
+      // Socket.IO automatically deduplicates sockets present in multiple target rooms,
+      // ensuring each connected client receives EXACTLY ONE message packet!
+      this.server.to(roomTargets).emit(WS_EVENTS.MESSAGE_NEW, messageResponse);
 
       // ACK to sender in case they are not in the room yet
       const roomSockets = await this.server
@@ -219,6 +242,30 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.logger.error(`[message:send] Error: ${message}`);
       client.emit(WS_EVENTS.WS_ERROR, { message });
     }
+  }
+
+  /**
+   * Broadcast a newly created message to all connected clients in the chat room
+   * AND to individual user rooms for every chat participant.
+   */
+  async broadcastNewMessage(messageResponse: MessageResponseDto): Promise<void> {
+    if (!this.server) {
+      this.logger.warn('WebSocket server is not initialized yet');
+      return;
+    }
+
+    const roomTargets: string[] = [`room:${messageResponse.chatId}`];
+    try {
+      const participantIds = await this.chatService.getChatParticipantIds(messageResponse.chatId);
+      for (const participantId of participantIds) {
+        roomTargets.push(`user:${participantId}`);
+      }
+    } catch (e) {
+      this.logger.warn(`Failed to resolve participant rooms for chat ${messageResponse.chatId}: ${e}`);
+    }
+
+    this.logger.log(`📢 Broadcasting WS_EVENTS.MESSAGE_NEW to rooms: ${roomTargets.join(', ')}`);
+    this.server.to(roomTargets).emit(WS_EVENTS.MESSAGE_NEW, messageResponse);
   }
 
   // ─── Read Receipts ─────────────────────────────────────────────────────────

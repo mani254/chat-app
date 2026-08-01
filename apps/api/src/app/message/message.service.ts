@@ -6,13 +6,14 @@ import {
 } from '@nestjs/common';
 import type { MessageEntity, UserEntity } from '@org/dal';
 import { ChatRepository, MessageRepository, UserRepository } from '@org/dal';
+import { UserSummaryDto } from '../chat/dto/chat-response.dto';
+import { ChatEventsService } from '../websocket/chat-events.service';
 import type {
+  GetMessagesQueryDto,
   MessageListResponseDto,
   MessageResponseDto,
   SendMessageRequestDto,
-  GetMessagesQueryDto,
 } from './dto';
-import { UserSummaryDto } from '../chat/dto/chat-response.dto';
 
 // ─── Internal Mappers ─────────────────────────────────────────────────────────
 
@@ -27,6 +28,7 @@ function toUserSummary(user: UserEntity): UserSummaryDto {
   };
 }
 
+
 // ─── Service ──────────────────────────────────────────────────────────────────
 
 @Injectable()
@@ -37,7 +39,8 @@ export class MessageService {
     private readonly messageRepository: MessageRepository,
     private readonly chatRepository: ChatRepository,
     private readonly userRepository: UserRepository,
-  ) {}
+    private readonly chatEventsService: ChatEventsService,
+  ) { }
 
   /**
    * Build a fully populated MessageResponseDto from a raw MessageEntity.
@@ -126,8 +129,13 @@ export class MessageService {
     // Update latestMessage pointer on the chat
     await this.chatRepository.updateLatestMessage(dto.chatId, msg._id);
 
+    const messageResponse = await this.buildMessageResponse(msg);
+
+    // Broadcast to Socket.IO clients in real-time via decoupled ChatEventsService
+    this.chatEventsService.emitMessageCreated(messageResponse);
+
     this.logger.log(`Message ${msg._id} sent to chat ${dto.chatId} by ${user.email}`);
-    return this.buildMessageResponse(msg);
+    return messageResponse;
   }
 
   // ─── Mark All Read ─────────────────────────────────────────────────────────

@@ -111,6 +111,7 @@ export class ChatService {
         cursor: query.cursor,
         limit,
         type: query.type,
+        search: query.search,
       });
 
     const chatResponses = await Promise.all(
@@ -130,6 +131,14 @@ export class ChatService {
     if (!isMember) throw new ForbiddenException('You are not a member of this chat');
 
     return this.buildChatResponse(chat, user._id);
+  }
+
+  /**
+   * Fast participant user ID lookup for socket broadcasting.
+   */
+  async getChatParticipantIds(chatId: string): Promise<string[]> {
+    const chat = await this.chatRepository.findById(chatId);
+    return chat ? chat._users : [];
   }
 
   // ─── Create Chat ───────────────────────────────────────────────────────────

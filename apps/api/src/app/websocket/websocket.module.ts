@@ -3,11 +3,12 @@ import { UserRepository } from '@org/dal';
 import { ChatModule } from '../chat/chat.module';
 import { MessageModule } from '../message/message.module';
 import { RedisModule } from '../redis/redis.module';
+import { ChatEventsModule } from './chat-events.module';
 import { ChatGateway } from './gateways/chat.gateway';
 import { WsAuthGuard } from './guards/ws-auth.guard';
 
 @Module({
-  imports: [RedisModule, ChatModule, MessageModule],
+  imports: [RedisModule, ChatModule, MessageModule, ChatEventsModule],
   providers: [
     ChatGateway,
     WsAuthGuard,
@@ -18,4 +19,4 @@ import { WsAuthGuard } from './guards/ws-auth.guard';
   ],
   exports: [ChatGateway],
 })
-export class WebSocketModule {}
+export class WebSocketModule { }

@@ -1,24 +1,27 @@
 import axios, { type AxiosInstance, type InternalAxiosRequestConfig } from 'axios';
 import { ApiError } from './api-error';
+import { getEnvConfig } from '../config/env.config';
 
 let apiClientInstance: AxiosInstance | null = null;
 let currentTokenGetter: (() => string | null) | null = null;
 
 export function configureApiClient(config: {
-  baseUrl: string;
+  baseUrl?: string;
   getToken?: () => string | null;
 }): AxiosInstance {
+  const targetBaseUrl = config.baseUrl || getEnvConfig().apiBaseUrl;
+
   if (config.getToken) {
     currentTokenGetter = config.getToken;
   }
 
   if (apiClientInstance) {
-    apiClientInstance.defaults.baseURL = config.baseUrl;
+    apiClientInstance.defaults.baseURL = targetBaseUrl;
     return apiClientInstance;
   }
 
   const client = axios.create({
-    baseURL: config.baseUrl,
+    baseURL: targetBaseUrl,
     headers: {
       'Content-Type': 'application/json',
     },
@@ -63,7 +66,7 @@ export function configureApiClient(config: {
 
 export function getApiClient(): AxiosInstance {
   if (!apiClientInstance) {
-    return configureApiClient({ baseUrl: '/api/v1' });
+    return configureApiClient({ baseUrl: getEnvConfig().apiBaseUrl });
   }
   return apiClientInstance;
 }

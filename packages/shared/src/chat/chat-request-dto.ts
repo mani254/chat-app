@@ -33,4 +33,6 @@ export interface GetChatsQuery {
   limit?: number;
   /** Filter by chat type. Defaults to 'all' */
   type?: 'all' | 'group' | 'direct';
+  /** Optional search query for chat name or participant name/email */
+  search?: string;
 }

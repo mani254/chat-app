@@ -1,8 +1,8 @@
+import { SdkProvider } from '@org/internal-sdk';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { SdkProvider } from '@org/internal-sdk';
+import { BrowserRouter } from 'react-router-dom';
 import { App } from './app';
 import './index.css';
 
@@ -13,7 +13,7 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
   <React.StrictMode>
-    <SdkProvider apiBaseUrl="/api/v1">
+    <SdkProvider>
       <BrowserRouter>
         <App />
         <Toaster

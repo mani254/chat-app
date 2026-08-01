@@ -5,18 +5,7 @@ import { ConfigService } from '@nestjs/config';
 /**
  * LoggerModule
  *
- * Configures nestjs-pino as the global application logger.
- *
- * Development:  pino-pretty — colorized, human-readable output.
- * Production:   JSON structured logs — compatible with log aggregators
- *               (Datadog, CloudWatch, ELK, Loki, etc.)
- *
- * Security policies (applied in ALL environments):
- *   - req.headers.authorization  → [REDACTED]
- *   - req.headers.cookie         → [REDACTED]
- *   - password                   → [REDACTED]
- *   - token, secret, accessToken → [REDACTED]
- *   - creditCard, ssn, apiKey    → [REDACTED]
+ * Configures nestjs-pino as the application logger with clean, concise dev output.
  */
 @Module({
   imports: [
@@ -28,8 +17,10 @@ import { ConfigService } from '@nestjs/config';
         return {
           pinoHttp: {
             level: isDev ? 'debug' : 'info',
+            // Disable pino-http verbose request header dumps; LoggingInterceptor handles clean single-line request logs
+            autoLogging: false,
 
-            // Redact sensitive fields in every log line
+            // Redact sensitive fields in any manual pino logger calls
             redact: {
               paths: [
                 'req.headers.authorization',
@@ -38,11 +29,6 @@ import { ConfigService } from '@nestjs/config';
                 'req.body.password',
                 'req.body.token',
                 'req.body.secret',
-                'req.body.accessToken',
-                'req.body.refreshToken',
-                'req.body.apiKey',
-                'req.body.creditCard',
-                'req.body.ssn',
                 '*.password',
                 '*.token',
                 '*.secret',
@@ -50,38 +36,30 @@ import { ConfigService } from '@nestjs/config';
               censor: '[REDACTED]',
             },
 
-            // Pretty-print in development, structured JSON in production
+            // Concise request/response serializers
+            serializers: {
+              req: (req: { method: string; url: string }) => ({
+                method: req.method,
+                url: req.url,
+              }),
+              res: (res: { statusCode: number }) => ({
+                statusCode: res.statusCode,
+              }),
+            },
+
             ...(isDev
               ? {
                   transport: {
                     target: 'pino-pretty',
                     options: {
                       colorize: true,
-                      singleLine: false,
+                      singleLine: true,
                       translateTime: 'SYS:HH:MM:ss.l',
                       ignore: 'pid,hostname',
                     },
                   },
                 }
-              : {
-                  // Production: serializers for clean JSON
-                  serializers: {
-                    req: (req: {
-                      id: string;
-                      method: string;
-                      url: string;
-                      headers: Record<string, string>;
-                    }) => ({
-                      id: req.id,
-                      method: req.method,
-                      url: req.url,
-                      userAgent: req.headers['user-agent'],
-                    }),
-                    res: (res: { statusCode: number }) => ({
-                      statusCode: res.statusCode,
-                    }),
-                  },
-                }),
+              : {}),
           },
         };
       },

@@ -23,4 +23,12 @@ export class GetChatsQueryDto {
   @IsOptional()
   @IsIn(['all', 'group', 'direct'])
   type?: 'all' | 'group' | 'direct';
+
+  @ApiPropertyOptional({
+    description: 'Search query for group name or DM participant name/email',
+    example: 'alex',
+  })
+  @IsOptional()
+  @IsString()
+  search?: string;
 }

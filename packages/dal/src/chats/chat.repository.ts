@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import type { CreateChatInput, UpdateChatInput } from '@org/shared';
 import type { ChatEntity } from './chat.entity.js';
 import { type RawChatDocument, ChatModel } from './chat.schema.js';
+import { UserModel } from '../users/user.schema.js';
 
 // ─── Internal Conversion ──────────────────────────────────────────────────────
 
@@ -51,7 +52,7 @@ export class ChatRepository {
   }
 
   /**
-   * Cursor-based paginated chat list for a user.
+   * Cursor-based paginated chat list for a user with optional database-level search.
    * Cursor = updatedAt ISO string of the last item fetched.
    * Returns chats sorted by updatedAt descending (most recently active first).
    */
@@ -61,6 +62,7 @@ export class ChatRepository {
       cursor?: string;
       limit?: number;
       type?: 'all' | 'group' | 'direct';
+      search?: string;
     } = {},
   ): Promise<{ items: ChatEntity[]; nextCursor?: string; hasMore: boolean }> {
     const limit = Math.min(50, Math.max(1, options.limit ?? 20));
@@ -69,6 +71,39 @@ export class ChatRepository {
 
     if (options.type === 'group') filter['isGroupChat'] = true;
     if (options.type === 'direct') filter['isGroupChat'] = false;
+
+    // Database-level optimized search filtering
+    if (options.search && options.search.trim().length > 0) {
+      const searchTrimmed = options.search.trim();
+      const regex = new RegExp(searchTrimmed, 'i');
+
+      // Step 1: Find matching users (name or email) excluding current user
+      const matchingUsers = await UserModel.find(
+        {
+          _id: { $ne: userId },
+          $or: [{ name: regex }, { email: regex }],
+        },
+        { _id: 1 },
+      )
+        .lean<{ _id: mongoose.Types.ObjectId }[]>()
+        .exec();
+
+      const matchingUserIds = matchingUsers.map((u) => u._id.toString());
+
+      // Step 2: Combine group chat name match and DM participant match
+      if (options.type === 'group') {
+        filter['name'] = regex;
+      } else if (options.type === 'direct') {
+        filter['_users'] = { $all: [userId], $in: matchingUserIds };
+      } else {
+        // 'all' type: match group name OR DM participant user IDs
+        filter['$or'] = [
+          { isGroupChat: true, name: regex },
+          { isGroupChat: false, _users: { $all: [userId], $in: matchingUserIds } },
+        ];
+        delete filter['_users'];
+      }
+    }
 
     if (options.cursor) {
       filter['updatedAt'] = { $lt: new Date(options.cursor) };

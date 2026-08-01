@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { configureApiClient } from '../../http/api-client';
+import { getEnvConfig } from '../../config/env.config';
 
 export interface AuthContextValue {
   token: string | null;
@@ -15,7 +16,9 @@ export interface AuthProviderProps {
   apiBaseUrl?: string;
 }
 
-export function AuthProvider({ children, apiBaseUrl = '/api/v1' }: AuthProviderProps) {
+export function AuthProvider({ children, apiBaseUrl }: AuthProviderProps) {
+  const targetApiBaseUrl = apiBaseUrl || getEnvConfig().apiBaseUrl;
+
   const [token, setTokenState] = React.useState<string | null>(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('auth_token');
@@ -35,10 +38,10 @@ export function AuthProvider({ children, apiBaseUrl = '/api/v1' }: AuthProviderP
 
   React.useEffect(() => {
     configureApiClient({
-      baseUrl: apiBaseUrl,
+      baseUrl: targetApiBaseUrl,
       getToken: () => localStorage.getItem('auth_token'),
     });
-  }, [apiBaseUrl]);
+  }, [targetApiBaseUrl]);
 
   const value = React.useMemo(
     () => ({
